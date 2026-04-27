@@ -411,11 +411,14 @@ Format — exakt so, kein anderes Format:
 
 Gültige Kategorien: UNTERKUNFT, SUPERMARKT, RESTAURANTS, WANDERN / AUSFLÜGE, BESONDERHEITEN
 
-DOC-QUALITÄT:
-- Keine Duplikate eintragen
-- Immer mit "- " beginnen
-- Kurz: Name + ein Satz reicht
-- Bei unklarer Etappe: nachfragen — aber trotzdem eintragen sobald klar
+WENN DU ORTE ODER RESTAURANTS EMPFIEHLST:
+Füge zusätzlich einen map_search Block ein damit die Karte direkt angezeigt wird:
+
+<map_search>
+{"query": "Restaurants Barneville-Carteret Normandie", "lat": 49.3755, "lng": -1.7765}
+</map_search>
+
+Nutze immer die Koordinaten der aktuellen Etappe als Zentrum.
 
 REGELN:
 - Nur reiserelevante Antworten
@@ -455,12 +458,67 @@ async function processDocWrites(text) {
   return results;
 }
 
+function renderMapInChat(query, lat, lng) {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg ai';
+  div.style.maxWidth = '100%';
+  div.style.width = '100%';
+
+  const encodedQuery = encodeURIComponent(query);
+  const src = `https://www.google.com/maps/embed/v1/search?key=${REISE.mapsApiKey}&q=${encodedQuery}&center=${lat},${lng}&zoom=13`;
+
+  div.innerHTML = `
+    <div style="width:100%;border-radius:14px;overflow:hidden;border:1px solid var(--border);margin-top:4px;">
+      <div style="padding:8px 12px;background:var(--surface2);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);">
+        <span style="font-size:12px;">📍</span>
+        <span style="font-size:12px;font-weight:500;color:var(--text2);">${query}</span>
+        <a href="https://www.google.com/maps/search/${encodedQuery}/@${lat},${lng},14z"
+           target="_blank"
+           style="margin-left:auto;font-size:11px;color:var(--gold);text-decoration:none;font-weight:500;">
+          In Maps öffnen →
+        </a>
+      </div>
+      <iframe
+        src="${src}"
+        width="100%" height="260"
+        style="border:none;display:block;"
+        allowfullscreen loading="lazy">
+      </iframe>
+    </div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function processMapSearches(text) {
+  const regex = /<map_search>([\s\S]*?)<\/map_search>/g;
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    try {
+      const payload = JSON.parse(match[1].trim());
+      renderMapInChat(payload.query, payload.lat, payload.lng);
+    } catch(e) {
+      console.warn('Map parse error:', e);
+    }
+  }
+}
+
 function renderChatUI() {
   const wrap = document.getElementById('chat-wrap');
   wrap.innerHTML = `
     <div class="chat-header">
       <div class="chat-title">Reiseleiter</div>
-      <div class="chat-subtitle">Fragen · Empfehlungen · Notizen</div>
+      <div class="chat-subtitle">Fragen · Empfehlungen · Notizen · Karte</div>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <input id="map-search-input" type="text"
+          placeholder="Orte suchen, z.B. Bäckerei Barneville…"
+          style="flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:9px 12px;font-family:'Public Sans',sans-serif;font-size:13px;color:var(--text);outline:none;"
+          onkeydown="if(event.key==='Enter') manualMapSearch()">
+        <button onclick="manualMapSearch()"
+          style="background:color-mix(in srgb,var(--teal) 15%,var(--surface));border:1px solid color-mix(in srgb,var(--teal) 35%,transparent);border-radius:10px;padding:9px 14px;color:var(--teal);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;">
+          📍 Suchen
+        </button>
+      </div>
     </div>
     <div class="chat-messages" id="chat-messages"></div>
     <div class="chat-suggestions">
@@ -610,10 +668,16 @@ async function sendMessage() {
     // Process any doc_write blocks silently
     const writeResults = await processDocWrites(reply);
 
-    // Clean reply — remove doc_write blocks from display
-    const cleanReply = reply.replace(/<doc_write>[\s\S]*?<\/doc_write>/g, '').trim();
+    // Clean reply — remove special blocks from display
+    const cleanReply = reply
+      .replace(/<doc_write>[\s\S]*?<\/doc_write>/g, '')
+      .replace(/<map_search>[\s\S]*?<\/map_search>/g, '')
+      .trim();
 
     addMsg('ai', cleanReply);
+
+    // Render map if present
+    processMapSearches(reply);
 
     // Show write confirmations as small status messages
     if (writeResults.length > 0) {
@@ -636,6 +700,20 @@ async function sendMessage() {
 
   sendBtn.disabled = false;
   input.focus();
+}
+
+function manualMapSearch() {
+  const input = document.getElementById('map-search-input');
+  const query = input.value.trim();
+  if (!query) return;
+
+  const d = today();
+  const cur = currentEtappe(d);
+  const lat = cur ? cur.lat : 48.5;
+  const lng = cur ? cur.lng : -2.5;
+
+  renderMapInChat(query, lat, lng);
+  input.value = '';
 }
 
 function resetApiKey() {
