@@ -513,8 +513,6 @@ async function processDocWrites(text) {
 // ── PLACES SEARCH ─────────────────────────────────────────────────────────────
 async function placesSearch(query, lat, lng) {
   const msgs = document.getElementById('chat-messages');
-
-  // Show loading
   const loadDiv = document.createElement('div');
   loadDiv.className = 'msg ai';
   loadDiv.id = 'places-loading';
@@ -523,39 +521,27 @@ async function placesSearch(query, lat, lng) {
   msgs.scrollTop = msgs.scrollHeight;
 
   try {
-    // Use Places Nearby Search via proxy (avoid CORS)
-    // We use the Text Search endpoint via our Cloudflare Worker
-    const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&location=${lat},${lng}&radius=10000&language=fr&key=${REISE.mapsApiKey}`;
-
-    // Fetch via our worker to avoid CORS
+    const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&location=${lat},${lng}&radius=8000&language=de&key=${REISE.mapsApiKey}`;
     const res = await fetch('https://plain-leaf-8e0e.philipp-51c.workers.dev/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': 'places' },
       body: JSON.stringify({ placesUrl: searchUrl })
     });
-
     document.getElementById('places-loading')?.remove();
-
-    // If worker doesn't support places yet, fall back to embed
-    if (!res.ok) {
-      renderMapEmbed(query, lat, lng);
-      return;
+    if (res.ok) {
+      const data = await res.json();
+      if (data.results && data.results.length > 0) {
+        renderPlacesResults(data.results.slice(0, 5), query, lat, lng);
+        return;
+      }
     }
-
-    const data = await res.json();
-    if (!data.results || data.results.length === 0) {
-      renderMapEmbed(query, lat, lng);
-      return;
-    }
-
-    renderPlacesResults(data.results.slice(0, 5), query, lat, lng);
-
-  } catch(e) {
-    document.getElementById('places-loading')?.remove();
-    // Fallback to map embed
-    renderMapEmbed(query, lat, lng);
-  }
+  } catch(e) {}
+  document.getElementById('places-loading')?.remove();
+  renderMapEmbed(query, lat, lng);
 }
+
+// Global store for place save actions (avoids inline onclick escaping issues)
+window._placeStore = {};
 
 function renderPlacesResults(places, query, lat, lng) {
   const msgs = document.getElementById('chat-messages');
@@ -563,33 +549,41 @@ function renderPlacesResults(places, query, lat, lng) {
   const cur = currentEtappe(d);
   const etappeNum = cur ? ETAPPEN.indexOf(cur) + 1 : 1;
 
+  // Store places globally
+  const storeKey = 'search_' + Date.now();
+  window._placeStore[storeKey] = places;
+
   const div = document.createElement('div');
   div.className = 'msg ai';
   div.style.cssText = 'max-width:100%;width:100%;';
 
   const placesHtml = places.map((p, i) => {
-    const stars = p.rating ? '★'.repeat(Math.round(p.rating)) + ` ${p.rating}` : '';
+    const stars = p.rating ? `★ ${p.rating}` : '';
     const reviews = p.user_ratings_total ? `(${p.user_ratings_total})` : '';
-    const open = p.opening_hours?.open_now === true ? '<span style="color:var(--teal);font-size:10px;">● Jetzt geöffnet</span>' :
-                 p.opening_hours?.open_now === false ? '<span style="color:var(--rose);font-size:10px;">● Geschlossen</span>' : '';
+    const open = p.opening_hours?.open_now === true
+      ? '<span style="color:#78aba0;font-size:10px;font-weight:500;">● Geöffnet</span>'
+      : p.opening_hours?.open_now === false
+      ? '<span style="color:#bf7068;font-size:10px;font-weight:500;">● Geschlossen</span>'
+      : '';
+    const addr = (p.formatted_address || p.vicinity || '').replace(/, Frankreich$/, '').replace(/, France$/, '');
 
     return `
-      <div style="padding:12px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start;">
-        <div style="width:28px;height:28px;border-radius:50%;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--gold);flex-shrink:0;">${i+1}</div>
+      <div style="padding:12px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start;">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--gold);flex-shrink:0;margin-top:2px;">${i+1}</div>
         <div style="flex:1;min-width:0;">
-          <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;">${p.name}</div>
-          <div style="font-size:11px;color:var(--text3);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.formatted_address || p.vicinity || ''}</div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;line-height:1.3;">${p.name}</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${addr}</div>
+          <div style="display:flex;align-items:center;gap:8px;">
             ${stars ? `<span style="font-size:11px;color:var(--gold);">${stars} ${reviews}</span>` : ''}
             ${open}
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
-          <a href="https://www.google.com/maps/place/?q=place_id:${p.place_id}"
-             target="_blank"
-             style="font-size:11px;color:var(--teal);text-decoration:none;font-weight:500;white-space:nowrap;">Maps →</a>
-          <button onclick="savePlaceToDoc(${etappeNum}, '${p.name.replace(/'/g,"\\'")}', '${(p.formatted_address||p.vicinity||'').replace(/'/g,"\\'")}', ${p.rating||0})"
-            style="font-size:10px;font-weight:600;color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--gold) 25%,transparent);border-radius:6px;padding:4px 8px;cursor:pointer;white-space:nowrap;">
+        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;align-items:flex-end;">
+          <a href="https://www.google.com/maps/place/?q=place_id:${p.place_id}" target="_blank"
+             style="font-size:11px;color:var(--teal);text-decoration:none;font-weight:500;">Maps →</a>
+          <button type="button" data-store="${storeKey}" data-idx="${i}" data-etappe="${etappeNum}"
+            class="save-place-btn"
+            style="font-size:10px;font-weight:600;color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--gold) 25%,transparent);border-radius:6px;padding:4px 9px;cursor:pointer;white-space:nowrap;">
             + Speichern
           </button>
         </div>
@@ -602,16 +596,34 @@ function renderPlacesResults(places, query, lat, lng) {
         <span>📍</span>
         <span style="font-size:13px;font-weight:500;color:var(--text);">${query}</span>
         <a href="https://www.google.com/maps/search/${encodeURIComponent(query)}/@${lat},${lng},14z"
-           target="_blank"
-           style="margin-left:auto;font-size:11px;color:var(--gold);text-decoration:none;font-weight:500;">Alle in Maps →</a>
+           target="_blank" style="margin-left:auto;font-size:11px;color:var(--gold);text-decoration:none;font-weight:500;">Alle →</a>
       </div>
       <div style="padding:0 16px;">${placesHtml}</div>
-      <div style="padding:10px 16px;">
+      <div style="padding:12px 16px 0;">
         <iframe src="https://www.google.com/maps/embed/v1/search?key=${REISE.mapsApiKey}&q=${encodeURIComponent(query)}&center=${lat},${lng}&zoom=13"
-          width="100%" height="220" style="border:none;border-radius:10px;display:block;" allowfullscreen loading="lazy">
+          width="100%" height="200" style="border:none;border-radius:10px;display:block;" allowfullscreen loading="lazy">
         </iframe>
       </div>
+      <div style="padding:8px 16px 12px;font-size:10px;color:var(--text3);">Etappe ${etappeNum} · + Speichern fügt Ort ins Reisedoc ein</div>
     </div>`;
+
+  // Attach event listeners after insertion (no inline onclick)
+  div.querySelectorAll('.save-place-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const sk = btn.getAttribute('data-store');
+      const idx = parseInt(btn.getAttribute('data-idx'));
+      const et = parseInt(btn.getAttribute('data-etappe'));
+      const place = window._placeStore[sk]?.[idx];
+      if (!place) return;
+      const addr = (place.formatted_address || place.vicinity || '').replace(/, Frankreich$/, '').replace(/, France$/, '');
+      btn.textContent = '…';
+      btn.disabled = true;
+      await savePlaceToDoc(et, place.name, addr, place.rating || 0);
+      btn.textContent = '✓';
+    });
+  });
 
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
@@ -624,8 +636,8 @@ function renderMapEmbed(query, lat, lng) {
   div.style.cssText = 'max-width:100%;width:100%;';
   div.innerHTML = `
     <div style="border-radius:14px;overflow:hidden;border:1px solid var(--border);">
-      <div style="padding:8px 14px;background:var(--surface2);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);">
-        <span style="font-size:12px;">📍</span>
+      <div style="padding:9px 14px;background:var(--surface2);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);">
+        <span>📍</span>
         <span style="font-size:12px;font-weight:500;color:var(--text2);">${query}</span>
         <a href="https://www.google.com/maps/search/${encodeURIComponent(query)}/@${lat},${lng},14z"
            target="_blank" style="margin-left:auto;font-size:11px;color:var(--gold);text-decoration:none;font-weight:500;">
@@ -641,30 +653,30 @@ function renderMapEmbed(query, lat, lng) {
 }
 
 async function savePlaceToDoc(etappeNum, name, address, rating) {
-  const inhalt = `- ${name}${rating ? ` (★${rating})` : ''}: ${address}`;
-
-  // Determine best kategorie based on name (simple heuristic)
+  const inhalt = `- ${name}${rating ? ` (★${rating})` : ''}${address ? `: ${address}` : ''}`;
   const n = name.toLowerCase();
   let kat = 'BESONDERHEITEN';
-  if (n.includes('restaurant') || n.includes('café') || n.includes('brasserie') ||
-      n.includes('crêperie') || n.includes('boulangerie') || n.includes('bistro') ||
-      n.includes('bar') || n.includes('pizz') || n.includes('sushi')) kat = 'RESTAURANTS';
-  else if (n.includes('supermarché') || n.includes('leclerc') || n.includes('carrefour') ||
-           n.includes('intermarché') || n.includes('lidl') || n.includes('marché')) kat = 'SUPERMARKT';
-  else if (n.includes('plage') || n.includes('pointe') || n.includes('cap') ||
-           n.includes('sentier') || n.includes('randonnée')) kat = 'WANDERN / AUSFLÜGE';
+  if (n.match(/restaurant|café|cafe|brasserie|crêperie|creperie|bistro|pizz|boulangerie|pâtisserie|bar |auberge|taverne/))
+    kat = 'RESTAURANTS';
+  else if (n.match(/supermarché|supermarche|leclerc|carrefour|intermarché|lidl|aldi|marché|marche|épicerie/))
+    kat = 'SUPERMARKT';
+  else if (n.match(/plage|pointe|cap |sentier|randonnée|phare|château|abbaye|musée|parc/))
+    kat = 'WANDERN / AUSFLÜGE';
 
-  const result = await writeToDoc(etappeNum, kat, inhalt);
-
-  // Show confirmation in chat
   const msgs = document.getElementById('chat-messages');
-  const div = document.createElement('div');
-  div.style.cssText = 'text-align:center;font-size:12px;color:var(--teal);padding:6px;';
-  div.textContent = result || `✓ ${name} gespeichert`;
-  msgs.appendChild(div);
+  const confirmDiv = document.createElement('div');
+  confirmDiv.style.cssText = 'text-align:center;font-size:12px;color:var(--text3);padding:6px;';
+  confirmDiv.textContent = `Speichere ${name}…`;
+  msgs.appendChild(confirmDiv);
   msgs.scrollTop = msgs.scrollHeight;
 
-  if (result) setTimeout(loadDoc, 1500);
+  const result = await writeToDoc(etappeNum, kat, inhalt);
+  confirmDiv.style.color = 'var(--teal)';
+  confirmDiv.style.fontWeight = '500';
+  confirmDiv.textContent = result || `✓ ${name} gespeichert`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  if (result && !result.includes('Fehler')) setTimeout(loadDoc, 1500);
 }
 
 function processMapSearches(text) {
@@ -674,14 +686,11 @@ function processMapSearches(text) {
   const cur = currentEtappe(d);
   const defLat = cur ? cur.lat : 48.5;
   const defLng = cur ? cur.lng : -2.5;
-
   while ((match = regex.exec(text)) !== null) {
     try {
       const payload = JSON.parse(match[1].trim());
       placesSearch(payload.query, payload.lat || defLat, payload.lng || defLng);
-    } catch(e) {
-      console.warn('Map parse error:', e);
-    }
+    } catch(e) { console.warn('Map parse error:', e); }
   }
 }
 
