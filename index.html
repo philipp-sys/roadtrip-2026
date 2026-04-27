@@ -391,18 +391,65 @@ HEUTE: ${d.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month:
 
 ETAPPEN:
 1. Valenciennes 13–14.05 — Première Classe, A2-Stopp
-2. Cotentin/Barneville-Carteret 14–19.05 — Le Skiff Villa, 250m Strand, Jacuzzi, Kanalinseln-Blick
+2. Cotentin/Barneville-Carteret 14–19.05 — Le Skiff Villa, 250m Strand, Jacuzzi
 3. Crozon/Camaret-sur-Mer 19–25.05 — Haus Lambézen, 500m Meer, Pen-Hir 7 Min
-4. Alabasterküste/Criel-sur-Mer 25–30.05 — Horizon d'Opale, Strand direkt, 180° Meerblick
+4. Alabasterküste/Criel-sur-Mer 25–30.05 — Horizon d'Opale, Strand direkt
 
 NOTIZEN AUS DOC:
 ${docSummary || 'Keine Notizen.'}
 
+SCHREIB-ZUGRIFF AUF DAS REISEDOKUMENT:
+Du kannst Einträge direkt ins Reisedokument schreiben.
+Wenn der Nutzer etwas eintragen möchte, antworte kurz und füge am Ende einen doc_write Block ein:
+
+<doc_write>
+{"etappe": 2, "kategorie": "RESTAURANTS", "inhalt": "- Restaurantname: kurze Beschreibung"}
+</doc_write>
+
+Gültige Kategorien: UNTERKUNFT, SUPERMARKT, RESTAURANTS, WANDERN / AUSFLÜGE, BESONDERHEITEN
+
+DOC-QUALITÄT:
+- Keine Duplikate eintragen
+- Immer mit "- " beginnen (Listenformat)
+- Kurz: Name + ein Satz reicht
+- Bei unklarer Etappe: nachfragen
+
 REGELN:
-- Nur reiserelevante Antworten (Aktivitäten, Restaurants, Tipps, Notizen formulieren)
-- Kurz und konkret, auf Deutsch
-- Bei Notiz-Wunsch: Eintrag sauber formulieren und zeigen
-- Kein allgemeines Assistenten-Verhalten`;
+- Nur reiserelevante Antworten
+- Kurz und konkret, auf Deutsch`;
+}
+
+// ── DOC WRITE VIA APPS SCRIPT ─────────────────────────────────────────────────
+async function writeToDoc(etappe, kategorie, inhalt) {
+  const url = REISE.appsScriptUrl;
+  if (!url || url === 'APPS_SCRIPT_URL_HIER_EINTRAGEN') return null;
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'write', etappe, kategorie, inhalt })
+    });
+    const data = await res.json();
+    return data.success ? data.message : `Fehler: ${data.error}`;
+  } catch(e) {
+    return `Doc-Fehler: ${e.message}`;
+  }
+}
+
+async function processDocWrites(text) {
+  const regex = /<doc_write>([\s\S]*?)<\/doc_write>/g;
+  let match;
+  const results = [];
+  while ((match = regex.exec(text)) !== null) {
+    try {
+      const payload = JSON.parse(match[1].trim());
+      const result = await writeToDoc(payload.etappe, payload.kategorie, payload.inhalt);
+      if (result) results.push(result);
+    } catch(e) {
+      results.push(`Parse-Fehler: ${e.message}`);
+    }
+  }
+  return results;
 }
 
 function renderChatUI() {
@@ -560,7 +607,28 @@ async function sendMessage() {
       ?.filter(b => b.type === 'text')
       .map(b => b.text)
       .join('') || 'Keine Antwort erhalten.';
-    addMsg('ai', reply);
+
+    // Process any doc_write blocks silently
+    const writeResults = await processDocWrites(reply);
+
+    // Clean reply — remove doc_write blocks from display
+    const cleanReply = reply.replace(/<doc_write>[\s\S]*?<\/doc_write>/g, '').trim();
+
+    addMsg('ai', cleanReply);
+
+    // Show write confirmations as small status messages
+    if (writeResults.length > 0) {
+      writeResults.forEach(r => {
+        const msgs = document.getElementById('chat-messages');
+        const div = document.createElement('div');
+        div.style.cssText = 'text-align:center;font-size:11px;color:var(--teal);padding:4px 0;opacity:0.8;';
+        div.textContent = r;
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+      });
+      // Reload doc data after write
+      setTimeout(loadDoc, 1500);
+    }
 
   } catch(e) {
     document.getElementById('typing')?.remove();
