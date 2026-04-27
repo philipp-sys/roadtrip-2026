@@ -539,13 +539,12 @@ async function sendMessage() {
       .filter(m => m.role === 'user' || m.role === 'assistant')
       .slice(-12); // keep last 6 exchanges for context
 
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://plain-leaf-8e0e.philipp-51c.workers.dev/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-allow-cors': 'true'
+        'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
         model: 'claude-opus-4-5',
