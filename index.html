@@ -334,33 +334,85 @@ async function loadDoc() {
   renderAll();
 }
 
+// Known category headers — exact match
+const DOC_KATEGORIEN = [
+  'UNTERKUNFT',
+  'SUPERMARKT',
+  'RESTAURANTS',
+  'WANDERN / AUSFLÜGE',
+  'BESONDERHEITEN'
+];
+
 function parseDoc(text) {
   const result = {};
-  const parts = text.split(/==\s*ETAPPE\s*(\d+)\s*==/i);
-  for (let i = 1; i < parts.length; i += 2) {
-    const num = parseInt(parts[i]);
-    const body = (parts[i + 1] || '').split('---')[0];
-    result[num] = {
-      unterkunft:    gsec(body, 'UNTERKUNFT'),
-      supermarkt:    gsec(body, 'SUPERMARKT'),
-      restaurants:   gsec(body, 'RESTAURANTS'),
-      wandern:       gsec(body, 'WANDERN / AUSFLÜGE'),
-      besonderheiten:gsec(body, 'BESONDERHEITEN'),
-    };
-  }
-  return result;
-}
+  const lines = text.split('\n').map(l => l.trim());
 
-function gsec(text, key) {
-  const m = text.match(new RegExp(key + '\\s*([\\s\\S]*?)(?=\\n[A-ZÜÄÖ][A-ZÜÄÖ\\s\\/]+\\n|$)', 'i'));
-  if (!m) return null;
-  const c = m[1].trim();
-  return (!c || c === '—' || c === '-') ? null : c;
+  let currentEtappe = null;
+  let currentKat = null;
+  let buffer = [];
+
+  function flushBuffer() {
+    if (currentEtappe && currentKat && buffer.length) {
+      const content = buffer.filter(l => l && l !== '—').join('\n').trim();
+      if (content) {
+        if (!result[currentEtappe]) result[currentEtappe] = {};
+        result[currentEtappe][currentKat] = content;
+      }
+    }
+    buffer = [];
+  }
+
+  for (const line of lines) {
+    // Detect etappe marker: == ETAPPE 1 ==
+    const etappeMatch = line.match(/==\s*ETAPPE\s*(\d+)\s*==/i);
+    if (etappeMatch) {
+      flushBuffer();
+      currentEtappe = parseInt(etappeMatch[1]);
+      currentKat = null;
+      continue;
+    }
+
+    // Detect end of etappe section
+    if (line.match(/^---+$/)) {
+      flushBuffer();
+      currentKat = null;
+      continue;
+    }
+
+    // Detect category header within etappe
+    if (currentEtappe) {
+      const kat = DOC_KATEGORIEN.find(k => line === k);
+      if (kat) {
+        flushBuffer();
+        currentKat = kat.toLowerCase().replace(' / ', '_').replace(/ /g, '_');
+        // Normalize key names
+        const keyMap = {
+          'unterkunft': 'unterkunft',
+          'supermarkt': 'supermarkt',
+          'restaurants': 'restaurants',
+          'wandern_/_ausflüge': 'wandern',
+          'besonderheiten': 'besonderheiten'
+        };
+        currentKat = keyMap[currentKat] || currentKat;
+        continue;
+      }
+
+      // Collect content lines
+      if (currentKat) {
+        buffer.push(line);
+      }
+    }
+  }
+
+  flushBuffer();
+  return result;
 }
 
 function docBlock(label, icon, content) {
   if (!content) return '';
-  const lines = content.split('\n').map(l => l.trim()).filter(l => l && l !== '—');
+  const lines = content.split('\n')
+    .map(l => l.trim())
+    .filter(l => l && l !== '—' && l !== '-' && l !== '–');
   if (!lines.length) return '';
   const isList = lines.some(l => l.startsWith('-'));
   const inner = isList
