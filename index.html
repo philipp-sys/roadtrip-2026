@@ -510,45 +510,175 @@ async function processDocWrites(text) {
   return results;
 }
 
-function renderMapInChat(query, lat, lng) {
+// ── PLACES SEARCH ─────────────────────────────────────────────────────────────
+async function placesSearch(query, lat, lng) {
+  const msgs = document.getElementById('chat-messages');
+
+  // Show loading
+  const loadDiv = document.createElement('div');
+  loadDiv.className = 'msg ai';
+  loadDiv.id = 'places-loading';
+  loadDiv.innerHTML = `<div class="msg-bubble" style="color:var(--text3);font-style:italic;">📍 Suche nach "${query}"…</div>`;
+  msgs.appendChild(loadDiv);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  try {
+    // Use Places Nearby Search via proxy (avoid CORS)
+    // We use the Text Search endpoint via our Cloudflare Worker
+    const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&location=${lat},${lng}&radius=10000&language=fr&key=${REISE.mapsApiKey}`;
+
+    // Fetch via our worker to avoid CORS
+    const res = await fetch('https://plain-leaf-8e0e.philipp-51c.workers.dev/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': 'places' },
+      body: JSON.stringify({ placesUrl: searchUrl })
+    });
+
+    document.getElementById('places-loading')?.remove();
+
+    // If worker doesn't support places yet, fall back to embed
+    if (!res.ok) {
+      renderMapEmbed(query, lat, lng);
+      return;
+    }
+
+    const data = await res.json();
+    if (!data.results || data.results.length === 0) {
+      renderMapEmbed(query, lat, lng);
+      return;
+    }
+
+    renderPlacesResults(data.results.slice(0, 5), query, lat, lng);
+
+  } catch(e) {
+    document.getElementById('places-loading')?.remove();
+    // Fallback to map embed
+    renderMapEmbed(query, lat, lng);
+  }
+}
+
+function renderPlacesResults(places, query, lat, lng) {
+  const msgs = document.getElementById('chat-messages');
+  const d = today();
+  const cur = currentEtappe(d);
+  const etappeNum = cur ? ETAPPEN.indexOf(cur) + 1 : 1;
+
+  const div = document.createElement('div');
+  div.className = 'msg ai';
+  div.style.cssText = 'max-width:100%;width:100%;';
+
+  const placesHtml = places.map((p, i) => {
+    const stars = p.rating ? '★'.repeat(Math.round(p.rating)) + ` ${p.rating}` : '';
+    const reviews = p.user_ratings_total ? `(${p.user_ratings_total})` : '';
+    const open = p.opening_hours?.open_now === true ? '<span style="color:var(--teal);font-size:10px;">● Jetzt geöffnet</span>' :
+                 p.opening_hours?.open_now === false ? '<span style="color:var(--rose);font-size:10px;">● Geschlossen</span>' : '';
+
+    return `
+      <div style="padding:12px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start;">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--gold);flex-shrink:0;">${i+1}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;">${p.name}</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.formatted_address || p.vicinity || ''}</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            ${stars ? `<span style="font-size:11px;color:var(--gold);">${stars} ${reviews}</span>` : ''}
+            ${open}
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+          <a href="https://www.google.com/maps/place/?q=place_id:${p.place_id}"
+             target="_blank"
+             style="font-size:11px;color:var(--teal);text-decoration:none;font-weight:500;white-space:nowrap;">Maps →</a>
+          <button onclick="savePlaceToDoc(${etappeNum}, '${p.name.replace(/'/g,"\\'")}', '${(p.formatted_address||p.vicinity||'').replace(/'/g,"\\'")}', ${p.rating||0})"
+            style="font-size:10px;font-weight:600;color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--gold) 25%,transparent);border-radius:6px;padding:4px 8px;cursor:pointer;white-space:nowrap;">
+            + Speichern
+          </button>
+        </div>
+      </div>`;
+  }).join('');
+
+  div.innerHTML = `
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:16px;overflow:hidden;">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;">
+        <span>📍</span>
+        <span style="font-size:13px;font-weight:500;color:var(--text);">${query}</span>
+        <a href="https://www.google.com/maps/search/${encodeURIComponent(query)}/@${lat},${lng},14z"
+           target="_blank"
+           style="margin-left:auto;font-size:11px;color:var(--gold);text-decoration:none;font-weight:500;">Alle in Maps →</a>
+      </div>
+      <div style="padding:0 16px;">${placesHtml}</div>
+      <div style="padding:10px 16px;">
+        <iframe src="https://www.google.com/maps/embed/v1/search?key=${REISE.mapsApiKey}&q=${encodeURIComponent(query)}&center=${lat},${lng}&zoom=13"
+          width="100%" height="220" style="border:none;border-radius:10px;display:block;" allowfullscreen loading="lazy">
+        </iframe>
+      </div>
+    </div>`;
+
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function renderMapEmbed(query, lat, lng) {
   const msgs = document.getElementById('chat-messages');
   const div = document.createElement('div');
   div.className = 'msg ai';
-  div.style.maxWidth = '100%';
-  div.style.width = '100%';
-
-  const encodedQuery = encodeURIComponent(query);
-  const src = `https://www.google.com/maps/embed/v1/search?key=${REISE.mapsApiKey}&q=${encodedQuery}&center=${lat},${lng}&zoom=13`;
-
+  div.style.cssText = 'max-width:100%;width:100%;';
   div.innerHTML = `
-    <div style="width:100%;border-radius:14px;overflow:hidden;border:1px solid var(--border);margin-top:4px;">
-      <div style="padding:8px 12px;background:var(--surface2);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);">
+    <div style="border-radius:14px;overflow:hidden;border:1px solid var(--border);">
+      <div style="padding:8px 14px;background:var(--surface2);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);">
         <span style="font-size:12px;">📍</span>
         <span style="font-size:12px;font-weight:500;color:var(--text2);">${query}</span>
-        <a href="https://www.google.com/maps/search/${encodedQuery}/@${lat},${lng},14z"
-           target="_blank"
-           style="margin-left:auto;font-size:11px;color:var(--gold);text-decoration:none;font-weight:500;">
+        <a href="https://www.google.com/maps/search/${encodeURIComponent(query)}/@${lat},${lng},14z"
+           target="_blank" style="margin-left:auto;font-size:11px;color:var(--gold);text-decoration:none;font-weight:500;">
           In Maps öffnen →
         </a>
       </div>
-      <iframe
-        src="${src}"
-        width="100%" height="260"
-        style="border:none;display:block;"
-        allowfullscreen loading="lazy">
+      <iframe src="https://www.google.com/maps/embed/v1/search?key=${REISE.mapsApiKey}&q=${encodeURIComponent(query)}&center=${lat},${lng}&zoom=13"
+        width="100%" height="260" style="border:none;display:block;" allowfullscreen loading="lazy">
       </iframe>
     </div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }
 
+async function savePlaceToDoc(etappeNum, name, address, rating) {
+  const inhalt = `- ${name}${rating ? ` (★${rating})` : ''}: ${address}`;
+
+  // Determine best kategorie based on name (simple heuristic)
+  const n = name.toLowerCase();
+  let kat = 'BESONDERHEITEN';
+  if (n.includes('restaurant') || n.includes('café') || n.includes('brasserie') ||
+      n.includes('crêperie') || n.includes('boulangerie') || n.includes('bistro') ||
+      n.includes('bar') || n.includes('pizz') || n.includes('sushi')) kat = 'RESTAURANTS';
+  else if (n.includes('supermarché') || n.includes('leclerc') || n.includes('carrefour') ||
+           n.includes('intermarché') || n.includes('lidl') || n.includes('marché')) kat = 'SUPERMARKT';
+  else if (n.includes('plage') || n.includes('pointe') || n.includes('cap') ||
+           n.includes('sentier') || n.includes('randonnée')) kat = 'WANDERN / AUSFLÜGE';
+
+  const result = await writeToDoc(etappeNum, kat, inhalt);
+
+  // Show confirmation in chat
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.style.cssText = 'text-align:center;font-size:12px;color:var(--teal);padding:6px;';
+  div.textContent = result || `✓ ${name} gespeichert`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  if (result) setTimeout(loadDoc, 1500);
+}
+
 function processMapSearches(text) {
   const regex = /<map_search>([\s\S]*?)<\/map_search>/g;
   let match;
+  const d = today();
+  const cur = currentEtappe(d);
+  const defLat = cur ? cur.lat : 48.5;
+  const defLng = cur ? cur.lng : -2.5;
+
   while ((match = regex.exec(text)) !== null) {
     try {
       const payload = JSON.parse(match[1].trim());
-      renderMapInChat(payload.query, payload.lat, payload.lng);
+      placesSearch(payload.query, payload.lat || defLat, payload.lng || defLng);
     } catch(e) {
       console.warn('Map parse error:', e);
     }
@@ -764,7 +894,9 @@ function manualMapSearch() {
   const lat = cur ? cur.lat : 48.5;
   const lng = cur ? cur.lng : -2.5;
 
-  renderMapInChat(query, lat, lng);
+  // Add user message
+  addMsg('user', `📍 ${query}`);
+  placesSearch(query, lat, lng);
   input.value = '';
 }
 
