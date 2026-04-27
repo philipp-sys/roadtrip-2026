@@ -28,86 +28,37 @@
   --r: 16px;
   --r-lg: 24px;
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; font-size: 14px; line-height: 1.5; min-height: 100vh; overflow-x: hidden; }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Syne', sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* TOPBAR */
-.topbar {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(8,10,9,0.92);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 20px;
-  display: flex; align-items: center; justify-content: space-between;
-  height: 56px;
-}
+.topbar { position: sticky; top: 0; z-index: 100; background: rgba(8,10,9,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 20px; display: flex; align-items: center; justify-content: space-between; height: 56px; }
 .topbar-brand { display: flex; align-items: center; gap: 10px; }
-.brand-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--c1); box-shadow: 0 0 8px var(--c1);
-  animation: pulse 2s ease infinite;
-}
+.brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c1); box-shadow: 0 0 8px var(--c1); animation: pulse 2s ease infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 .brand-name { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
 .topbar-meta { font-family: 'Syne Mono', monospace; font-size: 11px; color: var(--dim); }
 
-/* HERO */
 .hero { padding: 32px 20px 24px; position: relative; overflow: hidden; }
-.hero::before {
-  content: ''; position: absolute; top: -60px; right: -60px;
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, rgba(79,255,176,0.06) 0%, transparent 70%);
-  pointer-events: none;
-}
-.hero-label {
-  font-family: 'Syne Mono', monospace; font-size: 10px; letter-spacing: 0.3em;
-  color: var(--c1); text-transform: uppercase; margin-bottom: 10px;
-  display: flex; align-items: center; gap: 8px;
-}
+.hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(79,255,176,0.06) 0%, transparent 70%); pointer-events: none; }
+.hero-label { font-family: 'Syne Mono', monospace; font-size: 10px; letter-spacing: 0.3em; color: var(--c1); text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
 .hero-label::before { content:''; display:inline-block; width:20px; height:1px; background:var(--c1); }
 .hero-title { font-size: clamp(32px,8vw,48px); font-weight: 800; line-height: 1.0; letter-spacing: -0.02em; margin-bottom: 20px; }
 .hero-title span { color: var(--c1); }
-
-.hero-stats {
-  display: grid; grid-template-columns: repeat(4,1fr);
-  gap: 1px; background: var(--border);
-  border: 1px solid var(--border); border-radius: var(--r); overflow: hidden;
-}
+.hero-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
 .stat { background: var(--card); padding: 14px 12px; display: flex; flex-direction: column; gap: 3px; }
 .stat-val { font-size: 18px; font-weight: 700; line-height: 1; }
 .stat-label { font-family: 'Syne Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: var(--dim); text-transform: uppercase; }
 
-/* SECTIONS */
 .section { display: none; padding: 0 20px 100px; }
 .section.active { display: block; }
 
 /* ETAPPE CARDS */
-.etappe-card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--r-lg); overflow: hidden; margin-bottom: 16px;
-  animation: slideUp 0.4s ease both;
-}
-.etappe-card:nth-child(1){animation-delay:.05s}
-.etappe-card:nth-child(2){animation-delay:.10s}
-.etappe-card:nth-child(3){animation-delay:.15s}
-.etappe-card:nth-child(4){animation-delay:.20s}
+.etappe-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin-bottom: 16px; animation: slideUp 0.4s ease both; }
+.etappe-card:nth-child(1){animation-delay:.05s} .etappe-card:nth-child(2){animation-delay:.10s} .etappe-card:nth-child(3){animation-delay:.15s} .etappe-card:nth-child(4){animation-delay:.20s}
 @keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 
-.card-header {
-  padding: 20px 20px 16px;
-  display: flex; align-items: flex-start; gap: 14px; cursor: pointer;
-}
+.card-header { padding: 20px 20px 16px; display: flex; align-items: flex-start; gap: 14px; cursor: pointer; }
 .card-accent { width: 4px; align-self: stretch; border-radius: 4px; flex-shrink: 0; min-height: 50px; }
 .card-num { font-family: 'Syne Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: var(--dim); margin-bottom: 2px; }
 .card-name { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.1; margin-bottom: 2px; }
@@ -126,56 +77,50 @@ body {
 .card-body { display: none; padding: 20px; }
 .etappe-card.open .card-body { display: block; }
 
-/* BOOKING BADGE */
-.confirmation-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(79,255,176,0.08); border: 1px solid rgba(79,255,176,0.2);
-  border-radius: 8px; padding: 6px 12px;
-  font-family: 'Syne Mono', monospace; font-size: 12px; color: var(--c1);
-  letter-spacing: 0.06em; margin-bottom: 16px;
-}
+/* ACCOMMODATION SECTION */
+.accom-section { margin-bottom: 20px; }
+.accom-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.accom-address { font-family: 'Syne Mono', monospace; font-size: 11px; color: var(--dim); margin-bottom: 12px; line-height: 1.5; }
 
-/* INFO BLOCKS */
-.info-block { margin-bottom: 16px; }
-.info-key { font-family:'Syne Mono',monospace; font-size:9px; letter-spacing:0.25em; color:var(--dim); text-transform:uppercase; margin-bottom:6px; }
-.info-val { font-size: 14px; font-weight: 600; line-height: 1.4; }
-.info-val.secondary { font-weight: 400; color: var(--dim); font-size: 13px; }
+.checkin-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.checkin-box { background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.checkin-lbl { font-family: 'Syne Mono', monospace; font-size: 9px; letter-spacing: 0.2em; color: var(--dim); text-transform: uppercase; margin-bottom: 3px; }
+.checkin-val { font-size: 13px; font-weight: 700; }
 
-/* DOC CONTENT SECTIONS */
-.doc-section { margin-bottom: 18px; }
-.doc-section-title {
-  font-family: 'Syne Mono', monospace; font-size: 9px; letter-spacing: 0.25em;
-  color: var(--dim); text-transform: uppercase; margin-bottom: 8px;
-  display: flex; align-items: center; gap: 8px;
-}
+.confirmation-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(79,255,176,0.08); border: 1px solid rgba(79,255,176,0.2); border-radius: 8px; padding: 6px 12px; font-family: 'Syne Mono', monospace; font-size: 11px; color: var(--c1); letter-spacing: 0.06em; margin-bottom: 12px; }
+
+/* AMENITIES CHIPS */
+.amenities { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.chip { display: inline-flex; align-items: center; gap: 5px; background: var(--card2); border: 1px solid var(--border); border-radius: 100px; padding: 5px 10px; font-size: 11px; font-weight: 600; color: var(--dim); white-space: nowrap; }
+.chip.highlight { border-color: rgba(79,255,176,0.25); color: var(--c1); background: rgba(79,255,176,0.06); }
+
+/* DOC CONTENT */
+.doc-section { margin-bottom: 16px; }
+.doc-section-title { font-family: 'Syne Mono', monospace; font-size: 9px; letter-spacing: 0.25em; color: var(--dim); text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
 .doc-section-title::after { content:''; flex:1; height:1px; background:var(--border); }
 .doc-content { font-size: 13px; color: var(--dim); line-height: 1.7; }
 .doc-content ul { list-style: none; padding: 0; }
 .doc-content li { padding: 4px 0; padding-left: 14px; position: relative; }
 .doc-content li::before { content:'·'; position:absolute; left:0; color:var(--muted); }
-.doc-loading { color: var(--muted); font-size: 12px; font-style: italic; }
-.doc-empty { color: var(--muted); font-size: 12px; }
 
 /* ACTION BUTTONS */
-.action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-.action-btn {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 6px; padding: 16px 12px; border-radius: var(--r); border: none;
-  cursor: pointer; text-decoration: none; transition: all 0.15s; min-height: 72px;
-}
+.action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+.action-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 14px 12px; border-radius: var(--r); border: none; cursor: pointer; text-decoration: none; transition: all 0.15s; min-height: 72px; }
 .action-btn:active { transform: scale(0.97); }
 .action-btn.maps { background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.25); color: var(--c4); }
 .action-btn.tesla { background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.25); color: var(--c2); }
-.btn-icon { font-size: 22px; }
-.btn-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; text-align: center; }
+.action-btn.booking { background: rgba(79,255,176,0.07); border: 1px solid rgba(79,255,176,0.2); color: var(--c1); }
+.action-btn.full { grid-column: 1 / -1; }
+.btn-icon { font-size: 20px; }
+.btn-label { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; text-align: center; }
+.btn-hint { font-size: 9px; opacity: 0.45; font-weight: 400; }
 
-/* OVERVIEW CARDS */
-.route-strip {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--r-lg); padding: 20px; margin-bottom: 16px;
-}
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+/* ROUTE */
+.route-strip { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px; margin-bottom: 16px; }
 .route-title { font-family:'Syne Mono',monospace; font-size:10px; letter-spacing:0.2em; color:var(--dim); text-transform:uppercase; margin-bottom:16px; }
-.route-line { display:flex; align-items:center; overflow-x:auto; scrollbar-width:none; padding-bottom: 4px; }
+.route-line { display:flex; align-items:center; overflow-x:auto; scrollbar-width:none; padding-bottom:4px; }
 .route-line::-webkit-scrollbar { display:none; }
 .route-stop { display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0; }
 .route-dot { width:12px; height:12px; border-radius:50%; border:2px solid var(--bg); box-shadow:0 0 0 1px currentColor; }
@@ -183,65 +128,27 @@ body {
 .route-connector { flex:1; min-width:28px; height:1px; background:linear-gradient(90deg,var(--border2),var(--border)); margin-bottom:22px; position:relative; }
 .route-connector::after { content:attr(data-km); position:absolute; top:-12px; left:50%; transform:translateX(-50%); font-family:'Syne Mono',monospace; font-size:8px; color:var(--muted); white-space:nowrap; }
 
-/* MAPS SECTION */
-.maps-card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--r-lg); overflow: hidden; margin-bottom: 16px;
-}
+/* MAPS */
+.maps-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin-bottom: 16px; }
 .maps-card-header { padding: 20px; }
 .maps-card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
 .maps-card-sub { font-family:'Syne Mono',monospace; font-size:11px; color:var(--dim); margin-bottom:16px; }
-.maps-open-btn {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  width: 100%; padding: 18px;
-  background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.25);
-  border-radius: var(--r); color: var(--c4); text-decoration: none;
-  font-size: 14px; font-weight: 700; letter-spacing: 0.04em;
-  transition: all 0.15s;
-}
+.maps-open-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 18px; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.25); border-radius: var(--r); color: var(--c4); text-decoration: none; font-size: 14px; font-weight: 700; letter-spacing: 0.04em; transition: all 0.15s; }
 .maps-open-btn:active { transform: scale(0.98); }
-
-.maps-info {
-  border-top: 1px solid var(--border);
-  padding: 16px 20px;
-  font-family: 'Syne Mono', monospace; font-size: 11px; color: var(--dim);
-  line-height: 1.6;
-}
+.maps-info { border-top: 1px solid var(--border); padding: 16px 20px; font-family: 'Syne Mono', monospace; font-size: 11px; color: var(--dim); line-height: 1.6; }
 
 /* LOGISTIK */
-.logistik-card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--r-lg); padding: 20px;
-  display: flex; gap: 16px; align-items: flex-start;
-  margin-bottom: 12px;
-  animation: slideUp 0.4s ease both;
-}
-.logistik-card:nth-child(1){animation-delay:.05s}
-.logistik-card:nth-child(2){animation-delay:.10s}
-.logistik-card:nth-child(3){animation-delay:.15s}
+.logistik-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px; display: flex; gap: 16px; align-items: flex-start; margin-bottom: 12px; animation: slideUp 0.4s ease both; }
+.logistik-card:nth-child(1){animation-delay:.05s} .logistik-card:nth-child(2){animation-delay:.10s} .logistik-card:nth-child(3){animation-delay:.15s}
 .logistik-icon { font-size: 28px; line-height: 1; flex-shrink: 0; }
 .logistik-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
 .logistik-text { font-size: 13px; color: var(--dim); line-height: 1.6; }
 .alert-card { background: rgba(251,113,133,0.07); border-color: rgba(251,113,133,0.2); }
 .alert-card .logistik-title { color: var(--e4); }
 
-/* DIVIDER */
-.divider { height: 1px; background: var(--border); margin: 16px 0; }
-
 /* BOTTOM NAV */
-.bottom-nav {
-  position: fixed; bottom:0; left:0; right:0;
-  background: rgba(8,10,9,0.95);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid var(--border);
-  display: flex; z-index: 100;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.nav-item {
-  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:4px; padding:12px 8px; cursor:pointer; transition:all 0.15s;
-  border:none; background:none; color:var(--muted); font-family:'Syne',sans-serif;
-}
+.bottom-nav { position: fixed; bottom:0; left:0; right:0; background: rgba(8,10,9,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
+.nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:12px 8px; cursor:pointer; transition:all 0.15s; border:none; background:none; color:var(--muted); font-family:'Syne',sans-serif; }
 .nav-item.active { color: var(--c1); }
 .nav-icon { font-size: 20px; }
 .nav-label { font-size:9px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; }
@@ -250,10 +157,7 @@ body {
 <body>
 
 <div class="topbar">
-  <div class="topbar-brand">
-    <div class="brand-dot"></div>
-    <div class="brand-name">B&N · 2026</div>
-  </div>
+  <div class="topbar-brand"><div class="brand-dot"></div><div class="brand-name">B&N · 2026</div></div>
   <div class="topbar-meta">13.05 – 30.05</div>
 </div>
 
@@ -273,39 +177,20 @@ body {
     <div class="route-strip">
       <div class="route-title">Route</div>
       <div class="route-line">
-        <div class="route-stop">
-          <div class="route-dot" style="color:var(--dim)"></div>
-          <div class="route-stop-name" style="color:var(--dim)">Start</div>
-        </div>
+        <div class="route-stop"><div class="route-dot" style="color:var(--dim)"></div><div class="route-stop-name" style="color:var(--dim)">Start</div></div>
         <div class="route-connector" data-km="460km"></div>
-        <div class="route-stop">
-          <div class="route-dot" style="color:var(--e1)"></div>
-          <div class="route-stop-name" style="color:var(--e1)">Valenciennes</div>
-        </div>
+        <div class="route-stop"><div class="route-dot" style="color:var(--e1)"></div><div class="route-stop-name" style="color:var(--e1)">Valenciennes</div></div>
         <div class="route-connector" data-km="420km"></div>
-        <div class="route-stop">
-          <div class="route-dot" style="color:var(--e2)"></div>
-          <div class="route-stop-name" style="color:var(--e2)">Cotentin</div>
-        </div>
+        <div class="route-stop"><div class="route-dot" style="color:var(--e2)"></div><div class="route-stop-name" style="color:var(--e2)">Cotentin</div></div>
         <div class="route-connector" data-km="330km"></div>
-        <div class="route-stop">
-          <div class="route-dot" style="color:var(--e3)"></div>
-          <div class="route-stop-name" style="color:var(--e3)">Crozon</div>
-        </div>
+        <div class="route-stop"><div class="route-dot" style="color:var(--e3)"></div><div class="route-stop-name" style="color:var(--e3)">Crozon</div></div>
         <div class="route-connector" data-km="500km"></div>
-        <div class="route-stop">
-          <div class="route-dot" style="color:var(--e4)"></div>
-          <div class="route-stop-name" style="color:var(--e4)">Alabaster</div>
-        </div>
+        <div class="route-stop"><div class="route-dot" style="color:var(--e4)"></div><div class="route-stop-name" style="color:var(--e4)">Alabaster</div></div>
       </div>
     </div>
-
     <div class="logistik-card alert-card">
       <div class="logistik-icon">⚠️</div>
-      <div>
-        <div class="logistik-title">Klippen-Abbruchgefahr</div>
-        <div class="logistik-text">Criel-sur-Mer: Leinenpflicht für Hund an den Kreidefelsen!</div>
-      </div>
+      <div><div class="logistik-title">Klippen-Abbruchgefahr</div><div class="logistik-text">Criel-sur-Mer: Leinenpflicht für Hund an den Kreidefelsen!</div></div>
     </div>
   </div>
 </div>
@@ -322,18 +207,13 @@ body {
       <div class="maps-card-header">
         <div class="maps-card-title">Gespeicherte Orte</div>
         <div class="maps-card-sub">Unterkünfte · Restaurants · POIs · Wanderwege</div>
-        <a class="maps-open-btn" href="https://maps.app.goo.gl/ZXjmhrsYRp2C3i91A" target="_blank">
-          <span>📍</span> Karte in Google Maps öffnen
-        </a>
+        <a class="maps-open-btn" href="https://maps.app.goo.gl/ZXjmhrsYRp2C3i91A" target="_blank"><span>📍</span> Karte in Google Maps öffnen</a>
       </div>
-      <div class="maps-info">
-        Öffnet die gespeicherte Liste direkt in der Google Maps App.<br>
-        Neue Orte kannst du dort jederzeit hinzufügen.
-      </div>
+      <div class="maps-info">Öffnet die gespeicherte Liste direkt in der Google Maps App.<br>Neue Orte kannst du dort jederzeit hinzufügen.</div>
     </div>
-
     <div class="logistik-card" style="flex-direction:column; gap:12px;">
-      <div class="logistik-title" style="font-size:13px;">Direkt zur Unterkunft navigieren</div>
+      <div class="logistik-title" style="font-size:13px;">⚡ Tesla Navigation</div>
+      <div style="font-family:'Syne Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:4px;">Nur im Tesla Browser verfügbar</div>
       <div id="tesla-nav-list"></div>
     </div>
   </div>
@@ -344,55 +224,40 @@ body {
   <div style="padding-top: 20px;">
     <div class="logistik-card">
       <div class="logistik-icon">🐾</div>
-      <div>
-        <div class="logistik-title">Hund</div>
-        <div class="logistik-text">Pfotenwachs für Kiesel und Granit einpacken.<br><br>Vor dem <strong style="color:var(--text)">01. Juni</strong> Strände oft noch unkompliziert zugänglich.</div>
-      </div>
+      <div><div class="logistik-title">Hund</div><div class="logistik-text">Pfotenwachs für Kiesel und Granit einpacken.<br><br>Vor dem <strong style="color:var(--text)">01. Juni</strong> Strände oft noch unkompliziert zugänglich.</div></div>
     </div>
     <div class="logistik-card alert-card">
       <div class="logistik-icon">⚠️</div>
-      <div>
-        <div class="logistik-title">Sicherheit · Klippen</div>
-        <div class="logistik-text">Criel-sur-Mer: Höchste Kreidefelsen Europas — <strong style="color:var(--e4)">Abbruchgefahr!</strong><br><br>Leinenpflicht für Hund. Vom Rand fernhalten.</div>
-      </div>
+      <div><div class="logistik-title">Sicherheit · Klippen</div><div class="logistik-text">Criel-sur-Mer: Höchste Kreidefelsen Europas — <strong style="color:var(--e4)">Abbruchgefahr!</strong><br><br>Leinenpflicht für Hund. Vom Rand fernhalten.</div></div>
     </div>
     <div class="logistik-card">
       <div class="logistik-icon">🌊</div>
-      <div>
-        <div class="logistik-title">Highlights</div>
-        <div class="logistik-text">· Pointe de Pen-Hir (Crozon)<br>· Cap de Carteret (Cotentin)<br>· Plage de la Vieille Église bei Ebbe<br>· Kreidefelsen Alabasterküste</div>
-      </div>
+      <div><div class="logistik-title">Highlights</div><div class="logistik-text">· Pointe de Pen-Hir (Crozon)<br>· Cap de Carteret (Cotentin)<br>· Plage de la Vieille Église bei Ebbe<br>· Kreidefelsen Alabasterküste</div></div>
     </div>
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-  <button class="nav-item active" onclick="switchTab('overview',this)">
-    <span class="nav-icon">🏠</span><span class="nav-label">Start</span>
-  </button>
-  <button class="nav-item" onclick="switchTab('etappen',this)">
-    <span class="nav-icon">📍</span><span class="nav-label">Etappen</span>
-  </button>
-  <button class="nav-item" onclick="switchTab('karte',this)">
-    <span class="nav-icon">🗺️</span><span class="nav-label">Karte</span>
-  </button>
-  <button class="nav-item" onclick="switchTab('logistik',this)">
-    <span class="nav-icon">📋</span><span class="nav-label">Logistik</span>
-  </button>
+  <button class="nav-item active" onclick="switchTab('overview',this)"><span class="nav-icon">🏠</span><span class="nav-label">Start</span></button>
+  <button class="nav-item" onclick="switchTab('etappen',this)"><span class="nav-icon">📍</span><span class="nav-label">Etappen</span></button>
+  <button class="nav-item" onclick="switchTab('karte',this)"><span class="nav-icon">🗺️</span><span class="nav-label">Karte</span></button>
+  <button class="nav-item" onclick="switchTab('logistik',this)"><span class="nav-icon">📋</span><span class="nav-label">Logistik</span></button>
 </nav>
 
 <script>
-// ── STATIC DATA ───────────────────────────────────────────────────────────────
 const ETAPPEN = [
   {
     num:"01", color:"var(--e1)",
     name:"Valenciennes", region:"Stopover · Nordfrankreich",
     dates:"13.05. – 14.05.", km:"460 km", fahrtzeit:"5,5 Std.", naechte:"1 Nacht",
     unterkunft:"Première Classe Valenciennes Sud",
-    adresse:"ZI n°2 – B900 Rue Louis-Dacquin, 59220 Valenciennes",
-    checkin:"13. Mai", checkout:"14. Mai ab früh",
+    adresse:"ZI n°2 – B900 Rue Louis-Dacquin, 59220 Rouvignies",
+    checkin:"13. Mai ab 14:00", checkout:"14. Mai bis 11:00",
     confirmation:null,
+    buchungLink:"https://secure.booking.com/app_link/myreservations.de.html?stid=325542&bn=6526897918&aid=332731",
+    buchungPlattform:"Booking.com",
+    amenities:["🅿️ Parkplatz gratis","📶 WLAN gratis","🐾 Haustiere ok","🍳 Frühstück (6€)","♿ Barrierefrei","🏨 Budget-Hotel"],
+    highlight:"Strategischer Stopover direkt an der A2. Check-in 24/7 per Automat.",
     lat:50.3580, lng:3.5239,
     mapsQ:"Première+Classe+Valenciennes+Sud+59220"
   },
@@ -400,10 +265,14 @@ const ETAPPEN = [
     num:"02", color:"var(--e2)",
     name:"Cotentin", region:"Barneville-Carteret · Normandie",
     dates:"14.05. – 19.05.", km:"420 km", fahrtzeit:"4,5 Std.", naechte:"5 Nächte",
-    unterkunft:"Le Skiff (VILLA PLEIN VENT)",
+    unterkunft:"Le Skiff (Villa Plein Vent)",
     adresse:"Rue des Fauvettes 13, 50270 Barneville-Carteret",
     checkin:"14. Mai ab 17:30", checkout:"19. Mai",
-    confirmation:"5461895880 · Booking.com",
+    confirmation:"5461895880",
+    buchungLink:"https://secure.booking.com/app_link/myreservations.de.html?stid=325542&bn=5461895880&aid=332731",
+    buchungPlattform:"Booking.com",
+    amenities:["🌊 250m zum Strand","🅿️ Parkplatz gratis","📶 WLAN gratis","🐾 Haustiere ok","🛁 Jacuzzi","🚲 Fahrräder inklusive","🍖 Grill / Terrasse","⭐ 9.7 auf Booking"],
+    highlight:"Beachfront-Villa mit Panoramablick auf Kanalinseln. 4-Sterne Ferienhaus.",
     lat:49.3755, lng:-1.7765,
     mapsQ:"Rue+des+Fauvettes+13+50270+Barneville-Carteret"
   },
@@ -414,7 +283,11 @@ const ETAPPEN = [
     unterkunft:"Haus Lambézen (Host: Pascale Lucas)",
     adresse:"Lambézen, 29570 Camaret-sur-Mer, Bretagne",
     checkin:"19. Mai", checkout:"25. Mai",
-    confirmation:"HA-BWZJ2K · FeWo-Direkt",
+    confirmation:"HA-BWZJ2K",
+    buchungLink:"https://www.fewo-direkt.de/de-de/trips/egti-JQF-XO4-CZTX/details/OTAyMDI0NjA4OTc4MztlZzpwcm9wZXJ0eTp2MjphM2E5NDIxMDE1MWZjYWIwNTFkNTJiOTQ1MjNmNzM1NA",
+    buchungPlattform:"FeWo-Direkt",
+    amenities:["🌊 500m zum Meer","🅿️ Parkplatz","📶 WLAN","🐾 Haustiere ok","🧺 Waschmaschine","🏡 Ganzes Haus","🥾 Wanderwege direkt ab Haustür","⭐ 9.4 außergewöhnlich"],
+    highlight:"Kleines Steinhaus, ruhig gelegen. Pointe de Pen-Hir nur 7 Min. mit Auto.",
     lat:48.2776, lng:-4.5887,
     mapsQ:"Lambézen+29570+Camaret-sur-Mer"
   },
@@ -422,19 +295,20 @@ const ETAPPEN = [
     num:"04", color:"var(--e4)",
     name:"Alabasterküste", region:"Criel-sur-Mer · Normandie",
     dates:"25.05. – 30.05.", km:"500 km", fahrtzeit:"6 Std.", naechte:"5 Nächte",
-    unterkunft:"Erste Reihe am Meer",
-    adresse:"2 Impasse des Cygnes, 76910 Criel-sur-Mer, Normandie",
-    checkin:"25. Mai", checkout:"30. Mai",
+    unterkunft:"Horizon d'Opale — 180° Meerblick",
+    adresse:"2 Impasse des Cygnes, 76910 Criel-sur-Mer (3. OG mit Aufzug)",
+    checkin:"25. Mai (Schlüsselbox)", checkout:"30. Mai",
     confirmation:null,
+    buchungLink:"https://www.airbnb.de/trips/v1/reservation-details/ro/RESERVATION2_CHECKIN/HMXXPYRX39",
+    buchungPlattform:"Airbnb",
+    amenities:["🌊 Direkt am Strand","🅿️ Parkplatz B33","📶 WLAN","🐾 Haustiere ok","🛁 Holzbadewanne","🍽️ Restaurants zu Fuß","⭐ 4.88 Gäste-Favorit","🔑 Eigenständiger Check-in"],
+    highlight:"Eigentumswohnung in Natura-2000-Gebiet. Schwäne & Vögel direkt vor der Tür.",
     lat:50.0197, lng:1.3098,
     mapsQ:"2+Impasse+des+Cygnes+76910+Criel-sur-Mer"
   }
 ];
 
-// ── GOOGLE DOC URL ────────────────────────────────────────────────────────────
 const DOC_URL = "https://docs.google.com/document/d/e/2PACX-1vSnru4coTD1Bne3fYE_MNXOTI5VSuRkugAmgHdVSBx2NLeZk7bYNR0qB5Y45NoSKtZANpyxlP6Cp1VC/pub";
-
-// ── DOC PARSER ────────────────────────────────────────────────────────────────
 let docData = {};
 
 async function loadDoc() {
@@ -443,28 +317,21 @@ async function loadDoc() {
     const text = await res.text();
     docData = parseDoc(text);
     renderEtappen();
-  } catch(e) {
-    renderEtappen(); // render without doc data
-  }
+  } catch(e) { renderEtappen(); }
 }
 
 function parseDoc(text) {
   const result = {};
-  // Split by etappe markers
-  const etappeSections = text.split(/==\s*ETAPPE\s*(\d+)\s*==/i);
-  
-  for (let i = 1; i < etappeSections.length; i += 2) {
-    const num = parseInt(etappeSections[i]);
-    const body = etappeSections[i + 1] || '';
-    // Split by --- separator
-    const content = body.split('---')[0];
-    
+  const sections = text.split(/==\s*ETAPPE\s*(\d+)\s*==/i);
+  for (let i = 1; i < sections.length; i += 2) {
+    const num = parseInt(sections[i]);
+    const body = (sections[i+1] || '').split('---')[0];
     result[num] = {
-      unterkunft: extractSection(content, 'UNTERKUNFT'),
-      supermarkt: extractSection(content, 'SUPERMARKT'),
-      restaurants: extractSection(content, 'RESTAURANTS'),
-      wandern: extractSection(content, 'WANDERN / AUSFLÜGE'),
-      besonderheiten: extractSection(content, 'BESONDERHEITEN'),
+      unterkunft: extractSection(body, 'UNTERKUNFT'),
+      supermarkt: extractSection(body, 'SUPERMARKT'),
+      restaurants: extractSection(body, 'RESTAURANTS'),
+      wandern: extractSection(body, 'WANDERN / AUSFLÜGE'),
+      besonderheiten: extractSection(body, 'BESONDERHEITEN'),
     };
   }
   return result;
@@ -483,31 +350,19 @@ function renderDocSection(label, icon, content) {
   if (!content) return '';
   const lines = content.split('\n').map(l => l.trim()).filter(l => l && l !== '—');
   if (!lines.length) return '';
-  
   const isList = lines.some(l => l.startsWith('-'));
-  
-  let inner = '';
-  if (isList) {
-    inner = '<ul>' + lines.map(l => `<li>${l.replace(/^-\s*/, '')}</li>`).join('') + '</ul>';
-  } else {
-    inner = lines.join('<br>');
-  }
-
-  return `
-    <div class="doc-section">
-      <div class="doc-section-title">${icon} ${label}</div>
-      <div class="doc-content">${inner}</div>
-    </div>
-  `;
+  const inner = isList
+    ? '<ul>' + lines.map(l => `<li>${l.replace(/^-\s*/, '')}</li>`).join('') + '</ul>'
+    : lines.join('<br>');
+  return `<div class="doc-section"><div class="doc-section-title">${icon} ${label}</div><div class="doc-content">${inner}</div></div>`;
 }
 
-// ── RENDER ────────────────────────────────────────────────────────────────────
 function renderEtappen() {
   const list = document.getElementById('etappen-list');
   const teslaList = document.getElementById('tesla-nav-list');
 
   list.innerHTML = ETAPPEN.map((e, i) => {
-    const doc = docData[i + 1] || {};
+    const doc = docData[i+1] || {};
     const docContent = [
       renderDocSection('Lage & Unterkunft', '🏠', doc.unterkunft),
       renderDocSection('Supermarkt', '🛒', doc.supermarkt),
@@ -515,8 +370,6 @@ function renderEtappen() {
       renderDocSection('Wandern & Ausflüge', '🥾', doc.wandern),
       renderDocSection('Besonderheiten', '💡', doc.besonderheiten),
     ].filter(Boolean).join('');
-
-    const hasDoc = docContent.length > 0;
 
     return `
     <div class="etappe-card" id="card-${i}">
@@ -538,37 +391,50 @@ function renderEtappen() {
         </div>
       </div>
       <div class="card-body">
-        ${e.confirmation ? `<div class="confirmation-badge">✓ ${e.confirmation}</div>` : ''}
 
-        <div class="info-block">
-          <div class="info-key">Adresse</div>
-          <div class="info-val secondary">${e.adresse}</div>
-        </div>
-        <div class="info-block">
-          <div class="info-key">Check-in → Check-out</div>
-          <div class="info-val">${e.checkin} <span style="color:var(--muted)">→</span> ${e.checkout}</div>
+        <div class="accom-section">
+          <div class="accom-name">${e.unterkunft}</div>
+          <div class="accom-address">${e.adresse}</div>
+
+          <div class="checkin-row">
+            <div class="checkin-box">
+              <div class="checkin-lbl">Check-in</div>
+              <div class="checkin-val">${e.checkin}</div>
+            </div>
+            <div class="checkin-box">
+              <div class="checkin-lbl">Check-out</div>
+              <div class="checkin-val">${e.checkout}</div>
+            </div>
+          </div>
+
+          ${e.confirmation ? `<div class="confirmation-badge">✓ ${e.confirmation} · ${e.buchungPlattform}</div>` : ''}
+
+          <div style="font-size:12px;color:var(--dim);margin-bottom:12px;line-height:1.5;">${e.highlight}</div>
+
+          <div class="amenities">
+            ${e.amenities.map(a => `<div class="chip ${a.includes('⭐') || a.includes('🌊') ? 'highlight' : ''}">${a}</div>`).join('')}
+          </div>
         </div>
 
-        ${hasDoc ? `<div class="divider"></div>${docContent}` : ''}
+        ${docContent ? `<div class="divider"></div>${docContent}` : ''}
 
         <div class="action-row">
           <a class="action-btn maps" href="https://www.google.com/maps/search/?api=1&query=${e.mapsQ}" target="_blank">
-            <span class="btn-icon">📍</span>
-            <span class="btn-label">Google Maps</span>
+            <span class="btn-icon">📍</span><span class="btn-label">Maps</span>
           </a>
           <a class="action-btn tesla" href="https://nav.tesla.com/?lat=${e.lat}&lng=${e.lng}&name=${encodeURIComponent(e.unterkunft)}" target="_blank">
-            <span class="btn-icon">⚡</span>
-            <span class="btn-label">Tesla Nav</span>
+            <span class="btn-icon">⚡</span><span class="btn-label">Tesla Nav</span><span class="btn-hint">nur im Auto</span>
+          </a>
+          <a class="action-btn booking full" href="${e.buchungLink}" target="_blank">
+            <span class="btn-icon">🔖</span><span class="btn-label">Buchungsbestätigung · ${e.buchungPlattform}</span>
           </a>
         </div>
       </div>
-    </div>
-  `}).join('');
+    </div>`;
+  }).join('');
 
-  // Tesla nav shortcuts on Karte tab
   teslaList.innerHTML = ETAPPEN.map((e, i) => `
-    <a href="https://nav.tesla.com/?lat=${e.lat}&lng=${e.lng}&name=${encodeURIComponent(e.unterkunft)}"
-       target="_blank"
+    <a href="https://nav.tesla.com/?lat=${e.lat}&lng=${e.lng}&name=${encodeURIComponent(e.unterkunft)}" target="_blank"
        style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);text-decoration:none;color:var(--text);">
       <div style="width:8px;height:8px;border-radius:50%;background:${e.color};flex-shrink:0;box-shadow:0 0 6px ${e.color}"></div>
       <div style="flex:1;">
@@ -576,13 +442,10 @@ function renderEtappen() {
         <div style="font-family:'Syne Mono',monospace;font-size:10px;color:var(--dim);">${e.unterkunft}</div>
       </div>
       <div style="color:var(--c2);font-size:18px;">⚡</div>
-    </a>
-  `).join('');
+    </a>`).join('');
 }
 
-function toggleCard(i) {
-  document.getElementById(`card-${i}`).classList.toggle('open');
-}
+function toggleCard(i) { document.getElementById(`card-${i}`).classList.toggle('open'); }
 
 function switchTab(name, btn) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -592,7 +455,6 @@ function switchTab(name, btn) {
   window.scrollTo(0,0);
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
 loadDoc();
 </script>
 </body>
