@@ -374,54 +374,35 @@ function buildSystemPrompt() {
   const d = today();
   const cur = currentEtappe(d);
   const curName = cur ? cur.name : 'außerhalb der Reise';
+
+  // Short doc summary — only non-empty sections, trimmed
   const docSummary = Object.entries(docData).map(([num, data]) => {
     const e = ETAPPEN[num - 1];
-    const parts = [e.name];
-    if (data.restaurants)    parts.push('Restaurants: ' + data.restaurants.replace(/\n/g, ' | '));
-    if (data.wandern)        parts.push('Wandern: ' + data.wandern.replace(/\n/g, ' | '));
-    if (data.supermarkt)     parts.push('Supermarkt: ' + data.supermarkt);
-    if (data.besonderheiten) parts.push('Hinweise: ' + data.besonderheiten.replace(/\n/g, ' | '));
-    return parts.join(' — ');
-  }).join('\n');
+    const parts = [`[${e.name}]`];
+    if (data.restaurants)    parts.push('Restaurants: ' + data.restaurants.split('\n').filter(l=>l.trim()).slice(0,3).join(', '));
+    if (data.wandern)        parts.push('Wandern: ' + data.wandern.split('\n').filter(l=>l.trim()).slice(0,2).join(', '));
+    if (data.besonderheiten) parts.push(data.besonderheiten.split('\n')[0]?.trim());
+    return parts.filter(Boolean).join(' — ');
+  }).filter(Boolean).join('\n');
 
-  return `Du bist der persönliche Reiseleiter für Philipp und seine Frau auf einem Roadtrip durch die Bretagne und Normandie im Mai 2026.
+  return `Du bist Reiseleiter für Philipp & Frau, Roadtrip Bretagne/Normandie Mai 2026. Tesla, Hund dabei.
 
-DEINE PERSÖNLICHKEIT:
-- Kennst die Bretagne und Normandie sehr gut
-- Gibst konkrete, praktische Empfehlungen
-- Kurze, klare Antworten — kein unnötiges Blabla
-- Antwortest auf Deutsch
-- Denkst nach, bevor du antwortest — lieber eine gute Empfehlung als fünf mittelmäßige
+HEUTE: ${d.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })} — Standort: ${curName}
 
-REISE-KONTEXT:
-- Reisezeitraum: 13.–30. Mai 2026
-- Fahrzeug: Tesla (E-Auto, kein Benzin)
-- Reisende: Philipp + Frau + Hund
-- Aktueller Standort: ${curName}
-- Heute: ${d.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+ETAPPEN:
+1. Valenciennes 13–14.05 — Première Classe, A2-Stopp
+2. Cotentin/Barneville-Carteret 14–19.05 — Le Skiff Villa, 250m Strand, Jacuzzi, Kanalinseln-Blick
+3. Crozon/Camaret-sur-Mer 19–25.05 — Haus Lambézen, 500m Meer, Pen-Hir 7 Min
+4. Alabasterküste/Criel-sur-Mer 25–30.05 — Horizon d'Opale, Strand direkt, 180° Meerblick
 
-ETAPPEN-DETAILS:
-1. Valenciennes (13–14.05) — Première Classe Hotel, A2-Stopover
-2. Cotentin/Barneville-Carteret (14–19.05) — Le Skiff Villa, 250m zum Strand, Jacuzzi, Panorama Kanalinseln
-3. Crozon/Camaret-sur-Mer (19–25.05) — Haus Lambézen, 500m Meer, Pointe de Pen-Hir 7 Min
-4. Alabasterküste/Criel-sur-Mer (25–30.05) — Horizon d'Opale, Strand direkt, 180° Meerblick
+NOTIZEN AUS DOC:
+${docSummary || 'Keine Notizen.'}
 
-REISEDOKUMENT — AKTUELLE NOTIZEN:
-${docSummary || 'Noch keine Notizen eingetragen.'}
-
-WENN JEMAND ETWAS INS DOKUMENT EINTRAGEN MÖCHTE:
-- Formuliere den Eintrag klar und strukturiert
-- Sage genau: "Ich würde folgendes unter [Etappe X / Kategorie] eintragen:" und zeig den Text
-- Weise darauf hin, dass der Nutzer es selbst ins Doc kopieren kann, da du keinen direkten Schreibzugriff hast
-
-FOKUS — du beantwortest nur:
-- Fragen zur aktuellen oder kommenden Etappe
-- Restaurant-, Aktivitäts- und Sehenswürdigkeitsempfehlungen
-- Praktische Reiseinfos (Öffnungszeiten, Tipps, Gezeiten, Wetter-Hinweise)
-- Hilfe beim Formulieren von Notizen fürs Reisedokument
-- E-Auto-Fragen (Ladestopps, Reichweite)
-
-Bei Fragen die nichts mit der Reise zu tun haben: kurz ablehnen und zurück zum Thema.`;
+REGELN:
+- Nur reiserelevante Antworten (Aktivitäten, Restaurants, Tipps, Notizen formulieren)
+- Kurz und konkret, auf Deutsch
+- Bei Notiz-Wunsch: Eintrag sauber formulieren und zeigen
+- Kein allgemeines Assistenten-Verhalten`;
 }
 
 function renderChatUI() {
@@ -537,7 +518,7 @@ async function sendMessage() {
   try {
     const messages = chatHistory
       .filter(m => m.role === 'user' || m.role === 'assistant')
-      .slice(-12); // keep last 6 exchanges for context
+      .slice(-6); // last 3 exchanges
 
     const res = await fetch('https://plain-leaf-8e0e.philipp-51c.workers.dev/', {
       method: 'POST',
@@ -548,10 +529,10 @@ async function sendMessage() {
       },
       body: JSON.stringify({
         model: 'claude-opus-4-5',
-        max_tokens: 8000,
+        max_tokens: 3000,
         thinking: {
           type: 'enabled',
-          budget_tokens: 5000
+          budget_tokens: 2000
         },
         system: buildSystemPrompt(),
         messages: messages
