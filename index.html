@@ -549,10 +549,10 @@ async function sendMessage() {
       },
       body: JSON.stringify({
         model: 'claude-opus-4-5',
-        max_tokens: 1024,
+        max_tokens: 8000,
         thinking: {
           type: 'enabled',
-          budget_tokens: 800
+          budget_tokens: 5000
         },
         system: buildSystemPrompt(),
         messages: messages
@@ -560,25 +560,41 @@ async function sendMessage() {
     });
 
     document.getElementById('typing')?.remove();
-    const data = await res.json();
 
-    if (data.error) {
-      addMsg('ai', `Fehler: ${data.error.message}`);
-    } else {
-      // Extract text content (skip thinking blocks)
-      const reply = data.content
-        ?.filter(b => b.type === 'text')
-        .map(b => b.text)
-        .join('') || 'Keine Antwort erhalten.';
-      addMsg('ai', reply);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      const msg = err?.error?.message || `HTTP ${res.status}`;
+      // If key issue, offer to reset
+      if (res.status === 401) {
+        addMsg('ai', `API Key ungültig oder abgelaufen. <a href="#" onclick="resetApiKey()" style="color:var(--gold)">Key neu eingeben →</a>`);
+      } else {
+        addMsg('ai', `Fehler vom Server: ${msg}`);
+      }
+      sendBtn.disabled = false;
+      return;
     }
+
+    const data = await res.json();
+    // Extract text content (skip thinking blocks)
+    const reply = data.content
+      ?.filter(b => b.type === 'text')
+      .map(b => b.text)
+      .join('') || 'Keine Antwort erhalten.';
+    addMsg('ai', reply);
+
   } catch(e) {
     document.getElementById('typing')?.remove();
-    addMsg('ai', 'Verbindungsfehler. Bitte versuche es erneut.');
+    addMsg('ai', `Verbindungsfehler: ${e.message}. Bitte Internetverbindung prüfen.`);
   }
 
   sendBtn.disabled = false;
   input.focus();
+}
+
+function resetApiKey() {
+  localStorage.removeItem('bn_api_key');
+  apiKey = '';
+  renderApiSetup();
 }
 
 function handleKey(e) {
