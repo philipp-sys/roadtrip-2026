@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Bretagne & Normandie · 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Public+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-title">Bretagne & Normandie</div>
+    <div class="topbar-sub">Mai 2026 · Roadtrip</div>
+  </div>
+  <div class="topbar-right">
+    <span class="theme-label" id="theme-icon" onclick="toggleTheme()">☽</span>
+    <div class="theme-toggle" onclick="toggleTheme()"></div>
+  </div>
+</header>
+
+<!-- ══ START ══════════════════════════════════════════════ -->
+<div class="section active" id="s-overview">
+  <div class="hero">
+    <div class="hero-eyebrow">Roadtrip 2026</div>
+    <h1 class="hero-title">Bretagne<br>&amp; <em>Normandie</em></h1>
+    <p class="hero-tagline" id="hero-tagline"></p>
+    <div class="hero-stats" id="hero-stats"></div>
+  </div>
+  <div class="today-section" id="today-section"></div>
+  <div class="route-wrap">
+    <div class="section-label">Route</div>
+    <div class="route-line" id="route-line"></div>
+  </div>
+  <div class="alert-strip" id="alert-strip"></div>
+</div>
+
+<!-- ══ ETAPPEN ════════════════════════════════════════════ -->
+<div class="section" id="s-etappen">
+  <div class="etappen-list" id="etappen-list"></div>
+</div>
+
+<!-- ══ KARTE ══════════════════════════════════════════════ -->
+<div class="section" id="s-karte">
+  <div class="karte-wrap">
+    <div class="glass-card">
+      <div class="glass-inner">
+        <div class="gc-title">Gespeicherte Orte</div>
+        <div class="gc-sub">Unterkünfte · Restaurants · Sehenswürdigkeiten · Wanderwege</div>
+        <a class="maps-btn" id="maps-btn" href="#" target="_blank">
+          <span>📍</span> In Google Maps öffnen
+        </a>
+      </div>
+      <div class="glass-footer">Öffnet deine gespeicherte Liste direkt in der Google Maps App.</div>
+    </div>
+    <div class="glass-card">
+      <div class="glass-inner" style="padding-bottom:0">
+        <div class="gc-title">Tesla Navigation</div>
+        <div class="gc-sub" style="margin-bottom:16px">Nur im Tesla Browser · Direkt zur Unterkunft</div>
+      </div>
+      <div id="tesla-nav-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ KI REISELEITER ═════════════════════════════════════ -->
+<div class="section" id="s-chat">
+  <div class="chat-wrap" id="chat-wrap">
+    <!-- Rendered by JS: either API setup or full chat -->
+  </div>
+</div>
+
+<!-- ══ LOGISTIK ════════════════════════════════════════════ -->
+<div class="section" id="s-logistik">
+  <div class="logistik-wrap" id="logistik-wrap"></div>
+</div>
+
+<!-- ══ BOTTOM NAV ══════════════════════════════════════════ -->
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="switchTab('overview',this)">
+    <span class="nav-ico">🏠</span><span class="nav-lbl">Start</span>
+  </button>
+  <button class="nav-item" onclick="switchTab('etappen',this)">
+    <span class="nav-ico">📍</span><span class="nav-lbl">Etappen</span>
+  </button>
+  <button class="nav-item" onclick="switchTab('karte',this)">
+    <span class="nav-ico">🗺️</span><span class="nav-lbl">Karte</span>
+  </button>
+  <button class="nav-item" onclick="switchTab('chat',this)">
+    <span class="nav-ico">✦</span><span class="nav-lbl">KI</span>
+  </button>
+  <button class="nav-item" onclick="switchTab('logistik',this)">
+    <span class="nav-ico">📋</span><span class="nav-lbl">Info</span>
+  </button>
+</nav>
+
+<script src="data.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════
+//  APP LOGIC
+// ═══════════════════════════════════════════════════════
+
+let docData = {};
+let chatHistory = [];
+let apiKey = localStorage.getItem('bn_api_key') || '';
+
+// ── DATE HELPERS ──────────────────────────────────────────────────────────────
+function today() {
+  const d = new Date(); d.setHours(0,0,0,0); return d;
+}
+
+function daysBetween(a, b) {
+  return Math.round((b - a) / 86400000);
+}
+
+function currentEtappe(d) {
+  return ETAPPEN.find(e => {
+    const s = new Date(e.start); s.setHours(0,0,0,0);
+    const en = new Date(e.end);  en.setHours(0,0,0,0);
+    return d >= s && d < en;
+  });
+}
+
+function nextEtappe(d) {
+  return ETAPPEN.find(e => {
+    const s = new Date(e.start); s.setHours(0,0,0,0);
+    return s > d;
+  });
+}
+
+// ── RENDER: OVERVIEW ─────────────────────────────────────────────────────────
+function renderOverview() {
+  document.getElementById('hero-tagline').textContent = REISE.tagline;
+  document.getElementById('hero-stats').innerHTML = REISE.stats
+    .map(s => `<div class="stat"><div class="stat-val">${s.val}</div><div class="stat-label">${s.label}</div></div>`)
+    .join('');
+  document.getElementById('alert-strip').innerHTML = `<span>⚠️</span><span>${REISE.alert}</span>`;
+  document.getElementById('maps-btn').href = REISE.mapsLink;
+}
+
+// ── RENDER: TODAY CARD ────────────────────────────────────────────────────────
+function renderTodayCard() {
+  const d = today();
+  const sec = document.getElementById('today-section');
+  const cur = currentEtappe(d);
+  const nxt = nextEtappe(d);
+  const daysToStart = daysBetween(d, REISE.start);
+
+  if (d < REISE.start) {
+    sec.innerHTML = `
+      <div class="today-before">
+        <div class="before-eyebrow">Countdown</div>
+        <div class="before-title">Noch ${daysToStart} ${daysToStart === 1 ? 'Tag' : 'Tage'} bis zur Abfahrt</div>
+        <div class="before-sub">Start: 13. Mai 2026 · Valenciennes</div>
+      </div>`;
+  } else if (d >= REISE.end) {
+    sec.innerHTML = `
+      <div class="today-before">
+        <div class="before-eyebrow">Reise beendet</div>
+        <div class="before-title">Bretagne & Normandie ✓</div>
+        <div class="before-sub">17 Nächte · 1710 km</div>
+      </div>`;
+  } else if (cur) {
+    const doc = docData[ETAPPEN.indexOf(cur) + 1] || {};
+    const nightNum = daysBetween(cur.start, d) + 1;
+    const nightsLeft = daysBetween(d, cur.end);
+    const firstRest = doc.restaurants
+      ? doc.restaurants.split('\n').filter(l => l.trim() && l !== '—')[0]?.replace(/^-\s*/, '')
+      : null;
+    const gradMap = {
+      "01": "135deg, rgba(120,171,160,0.42), rgba(120,171,160,0.10)",
+      "02": "135deg, rgba(201,165,104,0.42), rgba(201,165,104,0.10)",
+      "03": "135deg, rgba(152,136,192,0.36), rgba(152,136,192,0.08)",
+      "04": "135deg, rgba(191,112,104,0.36), rgba(191,112,104,0.08)",
+    };
+    sec.innerHTML = `
+      <div class="today-card">
+        <div class="today-gradient" style="background:linear-gradient(${gradMap[cur.num]})"></div>
+        <div class="today-inner">
+          <div class="today-eyebrow" style="color:${cur.color}">Heute · Tag ${daysBetween(REISE.start, d) + 1}</div>
+          <div class="today-name">${cur.name}</div>
+          <div class="today-region">${cur.region} · Nacht ${nightNum} von ${daysBetween(cur.start, cur.end)}</div>
+          <div class="today-rows">
+            <div class="today-row"><span class="today-key">Unterkunft</span><span>${cur.unterkunft}</span></div>
+            ${firstRest ? `<div class="today-row"><span class="today-key">Restaurant</span><span>${firstRest}</span></div>` : ''}
+            <div class="today-row">
+              <span class="today-key">Morgen</span>
+              <span>${nightsLeft > 0
+                ? `Noch ${nightsLeft} Nacht${nightsLeft === 1 ? '' : 'e'} hier`
+                : `Abreise → ${nxt ? nxt.name : '—'}`}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+}
+
+// ── RENDER: ROUTE ─────────────────────────────────────────────────────────────
+function renderRoute() {
+  const d = today();
+  const cur = currentEtappe(d);
+  const kms = ['460 km', '420 km', '330 km', '500 km'];
+  const stops = [
+    { name: 'Start', color: 'var(--text3)', cur: false },
+    ...ETAPPEN.map(e => ({ name: e.name, color: e.color, cur: cur === e }))
+  ];
+  let html = '';
+  stops.forEach((s, i) => {
+    html += `
+      <div class="route-stop">
+        <div class="route-dot${s.cur ? ' current' : ''}" style="color:${s.color}"></div>
+        <div class="route-name" style="${s.cur ? `color:${s.color};font-weight:600` : ''}">${s.name}</div>
+      </div>`;
+    if (i < stops.length - 1) {
+      html += `<div class="route-connector" data-km="${kms[i] || ''}"></div>`;
+    }
+  });
+  document.getElementById('route-line').innerHTML = html;
+}
+
+// ── RENDER: ETAPPEN ───────────────────────────────────────────────────────────
+function renderEtappen() {
+  document.getElementById('etappen-list').innerHTML = ETAPPEN.map((e, i) => {
+    const doc = docData[i + 1] || {};
+    const docHtml = [
+      docBlock('Lage & Unterkunft', '🏠', doc.unterkunft),
+      docBlock('Supermarkt',        '🛒', doc.supermarkt),
+      docBlock('Restaurants',       '🍽', doc.restaurants),
+      docBlock('Wandern & Ausflüge','🥾', doc.wandern),
+      docBlock('Besonderheiten',    '💡', doc.besonderheiten),
+    ].filter(Boolean).join('');
+
+    return `
+    <div class="etappe-card" id="card-${i}">
+      <div class="card-band" style="background:linear-gradient(90deg,${e.color},color-mix(in srgb,${e.color} 30%,transparent))"></div>
+      <div class="drive-strip">
+        <div class="drive-item"><div class="drive-val">${e.km}</div><div class="drive-lbl">Fahrt</div></div>
+        <div class="drive-item"><div class="drive-val">${e.fahrtzeit}</div><div class="drive-lbl">Dauer</div></div>
+        <div class="drive-item"><div class="drive-val">${e.naechte}</div><div class="drive-lbl">Aufenthalt</div></div>
+      </div>
+      <div class="card-head" onclick="toggleCard(${i})">
+        <div class="card-main">
+          <div class="card-num">Etappe ${e.num}</div>
+          <div class="card-title" style="color:${e.color}">${e.name}</div>
+          <div class="card-region">${e.region}</div>
+        </div>
+        <div class="card-aside">
+          <div class="card-dates">${e.dates}</div>
+          <div class="card-chevron">↓</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="accom-name">${e.unterkunft}</div>
+        <div class="accom-address">${e.adresse}</div>
+        <div class="checkin-row">
+          <div class="checkin-box"><div class="ci-lbl">Check-in</div><div class="ci-val">${e.checkin}</div></div>
+          <div class="checkin-box"><div class="ci-lbl">Check-out</div><div class="ci-val">${e.checkout}</div></div>
+        </div>
+        ${e.confirmation ? `<div class="confirmation-badge">✓ ${e.confirmation} · ${e.buchungPlattform}</div><br>` : ''}
+        <div class="accom-highlight">${e.highlight}</div>
+        <div class="chips">
+          ${e.chips.map(c => `<div class="chip${c.star ? ' star' : c.s ? ' pos' : ''}">${c.t}</div>`).join('')}
+        </div>
+        ${docHtml ? `<div class="rule"></div>${docHtml}` : ''}
+        <div class="actions">
+          <a class="btn maps" href="https://www.google.com/maps/search/?api=1&query=${e.mapsQ}" target="_blank">
+            <span class="btn-ico">📍</span><span class="btn-lbl">Google Maps</span>
+          </a>
+          <a class="btn tesla" href="https://nav.tesla.com/?lat=${e.lat}&lng=${e.lng}&name=${encodeURIComponent(e.unterkunft)}" target="_blank">
+            <span class="btn-ico">⚡</span><span class="btn-lbl">Tesla Nav</span><span class="btn-note">nur im Auto</span>
+          </a>
+          <a class="btn booking" href="${e.buchungLink}" target="_blank">
+            <span class="btn-ico">🔖</span>
+            <span class="btn-lbl">Buchungsbestätigung · ${e.buchungPlattform}</span>
+          </a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── RENDER: TESLA LIST ────────────────────────────────────────────────────────
+function renderTeslaList() {
+  document.getElementById('tesla-nav-list').innerHTML = ETAPPEN.map(e => `
+    <a class="tesla-row" href="https://nav.tesla.com/?lat=${e.lat}&lng=${e.lng}&name=${encodeURIComponent(e.unterkunft)}" target="_blank">
+      <div class="tesla-dot" style="background:${e.color}"></div>
+      <div class="tesla-info">
+        <div class="tesla-name">${e.name}</div>
+        <div class="tesla-sub">${e.unterkunft}</div>
+      </div>
+      <div class="tesla-arrow">Nav →</div>
+    </a>`).join('');
+}
+
+// ── RENDER: LOGISTIK ──────────────────────────────────────────────────────────
+function renderLogistik() {
+  const wrap = document.getElementById('logistik-wrap');
+  wrap.innerHTML = [
+    ...REISE.logistik.map(item => `
+      <div class="info-card${item.warn ? ' warn' : ''}">
+        <div class="ic-icon">${item.icon}</div>
+        <div>
+          <div class="ic-title">${item.title}</div>
+          <div class="ic-text">${item.text.replace(/\n/g, '<br>')}</div>
+        </div>
+      </div>`),
+    `<div class="info-card">
+      <div class="ic-icon">📄</div>
+      <div>
+        <div class="ic-title">Reisedokument</div>
+        <div class="ic-text">
+          <a href="${REISE.masterDoc}" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">
+            Master-Dokument öffnen →
+          </a>
+        </div>
+      </div>
+    </div>`
+  ].join('');
+}
+
+// ── DOC PARSING ───────────────────────────────────────────────────────────────
+async function loadDoc() {
+  try {
+    const res = await fetch(REISE.docPubUrl + "?output=txt&t=" + Date.now());
+    const text = await res.text();
+    docData = parseDoc(text);
+  } catch(e) {}
+  renderAll();
+}
+
+function parseDoc(text) {
+  const result = {};
+  const parts = text.split(/==\s*ETAPPE\s*(\d+)\s*==/i);
+  for (let i = 1; i < parts.length; i += 2) {
+    const num = parseInt(parts[i]);
+    const body = (parts[i + 1] || '').split('---')[0];
+    result[num] = {
+      unterkunft:    gsec(body, 'UNTERKUNFT'),
+      supermarkt:    gsec(body, 'SUPERMARKT'),
+      restaurants:   gsec(body, 'RESTAURANTS'),
+      wandern:       gsec(body, 'WANDERN / AUSFLÜGE'),
+      besonderheiten:gsec(body, 'BESONDERHEITEN'),
+    };
+  }
+  return result;
+}
+
+function gsec(text, key) {
+  const m = text.match(new RegExp(key + '\\s*([\\s\\S]*?)(?=\\n[A-ZÜÄÖ][A-ZÜÄÖ\\s\\/]+\\n|$)', 'i'));
+  if (!m) return null;
+  const c = m[1].trim();
+  return (!c || c === '—' || c === '-') ? null : c;
+}
+
+function docBlock(label, icon, content) {
+  if (!content) return '';
+  const lines = content.split('\n').map(l => l.trim()).filter(l => l && l !== '—');
+  if (!lines.length) return '';
+  const isList = lines.some(l => l.startsWith('-'));
+  const inner = isList
+    ? '<ul>' + lines.map(l => `<li>${l.replace(/^-\s*/, '')}</li>`).join('') + '</ul>'
+    : lines.join('<br>');
+  return `<div class="doc-block"><div class="doc-lbl">${icon} ${label}</div><div class="doc-body">${inner}</div></div>`;
+}
+
+// ── CHAT ──────────────────────────────────────────────────────────────────────
+function buildSystemPrompt() {
+  const d = today();
+  const cur = currentEtappe(d);
+  const curName = cur ? cur.name : 'außerhalb der Reise';
+  const docSummary = Object.entries(docData).map(([num, data]) => {
+    const e = ETAPPEN[num - 1];
+    const parts = [e.name];
+    if (data.restaurants)    parts.push('Restaurants: ' + data.restaurants.replace(/\n/g, ' | '));
+    if (data.wandern)        parts.push('Wandern: ' + data.wandern.replace(/\n/g, ' | '));
+    if (data.supermarkt)     parts.push('Supermarkt: ' + data.supermarkt);
+    if (data.besonderheiten) parts.push('Hinweise: ' + data.besonderheiten.replace(/\n/g, ' | '));
+    return parts.join(' — ');
+  }).join('\n');
+
+  return `Du bist der persönliche Reiseleiter für Philipp und seine Frau auf einem Roadtrip durch die Bretagne und Normandie im Mai 2026.
+
+DEINE PERSÖNLICHKEIT:
+- Kennst die Bretagne und Normandie sehr gut
+- Gibst konkrete, praktische Empfehlungen
+- Kurze, klare Antworten — kein unnötiges Blabla
+- Antwortest auf Deutsch
+- Denkst nach, bevor du antwortest — lieber eine gute Empfehlung als fünf mittelmäßige
+
+REISE-KONTEXT:
+- Reisezeitraum: 13.–30. Mai 2026
+- Fahrzeug: Tesla (E-Auto, kein Benzin)
+- Reisende: Philipp + Frau + Hund
+- Aktueller Standort: ${curName}
+- Heute: ${d.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+
+ETAPPEN-DETAILS:
+1. Valenciennes (13–14.05) — Première Classe Hotel, A2-Stopover
+2. Cotentin/Barneville-Carteret (14–19.05) — Le Skiff Villa, 250m zum Strand, Jacuzzi, Panorama Kanalinseln
+3. Crozon/Camaret-sur-Mer (19–25.05) — Haus Lambézen, 500m Meer, Pointe de Pen-Hir 7 Min
+4. Alabasterküste/Criel-sur-Mer (25–30.05) — Horizon d'Opale, Strand direkt, 180° Meerblick
+
+REISEDOKUMENT — AKTUELLE NOTIZEN:
+${docSummary || 'Noch keine Notizen eingetragen.'}
+
+WENN JEMAND ETWAS INS DOKUMENT EINTRAGEN MÖCHTE:
+- Formuliere den Eintrag klar und strukturiert
+- Sage genau: "Ich würde folgendes unter [Etappe X / Kategorie] eintragen:" und zeig den Text
+- Weise darauf hin, dass der Nutzer es selbst ins Doc kopieren kann, da du keinen direkten Schreibzugriff hast
+
+FOKUS — du beantwortest nur:
+- Fragen zur aktuellen oder kommenden Etappe
+- Restaurant-, Aktivitäts- und Sehenswürdigkeitsempfehlungen
+- Praktische Reiseinfos (Öffnungszeiten, Tipps, Gezeiten, Wetter-Hinweise)
+- Hilfe beim Formulieren von Notizen fürs Reisedokument
+- E-Auto-Fragen (Ladestopps, Reichweite)
+
+Bei Fragen die nichts mit der Reise zu tun haben: kurz ablehnen und zurück zum Thema.`;
+}
+
+function renderChatUI() {
+  const wrap = document.getElementById('chat-wrap');
+  wrap.innerHTML = `
+    <div class="chat-header">
+      <div class="chat-title">Reiseleiter</div>
+      <div class="chat-subtitle">Fragen · Empfehlungen · Notizen</div>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-suggestions">
+      <div class="suggestion" onclick="useSuggestion(this)">Was gibt es heute zu tun?</div>
+      <div class="suggestion" onclick="useSuggestion(this)">Beste Restaurants hier</div>
+      <div class="suggestion" onclick="useSuggestion(this)">Wandertipps für morgen</div>
+      <div class="suggestion" onclick="useSuggestion(this)">Notiz ins Doc eintragen</div>
+      <div class="suggestion" onclick="useSuggestion(this)">Gezeitenzeiten heute</div>
+    </div>
+    <div class="chat-input-wrap">
+      <textarea class="chat-input" id="chat-input" placeholder="Frage stellen oder Notiz ablegen…" rows="1"
+        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="chat-send" onclick="sendMessage()" id="chat-send">↑</button>
+    </div>`;
+  initChatGreeting();
+}
+
+function renderApiSetup() {
+  const wrap = document.getElementById('chat-wrap');
+  wrap.innerHTML = `
+    <div class="api-setup">
+      <div class="api-setup-icon">🔑</div>
+      <div class="api-setup-title">KI Reiseleiter einrichten</div>
+      <div class="api-setup-sub">
+        Gib deinen Anthropic API Key ein. Er wird nur auf diesem Gerät gespeichert und nie übertragen.
+      </div>
+      <input class="api-key-input" id="api-key-input" type="password"
+        placeholder="sk-ant-api03-..." autocomplete="off"
+        onkeydown="if(event.key==='Enter') saveApiKey()">
+      <button class="api-key-btn" onclick="saveApiKey()">Speichern & Starten</button>
+      <div class="api-key-note">
+        API Key unter <strong>console.anthropic.com</strong> erstellen.<br>
+        Wird sicher in deinem Browser gespeichert.
+      </div>
+    </div>`;
+}
+
+function saveApiKey() {
+  const val = document.getElementById('api-key-input').value.trim();
+  if (!val.startsWith('sk-ant-')) {
+    alert('Bitte einen gültigen Anthropic API Key eingeben (beginnt mit sk-ant-)');
+    return;
+  }
+  apiKey = val;
+  localStorage.setItem('bn_api_key', val);
+  renderChatUI();
+}
+
+function initChatGreeting() {
+  const d = today();
+  const cur = currentEtappe(d);
+  let greeting;
+  if (d < REISE.start) {
+    const days = daysBetween(d, REISE.start);
+    greeting = `Hallo! Noch ${days} Tage bis zur Abfahrt.\n\nIch bin euer Reiseleiter für die Bretagne & Normandie. Ich kenne alle Etappen, Unterkünfte und kann Empfehlungen geben oder Notizen ins Reisedokument formulieren.\n\nWas kann ich für euch tun?`;
+  } else if (cur) {
+    greeting = `Guten Tag! Ihr seid in ${cur.name} — Tag ${daysBetween(REISE.start, d) + 1} der Reise.\n\nIch helfe mit Restaurants, Aktivitäten, Wanderungen oder Notizen.\n\nWas braucht ihr?`;
+  } else {
+    greeting = `Hallo! Euer persönlicher Reiseleiter für Bretagne & Normandie.\n\nFragt mich nach Aktivitäten, Restaurants, Tipps — oder ich formuliere Notizen fürs Reisedokument.`;
+  }
+  const msgs = document.getElementById('chat-messages');
+  const now = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  msgs.innerHTML = `
+    <div class="msg ai">
+      <div class="msg-bubble">${greeting.replace(/\n/g, '<br>')}</div>
+      <div class="msg-time">${now}</div>
+    </div>`;
+  chatHistory = [{ role: 'assistant', content: greeting }];
+}
+
+function addMsg(role, text) {
+  const msgs = document.getElementById('chat-messages');
+  const now = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = `<div class="msg-bubble">${text.replace(/\n/g, '<br>')}</div><div class="msg-time">${now}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  chatHistory.push({ role: role === 'user' ? 'user' : 'assistant', content: text });
+}
+
+function addTyping() {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.id = 'typing';
+  div.className = 'typing-indicator';
+  div.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  const sendBtn = document.getElementById('chat-send');
+  sendBtn.disabled = true;
+
+  addMsg('user', text);
+  addTyping();
+
+  try {
+    const messages = chatHistory
+      .filter(m => m.role === 'user' || m.role === 'assistant')
+      .slice(-12); // keep last 6 exchanges for context
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-allow-cors': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-opus-4-5',
+        max_tokens: 1024,
+        thinking: {
+          type: 'enabled',
+          budget_tokens: 800
+        },
+        system: buildSystemPrompt(),
+        messages: messages
+      })
+    });
+
+    document.getElementById('typing')?.remove();
+    const data = await res.json();
+
+    if (data.error) {
+      addMsg('ai', `Fehler: ${data.error.message}`);
+    } else {
+      // Extract text content (skip thinking blocks)
+      const reply = data.content
+        ?.filter(b => b.type === 'text')
+        .map(b => b.text)
+        .join('') || 'Keine Antwort erhalten.';
+      addMsg('ai', reply);
+    }
+  } catch(e) {
+    document.getElementById('typing')?.remove();
+    addMsg('ai', 'Verbindungsfehler. Bitte versuche es erneut.');
+  }
+
+  sendBtn.disabled = false;
+  input.focus();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function useSuggestion(el) {
+  document.getElementById('chat-input').value = el.textContent;
+  sendMessage();
+}
+
+function initChat() {
+  if (apiKey) {
+    renderChatUI();
+  } else {
+    renderApiSetup();
+  }
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+function toggleCard(i) {
+  document.getElementById(`card-${i}`).classList.toggle('open');
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById(`s-${name}`).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const dark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', dark ? 'light' : 'dark');
+  document.getElementById('theme-icon').textContent = dark ? '☀︎' : '☽';
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+function renderAll() {
+  renderOverview();
+  renderTodayCard();
+  renderRoute();
+  renderEtappen();
+  renderTeslaList();
+  renderLogistik();
+  initChat();
+}
+
+loadDoc();
+</script>
+</body>
+</html>
