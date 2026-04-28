@@ -18,10 +18,9 @@ const REISE = {
   masterDoc:   "https://docs.google.com/document/d/1Fqlifn0YZue2BEvFc9A-dgzlf0xBnli1DHgJgZsDlDA",
   docPubUrl:   "https://docs.google.com/document/d/e/2PACX-1vSnru4coTD1Bne3fYE_MNXOTI5VSuRkugAmgHdVSBx2NLeZk7bYNR0qB5Y45NoSKtZANpyxlP6Cp1VC/pub",
   // Nach Apps Script Deploy: URL hier eintragen
-  appsScriptUrl: "https://script.google.com/macros/s/AKfycbzgU2HUnnri0eJVafcjXggv2dCvQc87QQGHjGhf-y6aSQbuEXG1q01Rfd8omNEM8w-A/exec",
+  appsScriptUrl: "https://script.google.com/macros/s/AKfycbzVuZsw06w4NejYYQudXUbRUpocXX1iHKIzubvA5ppTSVOtZQS9vyhIgsi6qO6yW2k2/exec",
+   // Google Maps Embed API Key hier eintragen
   mapsApiKey: "AIzaSyAgh-3kD60VcglLsSEJ6lWMfUnDkj-BukA",
-  // Google Maps Embed API Key hier eintragen
-  mapsApiKey: "MAPS_API_KEY_HIER_EINTRAGEN",
   alert:       "⚠️ Klippen-Abbruchgefahr · Criel-sur-Mer: Leinenpflicht für Hund.",
   logistik: [
     {
