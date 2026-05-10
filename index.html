@@ -81,6 +81,49 @@
 </div>
 
 <!-- ══ BOTTOM NAV ══════════════════════════════════════════ -->
+<!-- ══ NOTIZEN ══════════════════════════════════════════ -->
+<div class="section" id="s-notizen">
+  <div style="padding:24px 24px 96px;">
+    <div style="margin-bottom:20px;">
+      <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:400;color:var(--text);margin-bottom:4px;">Notizen</div>
+      <div style="font-size:14px;font-weight:300;color:var(--text2);">Gespeicherte Einträge aus dem Reisedokument</div>
+    </div>
+    <div id="notizen-content"></div>
+    <!-- Schnell eintragen -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px;margin-top:16px;">
+      <div style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:14px;">Schnell eintragen</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <select id="notiz-etappe" style="background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;font-family:'Public Sans',sans-serif;font-size:16px;color:var(--text);outline:none;">
+          <option value="1">Etappe 1 · Valenciennes</option>
+          <option value="2">Etappe 2 · Cotentin</option>
+          <option value="3">Etappe 3 · Crozon</option>
+          <option value="4">Etappe 4 · Alabasterküste</option>
+        </select>
+        <select id="notiz-kat" style="background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;font-family:'Public Sans',sans-serif;font-size:16px;color:var(--text);outline:none;">
+          <option value="RESTAURANTS">🍽 Restaurants</option>
+          <option value="WANDERN / AUSFLÜGE">🥾 Wandern & Ausflüge</option>
+          <option value="BESONDERHEITEN">💡 Besonderheiten</option>
+          <option value="SUPERMARKT">🛒 Supermarkt</option>
+          <option value="UNTERKUNFT">🏠 Unterkunft</option>
+        </select>
+        <textarea id="notiz-text" placeholder="Notiz eingeben…" rows="2"
+          style="background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;font-family:'Public Sans',sans-serif;font-size:16px;color:var(--text);outline:none;resize:none;line-height:1.5;"></textarea>
+        <button type="button" onclick="quickSaveNotiz()"
+          style="background:linear-gradient(135deg,var(--gold2),var(--gold));border:none;border-radius:12px;padding:16px;font-family:'Public Sans',sans-serif;font-size:16px;font-weight:600;color:var(--bg);cursor:pointer;">
+          Speichern im Reisedoc
+        </button>
+        <div id="notiz-status" style="text-align:center;font-size:14px;color:var(--teal);min-height:20px;"></div>
+      </div>
+    </div>
+    <div style="margin-top:16px;text-align:center;">
+      <a href="https://docs.google.com/document/d/1aLtGI3wMpkX4OxcORb7dbItrf8aCgRsmlpWhMG2JppM" target="_blank"
+        style="font-size:14px;color:var(--gold);text-decoration:none;font-weight:500;">
+        Vollständiges Dokument öffnen →
+      </a>
+    </div>
+  </div>
+</div>
+
 <nav class="bottom-nav">
   <button class="nav-item active" onclick="switchTab('overview',this)">
     <span class="nav-ico">🏠</span><span class="nav-lbl">Start</span>
@@ -88,14 +131,14 @@
   <button class="nav-item" onclick="switchTab('etappen',this)">
     <span class="nav-ico">📍</span><span class="nav-lbl">Etappen</span>
   </button>
-  <button class="nav-item" onclick="switchTab('karte',this)">
-    <span class="nav-ico">🗺️</span><span class="nav-lbl">Karte</span>
+  <button class="nav-item" onclick="switchTab('notizen',this)">
+    <span class="nav-ico">📝</span><span class="nav-lbl">Notizen</span>
   </button>
   <button class="nav-item" onclick="switchTab('chat',this)">
     <span class="nav-ico">✦</span><span class="nav-lbl">KI</span>
   </button>
-  <button class="nav-item" onclick="switchTab('logistik',this)">
-    <span class="nav-ico">📋</span><span class="nav-lbl">Info</span>
+  <button class="nav-item" onclick="switchTab('karte',this)">
+    <span class="nav-ico">🗺️</span><span class="nav-lbl">Karte</span>
   </button>
 </nav>
 
@@ -107,7 +150,7 @@
 
 let docData = {};
 let chatHistory = [];
-let apiKey = localStorage.getItem('bn_api_key') || '';
+const apiKey = 'ANTHROPIC_KEY_HERE';
 
 // ── DATE HELPERS ──────────────────────────────────────────────────────────────
 function today() {
@@ -272,7 +315,7 @@ function renderEtappen() {
           <a class="btn maps" href="https://www.google.com/maps/search/?api=1&query=${e.mapsQ}" target="_blank">
             <span class="btn-ico">📍</span><span class="btn-lbl">Google Maps</span>
           </a>
-          <a class="btn tesla" href="https://nav.tesla.com/?lat=${e.lat}&lng=${e.lng}&name=${encodeURIComponent(e.unterkunft)}" target="_blank">
+          <a class="btn tesla" href="https://maps.google.com/maps?daddr=${e.lat},${e.lng}&directionsmode=driving" target="_blank">
             <span class="btn-ico">⚡</span><span class="btn-lbl">Tesla Nav</span><span class="btn-note">nur im Auto</span>
           </a>
           <a class="btn booking" href="${e.buchungLink}" target="_blank">
@@ -288,7 +331,7 @@ function renderEtappen() {
 // ── RENDER: TESLA LIST ────────────────────────────────────────────────────────
 function renderTeslaList() {
   document.getElementById('tesla-nav-list').innerHTML = ETAPPEN.map(e => `
-    <a class="tesla-row" href="https://nav.tesla.com/?lat=${e.lat}&lng=${e.lng}&name=${encodeURIComponent(e.unterkunft)}" target="_blank">
+    <a class="tesla-row" href="https://maps.google.com/maps?daddr=${e.lat},${e.lng}&directionsmode=driving" target="_blank">
       <div class="tesla-dot" style="background:${e.color}"></div>
       <div class="tesla-info">
         <div class="tesla-name">${e.name}</div>
@@ -849,11 +892,7 @@ function useSuggestion(el) {
 }
 
 function initChat() {
-  if (apiKey) {
-    renderChatUI();
-  } else {
-    renderApiSetup();
-  }
+  renderChatUI();
 }
 
 // ── NAVIGATION ────────────────────────────────────────────────────────────────
@@ -877,6 +916,73 @@ function toggleTheme() {
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
+function renderNotizen() {
+  const el = document.getElementById('notizen-content');
+  if (!el) return;
+
+  const etappenMitDaten = ETAPPEN.map((e, i) => {
+    const doc = docData[i+1] || {};
+    const eintraege = [
+      { kat:'🍽 Restaurants', data: doc.restaurants },
+      { kat:'🥾 Wandern', data: doc.wandern },
+      { kat:'💡 Besonderheiten', data: doc.besonderheiten },
+      { kat:'🛒 Supermarkt', data: doc.supermarkt },
+      { kat:'🏠 Unterkunft', data: doc.unterkunft },
+    ].filter(x => x.data);
+    return { e, eintraege };
+  }).filter(x => x.eintraege.length > 0);
+
+  if (!etappenMitDaten.length) {
+    el.innerHTML = `<div style="text-align:center;padding:32px;color:var(--text3);font-size:16px;">Noch keine Notizen gespeichert.</div>`;
+    return;
+  }
+
+  el.innerHTML = etappenMitDaten.map(({ e, eintraege }) => `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:14px;">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;">
+        <div style="width:10px;height:10px;border-radius:50%;background:${e.color};flex-shrink:0;"></div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:${e.color};">${e.name}</div>
+        <div style="font-size:14px;font-weight:300;color:var(--text3);">${e.dates}</div>
+      </div>
+      <div style="padding:16px 20px;">
+        ${eintraege.map(({ kat, data }) => {
+          const lines = data.split('\n').map(l=>l.trim()).filter(l=>l&&l!=='—');
+          if (!lines.length) return '';
+          return `
+            <div style="margin-bottom:14px;">
+              <div style="font-size:13px;font-weight:600;letter-spacing:0.15em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;">${kat}</div>
+              <div style="font-size:16px;font-weight:300;color:var(--text2);line-height:1.7;">
+                ${lines.map(l=>`<div style="padding:3px 0;">– ${l.replace(/^-\s*/,'')}</div>`).join('')}
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>`).join('');
+}
+
+async function quickSaveNotiz() {
+  const etappe = document.getElementById('notiz-etappe').value;
+  const kat = document.getElementById('notiz-kat').value;
+  const text = document.getElementById('notiz-text').value.trim();
+  const status = document.getElementById('notiz-status');
+
+  if (!text) { status.textContent = 'Bitte Text eingeben.'; return; }
+
+  status.textContent = 'Speichere…';
+  status.style.color = 'var(--text3)';
+
+  const inhalt = text.startsWith('-') ? text : `- ${text}`;
+  const result = await writeToDoc(parseInt(etappe), kat, inhalt);
+
+  status.textContent = result || '✓ Gespeichert';
+  status.style.color = 'var(--teal)';
+  document.getElementById('notiz-text').value = '';
+
+  if (result && !result.includes('Fehler')) {
+    setTimeout(() => { loadDoc(); status.textContent = ''; }, 2000);
+  }
+}
+
 function renderAll() {
   renderOverview();
   renderTodayCard();
@@ -884,6 +990,7 @@ function renderAll() {
   renderEtappen();
   renderTeslaList();
   renderLogistik();
+  renderNotizen();
   initChat();
 }
 
