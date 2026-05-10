@@ -102,79 +102,6 @@
   </div>
 </div>
 
-<!-- ══ KI ════════════════════════════════════════════════ -->
-<div class="section" id="s-ki">
-  <div class="chat-wrap">
-    <div class="chat-topbar">
-      <div class="chat-title">// KI Reiseleiter</div>
-      <div class="chat-search-row">
-        <input class="chat-search-input" id="map-search" type="text"
-          placeholder="Ort suchen, z.B. Restaurant Barneville…"
-          onkeydown="if(event.key==='Enter'){event.preventDefault();doMapSearch()}">
-        <button class="search-btn" onclick="doMapSearch()">📍 Suchen</button>
-      </div>
-    </div>
-    <div class="chat-msgs" id="chat-msgs"></div>
-    <div class="chat-chips">
-      <div class="chip-btn" onclick="useChip(this)">Heute hier — was tun?</div>
-      <div class="chip-btn" onclick="useChip(this)">Beste Restaurants</div>
-      <div class="chip-btn" onclick="useChip(this)">Wandertipps</div>
-      <div class="chip-btn" onclick="useChip(this)">Gezeiten heute</div>
-      <div class="chip-btn" onclick="useChip(this)">Notiz ins Doc</div>
-    </div>
-    <div class="chat-input-row">
-      <textarea class="chat-input" id="chat-input" rows="1"
-        placeholder="Frage oder Notiz…"
-        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"
-        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
-      <button class="send-btn" id="send-btn" onclick="sendMsg()">↑</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ NOTIZEN ════════════════════════════════════════════ -->
-<div class="section" id="s-notizen">
-  <div class="notizen-wrap">
-    <div class="notizen-header">
-      <div class="page-title">Notizen</div>
-      <div class="page-sub">Gespeicherte Einträge · Reisedokument</div>
-    </div>
-
-    <!-- Quick add -->
-    <div class="quick-add">
-      <div class="quick-add-title">// Eintragen</div>
-      <div class="form-row">
-        <select class="form-select" id="notiz-etappe">
-          <option value="1">01 · Valenciennes</option>
-          <option value="2">02 · Cotentin</option>
-          <option value="3">03 · Crozon</option>
-          <option value="4">04 · Alabasterküste</option>
-        </select>
-        <select class="form-select" id="notiz-kat">
-          <option value="RESTAURANTS">🍽 Restaurants</option>
-          <option value="WANDERN / AUSFLÜGE">🥾 Wandern & Ausflüge</option>
-          <option value="BESONDERHEITEN">💡 Besonderheiten</option>
-          <option value="SUPERMARKT">🛒 Supermarkt</option>
-          <option value="UNTERKUNFT">🏠 Unterkunft</option>
-        </select>
-        <textarea class="form-textarea" id="notiz-text"
-          placeholder="Notiz eingeben…"></textarea>
-        <button class="submit-btn" type="button" onclick="saveNotiz()">
-          SPEICHERN IM REISEDOC
-        </button>
-        <div class="form-status" id="notiz-status"></div>
-      </div>
-    </div>
-
-    <!-- Stored notes -->
-    <div id="notizen-list"></div>
-
-    <a class="doc-link" href="https://docs.google.com/document/d/1aLtGI3wMpkX4OxcORb7dbItrf8aCgRsmlpWhMG2JppM" target="_blank">
-      Vollständiges Reisedokument →
-    </a>
-  </div>
-</div>
-
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-item active" onclick="switchTab('overview',this)">
@@ -186,12 +113,7 @@
   <button class="nav-item" onclick="switchTab('karte',this)">
     <span class="nav-ico">◉</span><span class="nav-lbl">Karte</span>
   </button>
-  <button class="nav-item" onclick="switchTab('ki',this)">
-    <span class="nav-ico">✦</span><span class="nav-lbl">KI</span>
-  </button>
-  <button class="nav-item" onclick="switchTab('notizen',this)">
-    <span class="nav-ico">≡</span><span class="nav-lbl">Notizen</span>
-  </button>
+
 </nav>
 
 <script src="data.js"></script>
