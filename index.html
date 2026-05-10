@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Bretagne & Normandie · 2026</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>B&N 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Public+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,228 +15,296 @@
 <!-- TOPBAR -->
 <header class="topbar">
   <div class="topbar-brand">
-    <div class="topbar-title">Bretagne & Normandie</div>
-    <div class="topbar-sub">Mai 2026 · Roadtrip</div>
+    <div class="topbar-pulse"></div>
+    <div>
+      <div class="topbar-title">B&N · 2026</div>
+    </div>
   </div>
   <div class="topbar-right">
-    <span class="theme-label" id="theme-icon" onclick="toggleTheme()">☽</span>
-    <div class="theme-toggle" onclick="toggleTheme()"></div>
+    <div class="topbar-sub" id="topbar-date"></div>
+    <button class="theme-btn" onclick="toggleTheme()" aria-label="Theme">◑</button>
   </div>
 </header>
 
 <!-- ══ START ══════════════════════════════════════════════ -->
 <div class="section active" id="s-overview">
-  <div class="hero">
-    <div class="hero-eyebrow">Roadtrip 2026</div>
-    <h1 class="hero-title">Bretagne<br>&amp; <em>Normandie</em></h1>
-    <p class="hero-tagline" id="hero-tagline"></p>
-    <div class="hero-stats" id="hero-stats"></div>
+  <div class="overview-wrap">
+    <div class="hero">
+      <div class="hero-label">Roadtrip</div>
+      <div class="hero-title">BRETAGNE<br>&amp; <span>NORMANDIE</span></div>
+      <div class="hero-sub">13. Mai – 30. Mai 2026 · Tesla · 🐾</div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-val">4</div><div class="stat-lbl">Etappen</div></div>
+        <div class="stat"><div class="stat-val">17</div><div class="stat-lbl">Nächte</div></div>
+        <div class="stat"><div class="stat-val">1710</div><div class="stat-lbl">km</div></div>
+        <div class="stat"><div class="stat-val" id="days-stat">—</div><div class="stat-lbl" id="days-lbl">Tage</div></div>
+      </div>
+    </div>
+    <div class="today-wrap" id="today-wrap"></div>
+    <div class="route-wrap">
+      <div class="section-tag">Route</div>
+      <div class="route-line" id="route-line"></div>
+    </div>
+    <div class="alert-bar">
+      <span>⚠</span>
+      <span><strong>Criel-sur-Mer:</strong> Klippen-Abbruchgefahr — Leinenpflicht für Hund.</span>
+    </div>
   </div>
-  <div class="today-section" id="today-section"></div>
-  <div class="route-wrap">
-    <div class="section-label">Route</div>
-    <div class="route-line" id="route-line"></div>
-  </div>
-  <div class="alert-strip" id="alert-strip"></div>
 </div>
 
 <!-- ══ ETAPPEN ════════════════════════════════════════════ -->
 <div class="section" id="s-etappen">
-  <div class="etappen-list" id="etappen-list"></div>
+  <div class="etappen-wrap">
+    <div style="padding:20px 24px 16px;">
+      <div class="page-title">Etappen</div>
+      <div class="page-sub">Alle Stopps — Navigation & Details</div>
+    </div>
+    <!-- Progress map -->
+    <div class="progress-map">
+      <div class="progress-map-inner">
+        <div class="section-tag">Fortschritt</div>
+        <div class="progress-steps" id="progress-steps"></div>
+      </div>
+    </div>
+    <div id="etappen-list"></div>
+  </div>
 </div>
 
 <!-- ══ KARTE ══════════════════════════════════════════════ -->
 <div class="section" id="s-karte">
   <div class="karte-wrap">
-    <div class="glass-card">
-      <div class="glass-inner">
-        <div class="gc-title">Gespeicherte Orte</div>
-        <div class="gc-sub">Unterkünfte · Restaurants · Sehenswürdigkeiten · Wanderwege</div>
-        <a class="maps-btn" id="maps-btn" href="#" target="_blank">
-          <span>📍</span> In Google Maps öffnen
+    <!-- Gespeicherte Liste -->
+    <div class="maps-embed-card">
+      <div class="card-header-bar">
+        <div>
+          <div class="card-header-title">Gespeicherte Orte</div>
+          <div class="card-header-sub">Unterkünfte · Restaurants · POIs</div>
+        </div>
+        <a class="maps-link-btn" href="https://maps.app.goo.gl/ZXjmhrsYRp2C3i91A" target="_blank">
+          📍 Öffnen
         </a>
       </div>
-      <div class="glass-footer">Öffnet deine gespeicherte Liste direkt in der Google Maps App.</div>
-    </div>
-    <div class="glass-card">
-      <div class="glass-inner" style="padding-bottom:0">
-        <div class="gc-title">Tesla Navigation</div>
-        <div class="gc-sub" style="margin-bottom:16px">Nur im Tesla Browser · Direkt zur Unterkunft</div>
+      <div class="maps-iframe-wrap">
+        <iframe
+          src="https://www.google.com/maps/embed/v1/search?key=AIzaSyAgh-3kD60VcglLsSEJ6lWMfUnDkj-BukA&q=Bretagne+Normandie+France+hotels&center=48.8,-2.5&zoom=7"
+          allowfullscreen loading="lazy">
+        </iframe>
       </div>
-      <div id="tesla-nav-list"></div>
+    </div>
+    <!-- Navigation shortcuts -->
+    <div class="maps-embed-card">
+      <div class="card-header-bar">
+        <div>
+          <div class="card-header-title">Navigation</div>
+          <div class="card-header-sub">Direkt zu den Unterkünften</div>
+        </div>
+      </div>
+      <div class="nav-list" id="nav-list"></div>
     </div>
   </div>
 </div>
 
-<!-- ══ KI REISELEITER ═════════════════════════════════════ -->
-<div class="section" id="s-chat">
-  <div class="chat-wrap" id="chat-wrap">
-    <!-- Rendered by JS: either API setup or full chat -->
+<!-- ══ KI ════════════════════════════════════════════════ -->
+<div class="section" id="s-ki">
+  <div class="chat-wrap">
+    <div class="chat-topbar">
+      <div class="chat-title">// KI Reiseleiter</div>
+      <div class="chat-search-row">
+        <input class="chat-search-input" id="map-search" type="text"
+          placeholder="Ort suchen, z.B. Restaurant Barneville…"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();doMapSearch()}">
+        <button class="search-btn" onclick="doMapSearch()">📍 Suchen</button>
+      </div>
+    </div>
+    <div class="chat-msgs" id="chat-msgs"></div>
+    <div class="chat-chips">
+      <div class="chip-btn" onclick="useChip(this)">Heute hier — was tun?</div>
+      <div class="chip-btn" onclick="useChip(this)">Beste Restaurants</div>
+      <div class="chip-btn" onclick="useChip(this)">Wandertipps</div>
+      <div class="chip-btn" onclick="useChip(this)">Gezeiten heute</div>
+      <div class="chip-btn" onclick="useChip(this)">Notiz ins Doc</div>
+    </div>
+    <div class="chat-input-row">
+      <textarea class="chat-input" id="chat-input" rows="1"
+        placeholder="Frage oder Notiz…"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+      <button class="send-btn" id="send-btn" onclick="sendMsg()">↑</button>
+    </div>
   </div>
 </div>
 
-<!-- ══ LOGISTIK ════════════════════════════════════════════ -->
-<div class="section" id="s-logistik">
-  <div class="logistik-wrap" id="logistik-wrap"></div>
-</div>
-
-<!-- ══ BOTTOM NAV ══════════════════════════════════════════ -->
-<!-- ══ NOTIZEN ══════════════════════════════════════════ -->
+<!-- ══ NOTIZEN ════════════════════════════════════════════ -->
 <div class="section" id="s-notizen">
-  <div style="padding:24px 24px 96px;">
-    <div style="margin-bottom:20px;">
-      <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:400;color:var(--text);margin-bottom:4px;">Notizen</div>
-      <div style="font-size:14px;font-weight:300;color:var(--text2);">Gespeicherte Einträge aus dem Reisedokument</div>
+  <div class="notizen-wrap">
+    <div class="notizen-header">
+      <div class="page-title">Notizen</div>
+      <div class="page-sub">Gespeicherte Einträge · Reisedokument</div>
     </div>
-    <div id="notizen-content"></div>
-    <!-- Schnell eintragen -->
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px;margin-top:16px;">
-      <div style="font-size:16px;font-weight:500;color:var(--text);margin-bottom:14px;">Schnell eintragen</div>
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <select id="notiz-etappe" style="background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;font-family:'Public Sans',sans-serif;font-size:16px;color:var(--text);outline:none;">
-          <option value="1">Etappe 1 · Valenciennes</option>
-          <option value="2">Etappe 2 · Cotentin</option>
-          <option value="3">Etappe 3 · Crozon</option>
-          <option value="4">Etappe 4 · Alabasterküste</option>
+
+    <!-- Quick add -->
+    <div class="quick-add">
+      <div class="quick-add-title">// Eintragen</div>
+      <div class="form-row">
+        <select class="form-select" id="notiz-etappe">
+          <option value="1">01 · Valenciennes</option>
+          <option value="2">02 · Cotentin</option>
+          <option value="3">03 · Crozon</option>
+          <option value="4">04 · Alabasterküste</option>
         </select>
-        <select id="notiz-kat" style="background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;font-family:'Public Sans',sans-serif;font-size:16px;color:var(--text);outline:none;">
+        <select class="form-select" id="notiz-kat">
           <option value="RESTAURANTS">🍽 Restaurants</option>
           <option value="WANDERN / AUSFLÜGE">🥾 Wandern & Ausflüge</option>
           <option value="BESONDERHEITEN">💡 Besonderheiten</option>
           <option value="SUPERMARKT">🛒 Supermarkt</option>
           <option value="UNTERKUNFT">🏠 Unterkunft</option>
         </select>
-        <textarea id="notiz-text" placeholder="Notiz eingeben…" rows="2"
-          style="background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;font-family:'Public Sans',sans-serif;font-size:16px;color:var(--text);outline:none;resize:none;line-height:1.5;"></textarea>
-        <button type="button" onclick="quickSaveNotiz()"
-          style="background:linear-gradient(135deg,var(--gold2),var(--gold));border:none;border-radius:12px;padding:16px;font-family:'Public Sans',sans-serif;font-size:16px;font-weight:600;color:var(--bg);cursor:pointer;">
-          Speichern im Reisedoc
+        <textarea class="form-textarea" id="notiz-text"
+          placeholder="Notiz eingeben…"></textarea>
+        <button class="submit-btn" type="button" onclick="saveNotiz()">
+          SPEICHERN IM REISEDOC
         </button>
-        <div id="notiz-status" style="text-align:center;font-size:14px;color:var(--teal);min-height:20px;"></div>
+        <div class="form-status" id="notiz-status"></div>
       </div>
     </div>
-    <div style="margin-top:16px;text-align:center;">
-      <a href="https://docs.google.com/document/d/1aLtGI3wMpkX4OxcORb7dbItrf8aCgRsmlpWhMG2JppM" target="_blank"
-        style="font-size:14px;color:var(--gold);text-decoration:none;font-weight:500;">
-        Vollständiges Dokument öffnen →
-      </a>
-    </div>
+
+    <!-- Stored notes -->
+    <div id="notizen-list"></div>
+
+    <a class="doc-link" href="https://docs.google.com/document/d/1aLtGI3wMpkX4OxcORb7dbItrf8aCgRsmlpWhMG2JppM" target="_blank">
+      Vollständiges Reisedokument →
+    </a>
   </div>
 </div>
 
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-item active" onclick="switchTab('overview',this)">
-    <span class="nav-ico">🏠</span><span class="nav-lbl">Start</span>
+    <span class="nav-ico">⬡</span><span class="nav-lbl">Start</span>
   </button>
   <button class="nav-item" onclick="switchTab('etappen',this)">
-    <span class="nav-ico">📍</span><span class="nav-lbl">Etappen</span>
-  </button>
-  <button class="nav-item" onclick="switchTab('notizen',this)">
-    <span class="nav-ico">📝</span><span class="nav-lbl">Notizen</span>
-  </button>
-  <button class="nav-item" onclick="switchTab('chat',this)">
-    <span class="nav-ico">✦</span><span class="nav-lbl">KI</span>
+    <span class="nav-ico">◎</span><span class="nav-lbl">Etappen</span>
   </button>
   <button class="nav-item" onclick="switchTab('karte',this)">
-    <span class="nav-ico">🗺️</span><span class="nav-lbl">Karte</span>
+    <span class="nav-ico">◉</span><span class="nav-lbl">Karte</span>
+  </button>
+  <button class="nav-item" onclick="switchTab('ki',this)">
+    <span class="nav-ico">✦</span><span class="nav-lbl">KI</span>
+  </button>
+  <button class="nav-item" onclick="switchTab('notizen',this)">
+    <span class="nav-ico">≡</span><span class="nav-lbl">Notizen</span>
   </button>
 </nav>
 
 <script src="data.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════
-//  APP LOGIC
+//  APP
 // ═══════════════════════════════════════════════════════
 
 let docData = {};
 let chatHistory = [];
-const apiKey = 'ANTHROPIC_KEY_HERE';
 
-// ── DATE HELPERS ──────────────────────────────────────────────────────────────
-function today() {
-  const d = new Date(); d.setHours(0,0,0,0); return d;
-}
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function today() { const d=new Date(); d.setHours(0,0,0,0); return d; }
+function daysBetween(a,b) { return Math.round((b-a)/86400000); }
 
-function daysBetween(a, b) {
-  return Math.round((b - a) / 86400000);
-}
-
-function currentEtappe(d) {
-  return ETAPPEN.find(e => {
-    const s = new Date(e.start); s.setHours(0,0,0,0);
-    const en = new Date(e.end);  en.setHours(0,0,0,0);
-    return d >= s && d < en;
+function currentEtappe() {
+  const d=today();
+  return ETAPPEN.find(e=>{
+    const s=new Date(e.start); s.setHours(0,0,0,0);
+    const en=new Date(e.end);  en.setHours(0,0,0,0);
+    return d>=s && d<en;
   });
 }
 
-function nextEtappe(d) {
-  return ETAPPEN.find(e => {
-    const s = new Date(e.start); s.setHours(0,0,0,0);
-    return s > d;
-  });
+function nextEtappe() {
+  const d=today();
+  return ETAPPEN.find(e=>{ const s=new Date(e.start); s.setHours(0,0,0,0); return s>d; });
 }
 
-// ── RENDER: OVERVIEW ─────────────────────────────────────────────────────────
-function renderOverview() {
-  document.getElementById('hero-tagline').textContent = REISE.tagline;
-  document.getElementById('hero-stats').innerHTML = REISE.stats
-    .map(s => `<div class="stat"><div class="stat-val">${s.val}</div><div class="stat-label">${s.label}</div></div>`)
-    .join('');
-  document.getElementById('alert-strip').innerHTML = `<span>⚠️</span><span>${REISE.alert}</span>`;
-  document.getElementById('maps-btn').href = REISE.mapsLink;
+// ── TOPBAR DATE ───────────────────────────────────────────────────────────────
+function renderTopbarDate() {
+  const d = new Date();
+  document.getElementById('topbar-date').textContent =
+    d.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit' });
 }
 
-// ── RENDER: TODAY CARD ────────────────────────────────────────────────────────
-function renderTodayCard() {
+// ── STATS ─────────────────────────────────────────────────────────────────────
+function renderStats() {
   const d = today();
-  const sec = document.getElementById('today-section');
-  const cur = currentEtappe(d);
-  const nxt = nextEtappe(d);
-  const daysToStart = daysBetween(d, REISE.start);
+  const stat = document.getElementById('days-stat');
+  const lbl  = document.getElementById('days-lbl');
+  if (d < TRIP.start) {
+    const days = daysBetween(d, TRIP.start);
+    stat.textContent = days;
+    lbl.textContent = 'Tage noch';
+  } else if (d >= TRIP.end) {
+    stat.textContent = '✓';
+    lbl.textContent = 'Fertig';
+  } else {
+    stat.textContent = daysBetween(TRIP.start, d) + 1;
+    lbl.textContent = 'Tag';
+  }
+}
 
-  if (d < REISE.start) {
-    sec.innerHTML = `
-      <div class="today-before">
-        <div class="before-eyebrow">Countdown</div>
-        <div class="before-title">Noch ${daysToStart} ${daysToStart === 1 ? 'Tag' : 'Tage'} bis zur Abfahrt</div>
-        <div class="before-sub">Start: 13. Mai 2026 · Valenciennes</div>
+// ── TODAY CARD ────────────────────────────────────────────────────────────────
+function renderToday() {
+  const wrap = document.getElementById('today-wrap');
+  const d = today();
+  const cur = currentEtappe();
+  const nxt = nextEtappe();
+  const daysToStart = daysBetween(d, TRIP.start);
+
+  if (d < TRIP.start) {
+    wrap.innerHTML = `
+      <div class="countdown-card">
+        <div class="countdown-num">${daysToStart}</div>
+        <div class="countdown-label">Tage bis zur Abfahrt · 13. Mai 2026</div>
       </div>`;
-  } else if (d >= REISE.end) {
-    sec.innerHTML = `
-      <div class="today-before">
-        <div class="before-eyebrow">Reise beendet</div>
-        <div class="before-title">Bretagne & Normandie ✓</div>
-        <div class="before-sub">17 Nächte · 1710 km</div>
+    return;
+  }
+
+  if (d >= TRIP.end) {
+    wrap.innerHTML = `
+      <div class="countdown-card">
+        <div class="countdown-num" style="font-size:60px;">B&N ✓</div>
+        <div class="countdown-label">Reise abgeschlossen · 1710 km</div>
       </div>`;
-  } else if (cur) {
-    const doc = docData[ETAPPEN.indexOf(cur) + 1] || {};
+    return;
+  }
+
+  if (cur) {
+    const doc = docData[cur.id] || {};
     const nightNum = daysBetween(cur.start, d) + 1;
     const nightsLeft = daysBetween(d, cur.end);
     const firstRest = doc.restaurants
-      ? doc.restaurants.split('\n').filter(l => l.trim() && l !== '—')[0]?.replace(/^-\s*/, '')
+      ? doc.restaurants.split('\n').filter(l=>l.trim()&&l!=='—')[0]?.replace(/^-\s*/,'')
       : null;
-    const gradMap = {
-      "01": "135deg, rgba(120,171,160,0.42), rgba(120,171,160,0.10)",
-      "02": "135deg, rgba(201,165,104,0.42), rgba(201,165,104,0.10)",
-      "03": "135deg, rgba(152,136,192,0.36), rgba(152,136,192,0.08)",
-      "04": "135deg, rgba(191,112,104,0.36), rgba(191,112,104,0.08)",
-    };
-    sec.innerHTML = `
+
+    wrap.innerHTML = `
       <div class="today-card">
-        <div class="today-gradient" style="background:linear-gradient(${gradMap[cur.num]})"></div>
         <div class="today-inner">
-          <div class="today-eyebrow" style="color:${cur.color}">Heute · Tag ${daysBetween(REISE.start, d) + 1}</div>
-          <div class="today-name">${cur.name}</div>
-          <div class="today-region">${cur.region} · Nacht ${nightNum} von ${daysBetween(cur.start, cur.end)}</div>
-          <div class="today-rows">
-            <div class="today-row"><span class="today-key">Unterkunft</span><span>${cur.unterkunft}</span></div>
-            ${firstRest ? `<div class="today-row"><span class="today-key">Restaurant</span><span>${firstRest}</span></div>` : ''}
-            <div class="today-row">
-              <span class="today-key">Morgen</span>
-              <span>${nightsLeft > 0
-                ? `Noch ${nightsLeft} Nacht${nightsLeft === 1 ? '' : 'e'} hier`
-                : `Abreise → ${nxt ? nxt.name : '—'}`}
-              </span>
+          <div class="today-tag" style="color:${cur.color}">// Aktuell · Tag ${daysBetween(TRIP.start,d)+1}</div>
+          <div class="today-location" style="color:${cur.color}">${cur.name}</div>
+          <div class="today-region">${cur.region}</div>
+          <div class="today-grid">
+            <div class="today-cell">
+              <div class="today-cell-label">Unterkunft</div>
+              <div class="today-cell-val">${cur.unterkunft}</div>
+            </div>
+            <div class="today-cell">
+              <div class="today-cell-label">Nacht</div>
+              <div class="today-cell-val">${nightNum} / ${cur.naechte}</div>
+            </div>
+            ${firstRest ? `
+            <div class="today-cell">
+              <div class="today-cell-label">Restaurant</div>
+              <div class="today-cell-val">${firstRest}</div>
+            </div>` : ''}
+            <div class="today-cell">
+              <div class="today-cell-label">Morgen</div>
+              <div class="today-cell-val">${nightsLeft>0?`noch ${nightsLeft} Nacht${nightsLeft>1?'e':''}`:`Abreise → ${nxt?nxt.name:'–'}`}</div>
             </div>
           </div>
         </div>
@@ -244,83 +312,111 @@ function renderTodayCard() {
   }
 }
 
-// ── RENDER: ROUTE ─────────────────────────────────────────────────────────────
+// ── ROUTE ─────────────────────────────────────────────────────────────────────
 function renderRoute() {
   const d = today();
-  const cur = currentEtappe(d);
-  const kms = ['460 km', '420 km', '330 km', '500 km'];
+  const cur = currentEtappe();
+  const kms = ['460 km','420 km','330 km','500 km'];
   const stops = [
-    { name: 'Start', color: 'var(--text3)', cur: false },
-    ...ETAPPEN.map(e => ({ name: e.name, color: e.color, cur: cur === e }))
+    { name:'Start', color:'#3a5566', active:false },
+    ...ETAPPEN.map(e => ({ name:e.name, color:e.color, active:cur===e }))
   ];
+
   let html = '';
-  stops.forEach((s, i) => {
-    html += `
-      <div class="route-stop">
-        <div class="route-dot${s.cur ? ' current' : ''}" style="color:${s.color}"></div>
-        <div class="route-name" style="${s.cur ? `color:${s.color};font-weight:600` : ''}">${s.name}</div>
-      </div>`;
-    if (i < stops.length - 1) {
-      html += `<div class="route-connector" data-km="${kms[i] || ''}"></div>`;
-    }
+  stops.forEach((s,i) => {
+    const cls = s.active ? ' active' : '';
+    html += `<div class="route-stop">
+      <div class="route-dot${cls}" style="color:${s.color}"></div>
+      <div class="route-name${cls}" style="${s.active?'color:'+s.color:''}">${s.name}</div>
+    </div>`;
+    if (i < stops.length-1)
+      html += `<div class="route-conn" data-km="${kms[i]||''}"></div>`;
   });
   document.getElementById('route-line').innerHTML = html;
 }
 
-// ── RENDER: ETAPPEN ───────────────────────────────────────────────────────────
+// ── PROGRESS MAP ──────────────────────────────────────────────────────────────
+function renderProgress() {
+  const d = today();
+  const cur = currentEtappe();
+
+  document.getElementById('progress-steps').innerHTML = ETAPPEN.map(e => {
+    const isDone = d >= new Date(e.end);
+    const isCur  = cur === e;
+    const cls = isCur ? 'current' : isDone ? 'done' : '';
+    return `
+      <div class="prog-step ${cls}" onclick="openEtappe(${e.id-1})">
+        <div class="prog-dot">${e.id}</div>
+        <div class="prog-label">${e.name}</div>
+      </div>`;
+  }).join('');
+}
+
+// ── ETAPPEN ───────────────────────────────────────────────────────────────────
 function renderEtappen() {
-  document.getElementById('etappen-list').innerHTML = ETAPPEN.map((e, i) => {
-    const doc = docData[i + 1] || {};
-    const docHtml = [
-      docBlock('Lage & Unterkunft', '🏠', doc.unterkunft),
-      docBlock('Supermarkt',        '🛒', doc.supermarkt),
-      docBlock('Restaurants',       '🍽', doc.restaurants),
-      docBlock('Wandern & Ausflüge','🥾', doc.wandern),
-      docBlock('Besonderheiten',    '💡', doc.besonderheiten),
-    ].filter(Boolean).join('');
+  document.getElementById('etappen-list').innerHTML = ETAPPEN.map((e,i) => {
+    const doc = docData[e.id] || {};
+    const docBlocks = [
+      { lbl:'Restaurants',       ico:'🍽', data:doc.restaurants   },
+      { lbl:'Wandern & Ausflüge',ico:'🥾', data:doc.wandern       },
+      { lbl:'Besonderheiten',    ico:'💡', data:doc.besonderheiten },
+      { lbl:'Supermarkt',        ico:'🛒', data:doc.supermarkt    },
+    ].filter(x=>x.data);
+
+    const docHtml = docBlocks.map(b => {
+      const lines = b.data.split('\n').map(l=>l.trim()).filter(l=>l&&l!=='—');
+      if (!lines.length) return '';
+      const isList = lines.some(l=>l.startsWith('-'));
+      const inner = isList
+        ? `<ul class="doc-entry">${lines.map(l=>`<li>${l.replace(/^-\s*/,'')}</li>`).join('')}</ul>`
+        : `<div class="doc-entry">${lines.join('<br>')}</div>`;
+      return `<div class="body-section"><div class="body-label">${b.ico} ${b.lbl}</div>${inner}</div>`;
+    }).join('');
 
     return `
     <div class="etappe-card" id="card-${i}">
-      <div class="card-band" style="background:linear-gradient(90deg,${e.color},color-mix(in srgb,${e.color} 30%,transparent))"></div>
-      <div class="drive-strip">
-        <div class="drive-item"><div class="drive-val">${e.km}</div><div class="drive-lbl">Fahrt</div></div>
-        <div class="drive-item"><div class="drive-val">${e.fahrtzeit}</div><div class="drive-lbl">Dauer</div></div>
-        <div class="drive-item"><div class="drive-val">${e.naechte}</div><div class="drive-lbl">Aufenthalt</div></div>
+      <div class="card-accent" style="background:${e.color}"></div>
+      <div class="drive-bar">
+        <div class="drive-cell"><div class="drive-val">${e.km}</div><div class="drive-lbl">km</div></div>
+        <div class="drive-cell"><div class="drive-val">${e.dauer}</div><div class="drive-lbl">Fahrt</div></div>
+        <div class="drive-cell"><div class="drive-val">${e.naechte}</div><div class="drive-lbl">Nächte</div></div>
       </div>
       <div class="card-head" onclick="toggleCard(${i})">
-        <div class="card-main">
-          <div class="card-num">Etappe ${e.num}</div>
-          <div class="card-title" style="color:${e.color}">${e.name}</div>
+        <div class="card-num" style="color:${e.color}">${String(e.id).padStart(2,'0')}</div>
+        <div class="card-info">
+          <div class="card-name" style="color:${e.color}">${e.name}</div>
           <div class="card-region">${e.region}</div>
         </div>
-        <div class="card-aside">
+        <div class="card-right">
           <div class="card-dates">${e.dates}</div>
           <div class="card-chevron">↓</div>
         </div>
       </div>
       <div class="card-body">
-        <div class="accom-name">${e.unterkunft}</div>
-        <div class="accom-address">${e.adresse}</div>
-        <div class="checkin-row">
-          <div class="checkin-box"><div class="ci-lbl">Check-in</div><div class="ci-val">${e.checkin}</div></div>
-          <div class="checkin-box"><div class="ci-lbl">Check-out</div><div class="ci-val">${e.checkout}</div></div>
+        <div class="body-section">
+          <div class="body-label">Unterkunft</div>
+          <div class="body-val">${e.unterkunft}</div>
+          <div class="body-val dim" style="margin-top:4px;">${e.adresse}</div>
         </div>
-        ${e.confirmation ? `<div class="confirmation-badge">✓ ${e.confirmation} · ${e.buchungPlattform}</div><br>` : ''}
-        <div class="accom-highlight">${e.highlight}</div>
-        <div class="chips">
-          ${e.chips.map(c => `<div class="chip${c.star ? ' star' : c.s ? ' pos' : ''}">${c.t}</div>`).join('')}
+        <div class="body-section">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div><div class="body-label">Check-in</div><div class="body-val">${e.checkin}</div></div>
+            <div><div class="body-label">Check-out</div><div class="body-val">${e.checkout}</div></div>
+          </div>
+          ${e.buchungNr ? `<div style="margin-top:12px;"><div class="booking-badge">✓ ${e.buchungNr} · ${e.buchungPlattform}</div></div>` : ''}
         </div>
-        ${docHtml ? `<div class="rule"></div>${docHtml}` : ''}
-        <div class="actions">
-          <a class="btn maps" href="https://www.google.com/maps/search/?api=1&query=${e.mapsQ}" target="_blank">
-            <span class="btn-ico">📍</span><span class="btn-lbl">Google Maps</span>
+        <div class="body-section">
+          <div class="body-val dim">${e.info}</div>
+        </div>
+        ${docHtml}
+        <div class="action-row">
+          <a class="act-btn nav" href="${e.navUrl}" target="_blank">
+            <span class="act-ico">🗺</span>
+            <span class="act-lbl">Navigation</span>
           </a>
-          <a class="btn tesla" href="https://maps.google.com/maps?daddr=${e.lat},${e.lng}&directionsmode=driving" target="_blank">
-            <span class="btn-ico">⚡</span><span class="btn-lbl">Tesla Nav</span><span class="btn-note">nur im Auto</span>
-          </a>
-          <a class="btn booking" href="${e.buchungLink}" target="_blank">
-            <span class="btn-ico">🔖</span>
-            <span class="btn-lbl">Buchungsbestätigung · ${e.buchungPlattform}</span>
+          <a class="act-btn book" href="${e.buchungUrl}" target="_blank">
+            <span class="act-ico">🔖</span>
+            <span class="act-lbl">Buchung</span>
           </a>
         </div>
       </div>
@@ -328,151 +424,144 @@ function renderEtappen() {
   }).join('');
 }
 
-// ── RENDER: TESLA LIST ────────────────────────────────────────────────────────
-function renderTeslaList() {
-  document.getElementById('tesla-nav-list').innerHTML = ETAPPEN.map(e => `
-    <a class="tesla-row" href="https://maps.google.com/maps?daddr=${e.lat},${e.lng}&directionsmode=driving" target="_blank">
-      <div class="tesla-dot" style="background:${e.color}"></div>
-      <div class="tesla-info">
-        <div class="tesla-name">${e.name}</div>
-        <div class="tesla-sub">${e.unterkunft}</div>
+function renderNavList() {
+  document.getElementById('nav-list').innerHTML = ETAPPEN.map(e => `
+    <a class="nav-list-row" href="${e.navUrl}" target="_blank">
+      <div class="nav-dot" style="background:${e.color}"></div>
+      <div>
+        <div class="nav-name">${e.name}</div>
+        <div class="nav-sub">${e.unterkunft}</div>
       </div>
-      <div class="tesla-arrow">Nav →</div>
+      <div class="nav-arrow">NAV →</div>
     </a>`).join('');
 }
 
-// ── RENDER: LOGISTIK ──────────────────────────────────────────────────────────
-function renderLogistik() {
-  const wrap = document.getElementById('logistik-wrap');
-  wrap.innerHTML = [
-    ...REISE.logistik.map(item => `
-      <div class="info-card${item.warn ? ' warn' : ''}">
-        <div class="ic-icon">${item.icon}</div>
-        <div>
-          <div class="ic-title">${item.title}</div>
-          <div class="ic-text">${item.text.replace(/\n/g, '<br>')}</div>
-        </div>
-      </div>`),
-    `<div class="info-card">
-      <div class="ic-icon">📄</div>
-      <div>
-        <div class="ic-title">Reisedokument</div>
-        <div class="ic-text">
-          <a href="${REISE.masterDoc}" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">
-            Master-Dokument öffnen →
-          </a>
-        </div>
-      </div>
-    </div>`
-  ].join('');
-}
-
 // ── DOC PARSING ───────────────────────────────────────────────────────────────
+const KATMAP = {
+  'unterkunft':'unterkunft','supermarkt':'supermarkt','restaurants':'restaurants',
+  'wandern_/_ausflüge':'wandern','besonderheiten':'besonderheiten'
+};
+
 async function loadDoc() {
   try {
-    const res = await fetch(REISE.docPubUrl + "?output=txt&t=" + Date.now());
+    const res = await fetch(CONFIG.docPubUrl + '?output=txt&t=' + Date.now());
     const text = await res.text();
     docData = parseDoc(text);
   } catch(e) {}
   renderAll();
 }
 
-// Known category headers — exact match
-const DOC_KATEGORIEN = [
-  'UNTERKUNFT',
-  'SUPERMARKT',
-  'RESTAURANTS',
-  'WANDERN / AUSFLÜGE',
-  'BESONDERHEITEN'
-];
-
 function parseDoc(text) {
   const result = {};
-  const lines = text.split('\n').map(l => l.trim());
+  const lines = text.split('\n').map(l=>l.trim());
+  let curEtappe=null, curKat=null, buf=[];
+  const KATS = ['UNTERKUNFT','SUPERMARKT','RESTAURANTS','WANDERN / AUSFLÜGE','BESONDERHEITEN'];
 
-  let currentEtappe = null;
-  let currentKat = null;
-  let buffer = [];
-
-  function flushBuffer() {
-    if (currentEtappe && currentKat && buffer.length) {
-      const content = buffer.filter(l => l && l !== '—').join('\n').trim();
+  function flush() {
+    if (curEtappe && curKat && buf.length) {
+      const content = buf.filter(l=>l&&l!=='—').join('\n').trim();
       if (content) {
-        if (!result[currentEtappe]) result[currentEtappe] = {};
-        result[currentEtappe][currentKat] = content;
+        if (!result[curEtappe]) result[curEtappe] = {};
+        const k = curKat.toLowerCase().replace(' / ','_').replace(/ /g,'_');
+        result[curEtappe][KATMAP[k]||k] = content;
       }
     }
-    buffer = [];
+    buf = [];
   }
 
   for (const line of lines) {
-    // Detect etappe marker: == ETAPPE 1 ==
-    const etappeMatch = line.match(/==\s*ETAPPE\s*(\d+)\s*==/i);
-    if (etappeMatch) {
-      flushBuffer();
-      currentEtappe = parseInt(etappeMatch[1]);
-      currentKat = null;
-      continue;
-    }
-
-    // Detect end of etappe section
-    if (line.match(/^---+$/)) {
-      flushBuffer();
-      currentKat = null;
-      continue;
-    }
-
-    // Detect category header within etappe
-    if (currentEtappe) {
-      const kat = DOC_KATEGORIEN.find(k => line === k);
-      if (kat) {
-        flushBuffer();
-        currentKat = kat.toLowerCase().replace(' / ', '_').replace(/ /g, '_');
-        // Normalize key names
-        const keyMap = {
-          'unterkunft': 'unterkunft',
-          'supermarkt': 'supermarkt',
-          'restaurants': 'restaurants',
-          'wandern_/_ausflüge': 'wandern',
-          'besonderheiten': 'besonderheiten'
-        };
-        currentKat = keyMap[currentKat] || currentKat;
-        continue;
-      }
-
-      // Collect content lines
-      if (currentKat) {
-        buffer.push(line);
-      }
+    const em = line.match(/==\s*ETAPPE\s*(\d+)\s*==/i);
+    if (em) { flush(); curEtappe=parseInt(em[1]); curKat=null; continue; }
+    if (line.match(/^---+$/)) { flush(); curKat=null; continue; }
+    if (curEtappe) {
+      const kat = KATS.find(k=>line===k);
+      if (kat) { flush(); curKat=kat; continue; }
+      if (curKat) buf.push(line);
     }
   }
-
-  flushBuffer();
+  flush();
   return result;
 }
 
-function docBlock(label, icon, content) {
-  if (!content) return '';
-  const lines = content.split('\n')
-    .map(l => l.trim())
-    .filter(l => l && l !== '—' && l !== '-' && l !== '–');
-  if (!lines.length) return '';
-  const isList = lines.some(l => l.startsWith('-'));
-  const inner = isList
-    ? '<ul>' + lines.map(l => `<li>${l.replace(/^-\s*/, '')}</li>`).join('') + '</ul>'
-    : lines.join('<br>');
-  return `<div class="doc-block"><div class="doc-lbl">${icon} ${label}</div><div class="doc-body">${inner}</div></div>`;
+// ── NOTIZEN ───────────────────────────────────────────────────────────────────
+function renderNotizen() {
+  const el = document.getElementById('notizen-list');
+  if (!el) return;
+
+  const blocks = ETAPPEN.map(e => {
+    const doc = docData[e.id] || {};
+    const kats = [
+      { lbl:'Restaurants', data:doc.restaurants },
+      { lbl:'Wandern & Ausflüge', data:doc.wandern },
+      { lbl:'Besonderheiten', data:doc.besonderheiten },
+      { lbl:'Supermarkt', data:doc.supermarkt },
+    ].filter(x=>x.data);
+    if (!kats.length) return '';
+
+    return `
+      <div class="notiz-etappe-block">
+        <div class="notiz-etappe-head">
+          <div class="notiz-etappe-dot" style="background:${e.color}"></div>
+          <div class="notiz-etappe-name" style="color:${e.color}">${e.name}</div>
+          <div class="notiz-etappe-dates">${e.dates}</div>
+        </div>
+        ${kats.map(k => {
+          const lines = k.data.split('\n').map(l=>l.trim()).filter(l=>l&&l!=='—');
+          if (!lines.length) return '';
+          const isList = lines.some(l=>l.startsWith('-'));
+          const inner = isList
+            ? `<ul class="notiz-kat-items">${lines.map(l=>`<li>${l.replace(/^-\s*/,'')}</li>`).join('')}</ul>`
+            : `<div class="notiz-kat-items"><li>${lines.join('</li><li>')}</li></div>`;
+          return `<div class="notiz-kat"><div class="notiz-kat-label">${k.lbl}</div>${inner}</div>`;
+        }).join('')}
+      </div>`;
+  }).filter(Boolean).join('');
+
+  el.innerHTML = blocks || `<div style="text-align:center;padding:32px;color:var(--text3);font-size:15px;letter-spacing:0.1em;">// KEINE NOTIZEN VORHANDEN</div>`;
+}
+
+async function saveNotiz() {
+  const etappe  = document.getElementById('notiz-etappe').value;
+  const kat     = document.getElementById('notiz-kat').value;
+  const text    = document.getElementById('notiz-text').value.trim();
+  const status  = document.getElementById('notiz-status');
+
+  if (!text) { status.textContent = '// Text eingeben'; return; }
+
+  status.textContent = '// Speichern…';
+  const inhalt = text.startsWith('-') ? text : `- ${text}`;
+  const result = await writeToDoc(parseInt(etappe), kat, inhalt);
+
+  status.textContent = result || '// Gespeichert ✓';
+  document.getElementById('notiz-text').value = '';
+  if (result && !result.includes('Fehler')) setTimeout(()=>{ loadDoc(); status.textContent=''; }, 2000);
+}
+
+// ── DOC WRITE ─────────────────────────────────────────────────────────────────
+async function writeToDoc(etappe, kategorie, inhalt) {
+  const url = CONFIG.appsScriptUrl;
+  if (!url) return 'Apps Script nicht konfiguriert';
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action:'write', etappe, kategorie, inhalt })
+    });
+    const data = await res.json();
+    return data.success ? data.message : `Fehler: ${data.error}`;
+  } catch(e) {
+    return `Verbindungsfehler: ${e.message}`;
+  }
 }
 
 // ── CHAT ──────────────────────────────────────────────────────────────────────
 function buildSystemPrompt() {
   const d = today();
-  const cur = currentEtappe(d);
-  const curName = cur ? cur.name : 'außerhalb der Reise';
-
-  // Short doc summary — only non-empty sections, trimmed
+  const cur = currentEtappe();
+  const loc = cur ? cur.name : 'außerhalb der Reise';
   const docSummary = Object.entries(docData).map(([num, data]) => {
-    const e = ETAPPEN[num - 1];
+    const e = ETAPPEN[num-1];
+    if (!e) return '';
     const parts = [`[${e.name}]`];
     if (data.restaurants)    parts.push('Restaurants: ' + data.restaurants.split('\n').filter(l=>l.trim()).slice(0,3).join(', '));
     if (data.wandern)        parts.push('Wandern: ' + data.wandern.split('\n').filter(l=>l.trim()).slice(0,2).join(', '));
@@ -480,516 +569,229 @@ function buildSystemPrompt() {
     return parts.filter(Boolean).join(' — ');
   }).filter(Boolean).join('\n');
 
-  return `Du bist Reiseleiter für Philipp & Frau, Roadtrip Bretagne/Normandie Mai 2026. Tesla, Hund dabei.
-
-HEUTE: ${d.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })} — Standort: ${curName}
-
-ETAPPEN:
-1. Valenciennes 13–14.05 — Première Classe, A2-Stopp
-2. Cotentin/Barneville-Carteret 14–19.05 — Le Skiff Villa, 250m Strand, Jacuzzi
-3. Crozon/Camaret-sur-Mer 19–25.05 — Haus Lambézen, 500m Meer, Pen-Hir 7 Min
-4. Alabasterküste/Criel-sur-Mer 25–30.05 — Horizon d'Opale, Strand direkt
-
-NOTIZEN AUS DOC:
-${docSummary || 'Keine Notizen.'}
-
-SCHREIB-ZUGRIFF AUF DAS REISEDOKUMENT:
-Du kannst Einträge direkt ins Reisedokument schreiben.
-Wenn der Nutzer etwas eintragen möchte MUSST du zwingend einen doc_write Block ausgeben — ohne Ausnahme.
-Auch wenn du keine Internetsuche machen kannst, trägst du trotzdem ein was der Nutzer gesagt hat.
-
-Format — exakt so, kein anderes Format:
-
-<doc_write>
-{"etappe": 2, "kategorie": "RESTAURANTS", "inhalt": "- Restaurantname: kurze Beschreibung"}
-</doc_write>
-
-Gültige Kategorien: UNTERKUNFT, SUPERMARKT, RESTAURANTS, WANDERN / AUSFLÜGE, BESONDERHEITEN
-
-WENN DU ORTE ODER RESTAURANTS EMPFIEHLST:
-Füge zusätzlich einen map_search Block ein damit die Karte direkt angezeigt wird:
-
-<map_search>
-{"query": "Restaurants Barneville-Carteret Normandie", "lat": 49.3755, "lng": -1.7765}
-</map_search>
-
-Nutze immer die Koordinaten der aktuellen Etappe als Zentrum.
-
-REGELN:
-- Nur reiserelevante Antworten
-- Kurz und konkret, auf Deutsch`;
-}
-
-// ── DOC WRITE VIA APPS SCRIPT ─────────────────────────────────────────────────
-async function writeToDoc(etappe, kategorie, inhalt) {
-  const url = REISE.appsScriptUrl;
-  if (!url || url === 'APPS_SCRIPT_URL_HIER_EINTRAGEN') return null;
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'write', etappe, kategorie, inhalt })
-    });
-    const data = await res.json();
-    return data.success ? data.message : `Fehler: ${data.error}`;
-  } catch(e) {
-    return `Doc-Fehler: ${e.message}`;
-  }
-}
-
-async function processDocWrites(text) {
-  const regex = /<doc_write>([\s\S]*?)<\/doc_write>/g;
-  let match;
-  const results = [];
-  while ((match = regex.exec(text)) !== null) {
-    try {
-      const payload = JSON.parse(match[1].trim());
-      const result = await writeToDoc(payload.etappe, payload.kategorie, payload.inhalt);
-      if (result) results.push(result);
-    } catch(e) {
-      results.push(`Parse-Fehler: ${e.message}`);
-    }
-  }
-  return results;
-}
-
-// ── PLACES SEARCH ─────────────────────────────────────────────────────────────
-// ── PLACES: Direct Maps Embed (no server needed) ─────────────────────────────
-function placesSearch(query, lat, lng) {
-  renderMapEmbed(query, lat, lng);
-}
-
-function renderPlacesResults(places, query, lat, lng) {
-  renderMapEmbed(query, lat, lng);
-}
-
-function renderMapEmbed(query, lat, lng) {
-  const msgs = document.getElementById('chat-messages');
-  const div = document.createElement('div');
-  div.className = 'msg ai';
-  div.style.cssText = 'max-width:100%;width:100%;';
-
-  const encodedQ = encodeURIComponent(query);
-  const mapsOpen = `https://www.google.com/maps/search/${encodedQ}/@${lat},${lng},14z`;
-
-  div.innerHTML = `
-    <div style="border-radius:14px;overflow:hidden;border:1px solid var(--border);">
-      <div style="padding:10px 14px;background:var(--surface2);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);">
-        <span>📍</span>
-        <span style="font-size:13px;font-weight:500;color:var(--text);flex:1;">${query}</span>
-        <a href="${mapsOpen}" target="_blank"
-           style="font-size:11px;color:var(--gold);text-decoration:none;font-weight:500;flex-shrink:0;">
-          In Maps öffnen →
-        </a>
-      </div>
-      <iframe
-        src="https://www.google.com/maps/embed/v1/search?key=${REISE.mapsApiKey}&q=${encodedQ}&center=${lat},${lng}&zoom=14"
-        width="100%" height="280" style="border:none;display:block;" allowfullscreen loading="lazy">
-      </iframe>
-      <div style="padding:10px 14px;border-top:1px solid var(--border);">
-        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Ort speichern:</div>
-        <div style="display:flex;gap:8px;">
-          <input id="save-name-${Date.now()}" type="text" placeholder="Name des Ortes…"
-            style="flex:1;background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:7px 10px;font-family:'Public Sans',sans-serif;font-size:12px;color:var(--text);outline:none;"
-            onkeydown="if(event.key==='Enter'){event.preventDefault();saveManualPlace(this,${lat},${lng})}">
-          <button type="button" onclick="saveManualPlace(this.previousElementSibling,${lat},${lng})"
-            style="background:color-mix(in srgb,var(--gold) 15%,var(--surface));border:1px solid color-mix(in srgb,var(--gold) 30%,transparent);border-radius:8px;padding:7px 12px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;">
-            + Speichern
-          </button>
-        </div>
-      </div>
-    </div>`;
-
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-async function saveManualPlace(inputEl, lat, lng) {
-  const name = inputEl.value.trim();
-  if (!name) return;
-
-  const d = today();
-  const cur = currentEtappe(d);
-  const etappeNum = cur ? ETAPPEN.indexOf(cur) + 1 : 1;
-
-  inputEl.disabled = true;
-  inputEl.nextElementSibling.textContent = '…';
-
-  const n = name.toLowerCase();
-  let kat = 'BESONDERHEITEN';
-  if (n.match(/restaurant|café|cafe|brasserie|crêperie|creperie|bistro|pizz|boulangerie|bar |auberge/))
-    kat = 'RESTAURANTS';
-  else if (n.match(/supermarché|supermarche|leclerc|carrefour|intermarché|lidl|aldi|marché/))
-    kat = 'SUPERMARKT';
-  else if (n.match(/plage|pointe|cap |sentier|randonnée|phare|château|abbaye|musée|parc/))
-    kat = 'WANDERN / AUSFLÜGE';
-
-  const inhalt = `- ${name}`;
-  const result = await writeToDoc(etappeNum, kat, inhalt);
-
-  const msgs = document.getElementById('chat-messages');
-  const confirmDiv = document.createElement('div');
-  confirmDiv.style.cssText = 'text-align:center;font-size:12px;color:var(--teal);font-weight:500;padding:4px;';
-  confirmDiv.textContent = result || `✓ "${name}" gespeichert`;
-  msgs.appendChild(confirmDiv);
-  msgs.scrollTop = msgs.scrollHeight;
-
-  inputEl.value = '';
-  inputEl.disabled = false;
-  inputEl.nextElementSibling.textContent = '+ Speichern';
-
-  if (result && !result.includes('Fehler')) setTimeout(loadDoc, 1500);
-}
-
-function processMapSearches(text) {
-  const regex = /<map_search>([\s\S]*?)<\/map_search>/g;
-  let match;
-  const d = today();
-  const cur = currentEtappe(d);
-  const defLat = cur ? cur.lat : 48.5;
-  const defLng = cur ? cur.lng : -2.5;
-  while ((match = regex.exec(text)) !== null) {
-    try {
-      const payload = JSON.parse(match[1].trim());
-      renderMapEmbed(payload.query, payload.lat || defLat, payload.lng || defLng);
-    } catch(e) { console.warn('Map parse error:', e); }
-  }
-}
-
-function renderChatUI() {
-  const wrap = document.getElementById('chat-wrap');
-  wrap.innerHTML = `
-    <div class="chat-header">
-      <div class="chat-title">Reiseleiter</div>
-      <div class="chat-subtitle">Fragen · Empfehlungen · Notizen · Karte</div>
-      <div style="display:flex;gap:8px;margin-top:12px;">
-        <input id="map-search-input" type="text"
-          placeholder="Orte suchen, z.B. Bäckerei Barneville…"
-          style="flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:9px 12px;font-family:'Public Sans',sans-serif;font-size:13px;color:var(--text);outline:none;"
-          onkeydown="if(event.key==='Enter') manualMapSearch()">
-        <button onclick="manualMapSearch()"
-          style="background:color-mix(in srgb,var(--teal) 15%,var(--surface));border:1px solid color-mix(in srgb,var(--teal) 35%,transparent);border-radius:10px;padding:9px 14px;color:var(--teal);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;">
-          📍 Suchen
-        </button>
-      </div>
-    </div>
-    <div class="chat-messages" id="chat-messages"></div>
-    <div class="chat-suggestions">
-      <div class="suggestion" onclick="useSuggestion(this)">Was gibt es heute zu tun?</div>
-      <div class="suggestion" onclick="useSuggestion(this)">Beste Restaurants hier</div>
-      <div class="suggestion" onclick="useSuggestion(this)">Wandertipps für morgen</div>
-      <div class="suggestion" onclick="useSuggestion(this)">Notiz ins Doc eintragen</div>
-      <div class="suggestion" onclick="useSuggestion(this)">Gezeitenzeiten heute</div>
-    </div>
-    <div class="chat-input-wrap">
-      <textarea class="chat-input" id="chat-input" placeholder="Frage stellen oder Notiz ablegen…" rows="1"
-        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-      <button class="chat-send" onclick="sendMessage()" id="chat-send">↑</button>
-    </div>`;
-  initChatGreeting();
-}
-
-function renderApiSetup() {
-  const wrap = document.getElementById('chat-wrap');
-  wrap.innerHTML = `
-    <div class="api-setup">
-      <div class="api-setup-icon">🔑</div>
-      <div class="api-setup-title">KI Reiseleiter einrichten</div>
-      <div class="api-setup-sub">
-        Gib deinen Anthropic API Key ein. Er wird nur auf diesem Gerät gespeichert und nie übertragen.
-      </div>
-      <input class="api-key-input" id="api-key-input" type="password"
-        placeholder="sk-ant-api03-..." autocomplete="off"
-        onkeydown="if(event.key==='Enter') saveApiKey()">
-      <button class="api-key-btn" onclick="saveApiKey()">Speichern & Starten</button>
-      <div class="api-key-note">
-        API Key unter <strong>console.anthropic.com</strong> erstellen.<br>
-        Wird sicher in deinem Browser gespeichert.
-      </div>
-    </div>`;
-}
-
-function saveApiKey() {
-  const val = document.getElementById('api-key-input').value.trim();
-  if (!val.startsWith('sk-ant-')) {
-    alert('Bitte einen gültigen Anthropic API Key eingeben (beginnt mit sk-ant-)');
-    return;
-  }
-  apiKey = val;
-  localStorage.setItem('bn_api_key', val);
-  renderChatUI();
-}
-
-function initChatGreeting() {
-  const d = today();
-  const cur = currentEtappe(d);
-  let greeting;
-  if (d < REISE.start) {
-    const days = daysBetween(d, REISE.start);
-    greeting = `Hallo! Noch ${days} Tage bis zur Abfahrt.\n\nIch bin euer Reiseleiter für die Bretagne & Normandie. Ich kenne alle Etappen, Unterkünfte und kann Empfehlungen geben oder Notizen ins Reisedokument formulieren.\n\nWas kann ich für euch tun?`;
-  } else if (cur) {
-    greeting = `Guten Tag! Ihr seid in ${cur.name} — Tag ${daysBetween(REISE.start, d) + 1} der Reise.\n\nIch helfe mit Restaurants, Aktivitäten, Wanderungen oder Notizen.\n\nWas braucht ihr?`;
-  } else {
-    greeting = `Hallo! Euer persönlicher Reiseleiter für Bretagne & Normandie.\n\nFragt mich nach Aktivitäten, Restaurants, Tipps — oder ich formuliere Notizen fürs Reisedokument.`;
-  }
-  const msgs = document.getElementById('chat-messages');
-  const now = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-  msgs.innerHTML = `
-    <div class="msg ai">
-      <div class="msg-bubble">${greeting.replace(/\n/g, '<br>')}</div>
-      <div class="msg-time">${now}</div>
-    </div>`;
-  chatHistory = [{ role: 'assistant', content: greeting }];
+  return `Reiseleiter für Bretagne/Normandie Roadtrip Mai 2026. Tesla + Hund.
+Heute: ${d.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'})}. Standort: ${loc}.
+Etappen: 1.Valenciennes(13-14.05) 2.Cotentin(14-19.05) 3.Crozon(19-25.05) 4.Alabasterküste(25-30.05).
+Doc-Notizen: ${docSummary||'keine'}.
+Antworte kurz, konkret, auf Deutsch. Nur reiserelevante Antworten.
+Für Ortsuchen: gib <map_search>{"query":"...","lat":XX,"lng":XX}</map_search> aus.
+Für Doc-Einträge: gib <doc_write>{"etappe":N,"kategorie":"RESTAURANTS","inhalt":"- Name: Info"}</doc_write> aus.`;
 }
 
 function addMsg(role, text) {
-  const msgs = document.getElementById('chat-messages');
-  const now = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  const msgs = document.getElementById('chat-msgs');
+  const t = new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
   const div = document.createElement('div');
   div.className = `msg ${role}`;
-  div.innerHTML = `<div class="msg-bubble">${text.replace(/\n/g, '<br>')}</div><div class="msg-time">${now}</div>`;
+  div.innerHTML = `<div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div><div class="msg-time">${t}</div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
-  chatHistory.push({ role: role === 'user' ? 'user' : 'assistant', content: text });
+  chatHistory.push({ role: role==='user'?'user':'assistant', content: text });
 }
 
 function addTyping() {
-  const msgs = document.getElementById('chat-messages');
+  const msgs = document.getElementById('chat-msgs');
   const div = document.createElement('div');
-  div.id = 'typing';
-  div.className = 'typing-indicator';
-  div.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+  div.id = 'typing'; div.className = 'typing-wrap';
+  div.innerHTML = '<div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div>';
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
 }
 
-async function sendMessage() {
+async function sendMsg() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text) return;
 
-  input.value = '';
-  input.style.height = 'auto';
-  const sendBtn = document.getElementById('chat-send');
-  sendBtn.disabled = true;
+  input.value = ''; input.style.height = 'auto';
+  const btn = document.getElementById('send-btn');
+  btn.disabled = true;
 
   addMsg('user', text);
   addTyping();
 
   try {
-    const messages = chatHistory
-      .filter(m => m.role === 'user' || m.role === 'assistant')
-      .slice(-6); // last 3 exchanges
-
-    const res = await fetch('https://muddy-hall-ead6.philipp-51c.workers.dev/', {
+    const messages = chatHistory.filter(m=>m.role==='user'||m.role==='assistant').slice(-8);
+    const res = await fetch(CONFIG.workerUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
+        'x-api-key': CONFIG.anthropicKey,
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
         max_tokens: 1024,
         system: buildSystemPrompt(),
-        messages: messages
+        messages
       })
     });
 
     document.getElementById('typing')?.remove();
 
     if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      const msg = err?.error?.message || `HTTP ${res.status}`;
-      // If key issue, offer to reset
-      if (res.status === 401) {
-        addMsg('ai', `API Key ungültig oder abgelaufen. <a href="#" onclick="resetApiKey()" style="color:var(--gold)">Key neu eingeben →</a>`);
-      } else {
-        addMsg('ai', `Fehler vom Server: ${msg}`);
-      }
-      sendBtn.disabled = false;
-      return;
+      const err = await res.json().catch(()=>({}));
+      addMsg('ai', `Fehler: ${err?.error?.message || res.status}`);
+      btn.disabled = false; return;
     }
 
     const data = await res.json();
-    // Extract text content (skip thinking blocks)
-    const reply = data.content
-      ?.filter(b => b.type === 'text')
-      .map(b => b.text)
-      .join('') || 'Keine Antwort erhalten.';
+    const reply = data.content?.filter(b=>b.type==='text').map(b=>b.text).join('') || '–';
 
-    // Process any doc_write blocks silently
-    const writeResults = await processDocWrites(reply);
+    // Clean & process
+    const clean = reply.replace(/<map_search>[\s\S]*?<\/map_search>/g,'').replace(/<doc_write>[\s\S]*?<\/doc_write>/g,'').trim();
+    if (clean) addMsg('ai', clean);
 
-    // Clean reply — remove special blocks from display
-    const cleanReply = reply
-      .replace(/<doc_write>[\s\S]*?<\/doc_write>/g, '')
-      .replace(/<map_search>[\s\S]*?<\/map_search>/g, '')
-      .trim();
+    // Map search
+    const mapMatches = [...reply.matchAll(/<map_search>([\s\S]*?)<\/map_search>/g)];
+    mapMatches.forEach(m => {
+      try { const p = JSON.parse(m[1].trim()); renderMapInChat(p.query, p.lat||48.5, p.lng||-2.5); } catch(e){}
+    });
 
-    addMsg('ai', cleanReply);
-
-    // Render map if present
-    processMapSearches(reply);
-
-    // Show write confirmations as small status messages
-    if (writeResults.length > 0) {
-      writeResults.forEach(r => {
-        const msgs = document.getElementById('chat-messages');
-        const div = document.createElement('div');
-        div.style.cssText = 'text-align:center;font-size:11px;color:var(--teal);padding:4px 0;opacity:0.8;';
-        div.textContent = r;
-        msgs.appendChild(div);
-        msgs.scrollTop = msgs.scrollHeight;
-      });
-      // Reload doc data after write
-      setTimeout(loadDoc, 1500);
+    // Doc writes
+    const docMatches = [...reply.matchAll(/<doc_write>([\s\S]*?)<\/doc_write>/g)];
+    for (const m of docMatches) {
+      try {
+        const p = JSON.parse(m[1].trim());
+        const result = await writeToDoc(p.etappe, p.kategorie, p.inhalt);
+        const msgs = document.getElementById('chat-msgs');
+        const d = document.createElement('div');
+        d.style.cssText = 'text-align:center;font-size:12px;color:var(--cyan);padding:4px;letter-spacing:0.06em;';
+        d.textContent = result || '// Eingetragen';
+        msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
+        setTimeout(loadDoc, 1500);
+      } catch(e){}
     }
 
   } catch(e) {
     document.getElementById('typing')?.remove();
-    addMsg('ai', `Verbindungsfehler: ${e.message}. Bitte Internetverbindung prüfen.`);
+    addMsg('ai', `// Verbindungsfehler: ${e.message}`);
   }
 
-  sendBtn.disabled = false;
-  input.focus();
+  btn.disabled = false;
 }
 
-function manualMapSearch() {
-  const input = document.getElementById('map-search-input');
-  const query = input.value.trim();
-  if (!query) return;
+function useChip(el) {
+  document.getElementById('chat-input').value = el.textContent;
+  sendMsg();
+}
 
-  const d = today();
-  const cur = currentEtappe(d);
+function doMapSearch() {
+  const q = document.getElementById('map-search').value.trim();
+  if (!q) return;
+  const cur = currentEtappe();
   const lat = cur ? cur.lat : 48.5;
   const lng = cur ? cur.lng : -2.5;
-
-  // Add user message
-  addMsg('user', `📍 ${query}`);
-  placesSearch(query, lat, lng);
-  input.value = '';
+  addMsg('user', `📍 ${q}`);
+  renderMapInChat(q, lat, lng);
+  document.getElementById('map-search').value = '';
 }
 
-function resetApiKey() {
-  localStorage.removeItem('bn_api_key');
-  apiKey = '';
-  renderApiSetup();
+function renderMapInChat(query, lat, lng) {
+  const msgs = document.getElementById('chat-msgs');
+  const ts = Date.now();
+  const cur = currentEtappe();
+  const etappeNum = cur ? ETAPPEN.indexOf(cur)+1 : 1;
+
+  const div = document.createElement('div');
+  div.style.cssText = 'width:100%;max-width:100%;align-self:flex-start;animation:fadeUp 0.25s ease;';
+
+  div.innerHTML = `
+    <div class="chat-map">
+      <div class="chat-map-header">
+        <span style="font-size:14px;">📍</span>
+        <span class="chat-map-title">${query}</span>
+        <a class="chat-map-open" href="https://www.google.com/maps/search/${encodeURIComponent(query)}/@${lat},${lng},14z" target="_blank">MAPS →</a>
+      </div>
+      <iframe src="https://www.google.com/maps/embed/v1/search?key=${CONFIG.mapsApiKey}&q=${encodeURIComponent(query)}&center=${lat},${lng}&zoom=14"
+        width="100%" height="240" style="border:none;display:block;" allowfullscreen loading="lazy">
+      </iframe>
+      <div class="chat-map-save">
+        <input class="save-input" id="si-${ts}" type="text" placeholder="Namen eingeben und speichern…"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();chatSave('si-${ts}',${etappeNum})}">
+        <button class="save-btn" type="button" onclick="chatSave('si-${ts}',${etappeNum})">+ SAVE</button>
+      </div>
+    </div>`;
+
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
 }
 
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-}
+async function chatSave(inputId, etappeNum) {
+  const input = document.getElementById(inputId);
+  const name = input.value.trim();
+  if (!name) return;
 
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-}
+  input.disabled = true;
+  const n = name.toLowerCase();
+  let kat = 'BESONDERHEITEN';
+  if (n.match(/restaurant|café|cafe|brasserie|crêperie|bistro|boulangerie|bar |auberge/)) kat='RESTAURANTS';
+  else if (n.match(/supermarché|leclerc|carrefour|intermarché|lidl|aldi|marché/)) kat='SUPERMARKT';
+  else if (n.match(/plage|pointe|cap |sentier|randonnée|phare|château|musée|parc/)) kat='WANDERN / AUSFLÜGE';
 
-function useSuggestion(el) {
-  document.getElementById('chat-input').value = el.textContent;
-  sendMessage();
+  const result = await writeToDoc(etappeNum, kat, `- ${name}`);
+
+  const msgs = document.getElementById('chat-msgs');
+  const d = document.createElement('div');
+  d.style.cssText = 'text-align:center;font-size:12px;color:var(--cyan);padding:4px;letter-spacing:0.06em;';
+  d.textContent = result || `// "${name}" gespeichert`;
+  msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
+
+  input.value = ''; input.disabled = false;
+  if (result && !result.includes('Fehler')) setTimeout(loadDoc, 1500);
 }
 
 function initChat() {
-  renderChatUI();
+  const msgs = document.getElementById('chat-msgs');
+  const cur = currentEtappe();
+  const d = today();
+  let greeting;
+  if (d < TRIP.start) {
+    const days = daysBetween(d, TRIP.start);
+    greeting = `// SYSTEM BEREIT\nNoch ${days} Tage bis zur Abfahrt.\n\nFrag mich nach Aktivitäten, Restaurants oder Tipps. Ich kann auch Notizen ins Reisedokument schreiben.`;
+  } else if (cur) {
+    greeting = `// STANDORT: ${cur.name.toUpperCase()}\nTag ${daysBetween(TRIP.start,d)+1} der Reise.\n\nFrag mich nach Restaurants, Aktivitäten, Gezeiten. Oder sag mir was ich ins Reisedoc eintragen soll.`;
+  } else {
+    greeting = `// KI REISELEITER\nBretagne & Normandie 2026.\n\nFragen, Empfehlungen, Notizen eintragen — ich helfe.`;
+  }
+  const t = new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  msgs.innerHTML = `<div class="msg ai"><div class="msg-bubble">${greeting.replace(/\n/g,'<br>')}</div><div class="msg-time">${t}</div></div>`;
+  chatHistory = [{ role:'assistant', content:greeting }];
 }
 
 // ── NAVIGATION ────────────────────────────────────────────────────────────────
-function toggleCard(i) {
-  document.getElementById(`card-${i}`).classList.toggle('open');
+function toggleCard(i) { document.getElementById(`card-${i}`).classList.toggle('open'); }
+
+function openEtappe(i) {
+  switchTab('etappen', document.querySelectorAll('.nav-item')[1]);
+  setTimeout(() => {
+    const card = document.getElementById(`card-${i}`);
+    card?.classList.add('open');
+    card?.scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 100);
 }
 
 function switchTab(name, btn) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
   document.getElementById(`s-${name}`).classList.add('active');
   btn.classList.add('active');
-  window.scrollTo(0, 0);
+  window.scrollTo(0,0);
 }
 
 function toggleTheme() {
   const html = document.documentElement;
-  const dark = html.getAttribute('data-theme') === 'dark';
-  html.setAttribute('data-theme', dark ? 'light' : 'dark');
-  document.getElementById('theme-icon').textContent = dark ? '☀︎' : '☽';
+  html.setAttribute('data-theme', html.getAttribute('data-theme')==='dark'?'light':'dark');
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
-function renderNotizen() {
-  const el = document.getElementById('notizen-content');
-  if (!el) return;
-
-  const etappenMitDaten = ETAPPEN.map((e, i) => {
-    const doc = docData[i+1] || {};
-    const eintraege = [
-      { kat:'🍽 Restaurants', data: doc.restaurants },
-      { kat:'🥾 Wandern', data: doc.wandern },
-      { kat:'💡 Besonderheiten', data: doc.besonderheiten },
-      { kat:'🛒 Supermarkt', data: doc.supermarkt },
-      { kat:'🏠 Unterkunft', data: doc.unterkunft },
-    ].filter(x => x.data);
-    return { e, eintraege };
-  }).filter(x => x.eintraege.length > 0);
-
-  if (!etappenMitDaten.length) {
-    el.innerHTML = `<div style="text-align:center;padding:32px;color:var(--text3);font-size:16px;">Noch keine Notizen gespeichert.</div>`;
-    return;
-  }
-
-  el.innerHTML = etappenMitDaten.map(({ e, eintraege }) => `
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:14px;">
-      <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;">
-        <div style="width:10px;height:10px;border-radius:50%;background:${e.color};flex-shrink:0;"></div>
-        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:${e.color};">${e.name}</div>
-        <div style="font-size:14px;font-weight:300;color:var(--text3);">${e.dates}</div>
-      </div>
-      <div style="padding:16px 20px;">
-        ${eintraege.map(({ kat, data }) => {
-          const lines = data.split('\n').map(l=>l.trim()).filter(l=>l&&l!=='—');
-          if (!lines.length) return '';
-          return `
-            <div style="margin-bottom:14px;">
-              <div style="font-size:13px;font-weight:600;letter-spacing:0.15em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;">${kat}</div>
-              <div style="font-size:16px;font-weight:300;color:var(--text2);line-height:1.7;">
-                ${lines.map(l=>`<div style="padding:3px 0;">– ${l.replace(/^-\s*/,'')}</div>`).join('')}
-              </div>
-            </div>`;
-        }).join('')}
-      </div>
-    </div>`).join('');
-}
-
-async function quickSaveNotiz() {
-  const etappe = document.getElementById('notiz-etappe').value;
-  const kat = document.getElementById('notiz-kat').value;
-  const text = document.getElementById('notiz-text').value.trim();
-  const status = document.getElementById('notiz-status');
-
-  if (!text) { status.textContent = 'Bitte Text eingeben.'; return; }
-
-  status.textContent = 'Speichere…';
-  status.style.color = 'var(--text3)';
-
-  const inhalt = text.startsWith('-') ? text : `- ${text}`;
-  const result = await writeToDoc(parseInt(etappe), kat, inhalt);
-
-  status.textContent = result || '✓ Gespeichert';
-  status.style.color = 'var(--teal)';
-  document.getElementById('notiz-text').value = '';
-
-  if (result && !result.includes('Fehler')) {
-    setTimeout(() => { loadDoc(); status.textContent = ''; }, 2000);
-  }
-}
-
+// ── RENDER ALL ────────────────────────────────────────────────────────────────
 function renderAll() {
-  renderOverview();
-  renderTodayCard();
+  renderTopbarDate();
+  renderStats();
+  renderToday();
   renderRoute();
+  renderProgress();
   renderEtappen();
-  renderTeslaList();
-  renderLogistik();
+  renderNavList();
   renderNotizen();
   initChat();
 }
