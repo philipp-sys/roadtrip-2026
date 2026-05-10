@@ -1,6 +1,6 @@
 // ── CONFIGURATION ────────────────────────────────────────────────────────────
 const CONFIG = {
-  anthropicKey:  'ANTHROPIC_KEY_HERE',
+  anthropicKey:  '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',
   workerUrl:     'https://muddy-hall-ead6.philipp-51c.workers.dev/',
   appsScriptUrl: 'https://script.google.com/macros/s/AKfycbzVuZsw06w4NejYYQudXUbRUpocXX1iHKIzubvA5ppTSVOtZQS9vyhIgsi6qO6yW2k2/exec',
   mapsApiKey:    'AIzaSyAgh-3kD60VcglLsSEJ6lWMfUnDkj-BukA',
@@ -110,3 +110,63 @@ const ETAPPEN = [
 ];
 
 const KATEGORIEN = ['RESTAURANTS', 'WANDERN / AUSFLÜGE', 'BESONDERHEITEN', 'SUPERMARKT', 'UNTERKUNFT'];
+
+// ── REGION HIGHLIGHTS (static, curated) ───────────────────────────────────────
+const HIGHLIGHTS = {
+  1: null, // Valenciennes — nur Stopover
+  2: {
+    top3: [
+      { name:'Cap de Carteret', desc:'Spektakulärer Aussichtspunkt mit Blick auf Kanalinseln. Leichter Spaziergang, hundefreundlich.' },
+      { name:'Plage de la Vieille Église', desc:'Riesige Sandstrände bei Ebbe — perfekt für Hunde. Vor Juni keine Einschränkungen.' },
+      { name:'Barneville-Carteret Hafen', desc:'Gemütlicher Fischerhafen mit frischen Austern direkt vom Boot.' },
+    ],
+    wandern: [
+      'GR223 Küstenweg ab Cap de Carteret — 8 km, leicht, Meerblick',
+      'Plage de Hatainville — weiter Sandstrand, ideal bei Ebbe mit Hund',
+    ],
+    spezialitaeten: [
+      'Austern & Muscheln (direkt vom Fischer am Hafen)',
+      'Cidre de Normandie — trockener Apfelwein der Region',
+      'Teurgoule — normändischer Reispudding mit Zimt',
+    ],
+    nichtVerpassen: 'Ebbe-Zeiten checken! Bei Niedrigwasser entstehen endlose Sandstrände — mit Hund ein Erlebnis.',
+  },
+  3: {
+    top3: [
+      { name:'Pointe de Pen-Hir', desc:'Dramatischste Klippen der Bretagne. UNESCO-Landschaft. Hunde an der Leine erlaubt.' },
+      { name:'Camaret-sur-Mer', desc:'Authentisches Fischerdorf mit bunten Booten und mittelalterlichem Turm (Vauban).' },
+      { name:'Presqu\'île de Crozon', desc:'Halbinsel mit wilden Küstenlandschaften, Megalithen und einsamen Buchten.' },
+    ],
+    wandern: [
+      'Küstenwanderung Pen-Hir → Pointe de Dinan — 12 km, mittelschwer, spektakulär',
+      'Sentier des Douaniers ab Camaret — flacher Küstenpfad, hundefreundlich',
+      'Wanderwege direkt ab Haus Lambézen möglich',
+    ],
+    spezialitaeten: [
+      'Galettes (Buchweizen-Crêpes mit Käse/Ei/Schinken) — bretonische Spezialität',
+      'Kouign-Amann — buttrig-karamellisierter Blechkuchen aus Douarnenez',
+      'Bretonische Sardinen in Olivenöl — ideal als Mitbringsel',
+      'Cidre breton & Chouchen (Honigwein)',
+    ],
+    nichtVerpassen: 'Sonnenuntergang an der Pointe de Pen-Hir — einer der schönsten Frankreichs. Mit Hund möglich.',
+  },
+  4: {
+    top3: [
+      { name:'Falaises d\'Étretat', desc:'Berühmteste Kreidefelsen Frankreichs — 30 Min. Fahrt. Ikonische Bögen und Nadeln.' },
+      { name:'Dieppe', desc:'Lebendige Hafenstadt, 20 Min. Fahrt. Fischmarkt, Burg mit Meerblick, hundefreundliche Strände.' },
+      { name:'Véloroute Verte de Normandie', desc:'Flacher Radweg entlang der Küste. Mit Hund perfekt kombinierbar.' },
+    ],
+    wandern: [
+      'Klippen-Spaziergang Criel-sur-Mer → Mesnil-Val — 6 km, leicht (⚠️ Abstand halten!)',
+      'Strand von Criel-sur-Mer — direkt vor der Haustür, hundefreundlich',
+      'Forêt d\'Eu — Waldwanderung, 15 Min. entfernt',
+    ],
+    spezialitaeten: [
+      'Harengs fumés (Räucherhering) — Spezialität der Alabasterküste',
+      'Neufchâtel-Käse — herzförmiger Weichkäse aus der Normandie',
+      'Calvados — normändischer Apfelschnaps',
+      'Tarte normande — Apfelkuchen mit Crème fraîche',
+    ],
+    nichtVerpassen: '⚠️ Étretat unbedingt früh morgens besuchen — weniger Touristen und besseres Licht. Hund erlaubt außerhalb Hauptsaison.',
+  },
+};
