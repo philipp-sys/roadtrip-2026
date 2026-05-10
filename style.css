@@ -43,8 +43,8 @@ body {
   background-image: var(--scanlines);
   color: var(--text);
   font-family: 'Space Mono', monospace;
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 20px;
+  line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
   /* Subtle vignette */
@@ -65,7 +65,7 @@ body::before {
 /* ── TOPBAR ──────────────────────────────────────────── */
 .topbar {
   position: sticky; top: 0; z-index: 300;
-  height: 60px;
+  height: 68px;
   background: rgba(5, 6, 7, 0.95);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--line2);
@@ -92,13 +92,13 @@ body::before {
 
 .topbar-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px; letter-spacing: 0.12em;
+  font-size: 26px; letter-spacing: 0.10em;
   color: var(--text);
 }
 
 .topbar-sub {
-  font-size: 11px; letter-spacing: 0.08em;
-  color: var(--text3);
+  font-size: 14px; letter-spacing: 0.06em;
+  color: var(--text2);
 }
 
 .topbar-right { display: flex; align-items: center; gap: 16px; }
@@ -138,7 +138,7 @@ body::before {
 
 .hero-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(52px, 13vw, 80px);
+  font-size: clamp(56px, 14vw, 88px);
   line-height: 0.9; letter-spacing: 0.03em;
   color: var(--text); margin-bottom: 6px;
 }
@@ -149,8 +149,8 @@ body::before {
 }
 
 .hero-sub {
-  font-size: 13px; letter-spacing: 0.1em;
-  color: var(--text3); margin-bottom: 24px;
+  font-size: 17px; letter-spacing: 0.07em;
+  color: var(--text2); margin-bottom: 24px;
 }
 
 /* Stats row */
@@ -169,13 +169,13 @@ body::before {
 
 .stat-val {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 30px; letter-spacing: 0.04em;
+  font-size: 36px; letter-spacing: 0.03em;
   color: var(--cyan); line-height: 1;
 }
 
 .stat-lbl {
-  font-size: 10px; letter-spacing: 0.18em;
-  color: var(--text3); text-transform: uppercase;
+  font-size: 13px; letter-spacing: 0.12em;
+  color: var(--text2); text-transform: uppercase;
 }
 
 /* Today card */
@@ -212,12 +212,12 @@ body::before {
 
 .today-location {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 40px; letter-spacing: 0.05em;
+  font-size: 48px; letter-spacing: 0.04em;
   line-height: 1; margin-bottom: 4px;
 }
 
 .today-region {
-  font-size: 13px; letter-spacing: 0.06em;
+  font-size: 17px; letter-spacing: 0.04em;
   color: var(--text2); margin-bottom: 18px;
 }
 
@@ -234,13 +234,13 @@ body::before {
 }
 
 .today-cell-label {
-  font-size: 9px; letter-spacing: 0.25em;
-  color: var(--text3); text-transform: uppercase;
+  font-size: 12px; letter-spacing: 0.18em;
+  color: var(--text2); text-transform: uppercase;
   margin-bottom: 4px;
 }
 
 .today-cell-val {
-  font-size: 15px; font-weight: 400;
+  font-size: 18px; font-weight: 400;
   color: var(--text); line-height: 1.3;
 }
 
@@ -254,15 +254,15 @@ body::before {
 
 .countdown-num {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 80px; letter-spacing: 0.04em;
+  font-size: 90px; letter-spacing: 0.04em;
   color: var(--cyan);
   text-shadow: 0 0 40px rgba(0,229,255,0.4);
   line-height: 1;
 }
 
 .countdown-label {
-  font-size: 13px; letter-spacing: 0.2em;
-  color: var(--text3); text-transform: uppercase;
+  font-size: 16px; letter-spacing: 0.15em;
+  color: var(--text2); text-transform: uppercase;
   margin-top: 6px;
 }
 
@@ -270,8 +270,8 @@ body::before {
 .route-wrap { padding: 20px 24px 0; }
 
 .section-tag {
-  font-size: 10px; letter-spacing: 0.3em;
-  color: var(--text3); text-transform: uppercase;
+  font-size: 13px; letter-spacing: 0.20em;
+  color: var(--text2); text-transform: uppercase;
   margin-bottom: 14px;
   display: flex; align-items: center; gap: 8px;
 }
@@ -304,8 +304,8 @@ body::before {
 }
 
 .route-name {
-  font-size: 9px; letter-spacing: 0.08em;
-  text-transform: uppercase; white-space: nowrap; color: var(--text3);
+  font-size: 12px; letter-spacing: 0.06em;
+  text-transform: uppercase; white-space: nowrap; color: var(--text2);
 }
 
 .route-name.active { font-weight: 700; }
@@ -330,7 +330,7 @@ body::before {
   border: 1px solid rgba(255,107,53,0.3);
   border-radius: var(--r);
   display: flex; gap: 12px; align-items: center;
-  font-size: 14px; color: var(--text2);
+  font-size: 17px; color: var(--text2);
 }
 
 .alert-bar strong { color: var(--warn); font-weight: 600; }
@@ -389,8 +389,8 @@ body::before {
 }
 
 .prog-label {
-  font-size: 9px; letter-spacing: 0.06em;
-  text-transform: uppercase; color: var(--text3);
+  font-size: 12px; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--text2);
   text-align: center; white-space: nowrap;
 }
 
@@ -428,7 +428,7 @@ body::before {
 
 .card-num {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 36px; letter-spacing: 0.04em;
+  font-size: 42px; letter-spacing: 0.03em;
   line-height: 1; color: var(--text3); flex-shrink: 0;
   min-width: 42px;
 }
@@ -439,12 +439,12 @@ body::before {
 
 .card-name {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 28px; letter-spacing: 0.06em; line-height: 1;
-  margin-bottom: 3px;
+  font-size: 34px; letter-spacing: 0.05em; line-height: 1;
+  margin-bottom: 4px;
 }
 
 .card-region {
-  font-size: 12px; letter-spacing: 0.06em; color: var(--text2);
+  font-size: 16px; letter-spacing: 0.04em; color: var(--text2);
 }
 
 .card-right {
@@ -452,7 +452,7 @@ body::before {
   align-items: flex-end; gap: 6px; flex-shrink: 0;
 }
 
-.card-dates { font-size: 12px; letter-spacing: 0.04em; color: var(--text3); }
+.card-dates { font-size: 15px; letter-spacing: 0.03em; color: var(--text2); }
 
 .card-chevron {
   width: 32px; height: 32px; border-radius: 6px;
@@ -482,12 +482,12 @@ body::before {
 
 .drive-val {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px; letter-spacing: 0.04em; color: var(--text);
+  font-size: 26px; letter-spacing: 0.03em; color: var(--text);
 }
 
 .drive-lbl {
-  font-size: 10px; letter-spacing: 0.16em;
-  color: var(--text3); text-transform: uppercase;
+  font-size: 13px; letter-spacing: 0.10em;
+  color: var(--text2); text-transform: uppercase;
 }
 
 /* Card body */
@@ -502,12 +502,12 @@ body::before {
 .body-section:last-child { border-bottom: none; }
 
 .body-label {
-  font-size: 10px; letter-spacing: 0.28em;
-  color: var(--text3); text-transform: uppercase;
-  margin-bottom: 8px;
+  font-size: 13px; letter-spacing: 0.18em;
+  color: var(--text2); text-transform: uppercase;
+  margin-bottom: 10px;
 }
 
-.body-val { font-size: 16px; color: var(--text); line-height: 1.5; }
+.body-val { font-size: 19px; color: var(--text); line-height: 1.5; }
 .body-val.dim { color: var(--text2); font-size: 14px; }
 
 /* Booking badge */
@@ -539,7 +539,7 @@ body::before {
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 6px; padding: 18px 12px;
-  min-height: 80px;
+  min-height: 88px;
   border-radius: var(--r); border: 1px solid var(--line2);
   background: var(--panel2);
   text-decoration: none; cursor: pointer;
@@ -560,10 +560,10 @@ body::before {
   color: #ffe066;
 }
 
-.act-btn.full { grid-column: 1/-1; flex-direction: row; gap: 10px; min-height: 60px; padding: 14px 20px; }
+.act-btn.full { grid-column: 1/-1; flex-direction: row; gap: 10px; min-height: 68px; padding: 14px 20px; }
 
 .act-ico { font-size: 22px; }
-.act-lbl { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; text-align: center; }
+.act-lbl { font-size: 16px; letter-spacing: 0.05em; text-transform: uppercase; text-align: center; }
 .act-sub { font-size: 10px; letter-spacing: 0.04em; opacity: 0.5; }
 
 /* ── KARTE ───────────────────────────────────────────── */
@@ -583,11 +583,11 @@ body::before {
 
 .card-header-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 20px; letter-spacing: 0.06em; color: var(--text);
+  font-size: 24px; letter-spacing: 0.05em; color: var(--text);
 }
 
 .card-header-sub {
-  font-size: 11px; letter-spacing: 0.06em; color: var(--text3);
+  font-size: 15px; letter-spacing: 0.04em; color: var(--text2);
 }
 
 .maps-link-btn {
@@ -595,7 +595,7 @@ body::before {
   padding: 8px 16px; border-radius: 8px;
   background: var(--cyan-dim); border: 1px solid var(--line2);
   color: var(--cyan); text-decoration: none;
-  font-size: 13px; letter-spacing: 0.04em;
+  font-size: 16px; letter-spacing: 0.03em;
   transition: border-color 0.2s;
   white-space: nowrap;
 }
@@ -617,8 +617,8 @@ body::before {
 .nav-list-row:active { background: var(--panel2); }
 
 .nav-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.nav-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.04em; flex: 1; }
-.nav-sub { font-size: 11px; letter-spacing: 0.04em; color: var(--text3); }
+.nav-name { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.04em; flex: 1; }
+.nav-sub { font-size: 14px; letter-spacing: 0.04em; color: var(--text2); }
 .nav-arrow { font-size: 14px; letter-spacing: 0.06em; color: var(--cyan); font-weight: 700; }
 
 /* ── KI / CHAT ───────────────────────────────────────── */
@@ -808,11 +808,11 @@ body::before {
 
 .page-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 32px; letter-spacing: 0.06em; color: var(--text);
+  font-size: 38px; letter-spacing: 0.05em; color: var(--text);
   margin-bottom: 4px;
 }
 
-.page-sub { font-size: 13px; letter-spacing: 0.06em; color: var(--text3); }
+.page-sub { font-size: 16px; letter-spacing: 0.04em; color: var(--text2); }
 
 /* Quick add form */
 .quick-add {
@@ -839,7 +839,7 @@ body::before {
   width: 100%;
 }
 .form-select:focus, .form-textarea:focus { border-color: var(--cyan); }
-.form-textarea { resize: none; min-height: 80px; line-height: 1.5; }
+.form-textarea { resize: none; min-height: 88px; line-height: 1.5; }
 
 .submit-btn {
   width: 100%; padding: 18px;
@@ -878,7 +878,7 @@ body::before {
   font-size: 22px; letter-spacing: 0.06em; flex: 1;
 }
 
-.notiz-etappe-dates { font-size: 12px; letter-spacing: 0.04em; color: var(--text3); }
+.notiz-etappe-dates { font-size: 15px; letter-spacing: 0.03em; color: var(--text2); }
 
 .notiz-kat { padding: 12px 18px; border-bottom: 1px solid var(--line); }
 .notiz-kat:last-child { border-bottom: none; }
@@ -904,7 +904,7 @@ body::before {
 /* ── BOTTOM NAV ──────────────────────────────────────── */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
-  height: 72px;
+  height: 80px;
   background: rgba(5,6,7,0.97);
   backdrop-filter: blur(20px);
   border-top: 1px solid var(--line2);
@@ -923,8 +923,8 @@ body::before {
 
 .nav-item.active { color: var(--cyan); }
 
-.nav-ico { font-size: 22px; line-height: 1; }
-.nav-lbl { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+.nav-ico { font-size: 26px; line-height: 1; }
+.nav-lbl { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
 
 /* ── LIGHT MODE ──────────────────────────────────────── */
 [data-theme="light"] {
