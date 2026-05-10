@@ -41,14 +41,17 @@
       </div>
     </div>
     <div class="today-wrap" id="today-wrap"></div>
+    <div id="weather-wrap"></div>
     <div class="route-wrap">
       <div class="section-tag">Route</div>
-      <div class="route-line" id="route-line"></div>
+      <div id="route-map" style="border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--line2);height:220px;background:var(--panel);">
+        <iframe id="route-map-iframe"
+          src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyAgh-3kD60VcglLsSEJ6lWMfUnDkj-BukA&origin=50.3580,3.5239&waypoints=49.3755,-1.7765|48.2776,-4.5887&destination=50.0197,1.3098&mode=driving&language=de"
+          width="100%" height="220" style="border:none;display:block;" allowfullscreen loading="lazy">
+        </iframe>
+      </div>
     </div>
-    <div class="alert-bar">
-      <span>⚠</span>
-      <span><strong>Criel-sur-Mer:</strong> Klippen-Abbruchgefahr — Leinenpflicht für Hund.</span>
-    </div>
+
   </div>
 </div>
 
@@ -84,10 +87,10 @@
           📍 Öffnen
         </a>
       </div>
-      <div class="maps-iframe-wrap">
+      <div class="maps-iframe-wrap" style="height:380px;">
         <iframe
-          src="https://www.google.com/maps/embed/v1/search?key=AIzaSyAgh-3kD60VcglLsSEJ6lWMfUnDkj-BukA&q=Bretagne+Normandie+France+hotels&center=48.8,-2.5&zoom=7"
-          allowfullscreen loading="lazy">
+          src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyAgh-3kD60VcglLsSEJ6lWMfUnDkj-BukA&origin=50.3580,3.5239&waypoints=49.3755,-1.7765|48.2776,-4.5887&destination=50.0197,1.3098&mode=driving&language=de"
+          width="100%" height="380" allowfullscreen loading="lazy" style="border:none;display:block;">
         </iframe>
       </div>
     </div>
@@ -353,6 +356,107 @@ function renderProgress() {
 }
 
 // ── ETAPPEN ───────────────────────────────────────────────────────────────────
+// ── WEATHER ───────────────────────────────────────────────────────────────────
+async function renderWeather() {
+  const wrap = document.getElementById('weather-wrap');
+  if (!wrap) return;
+
+  const cur = currentEtappe();
+  if (!cur) return;
+
+  const lat = cur.lat, lng = cur.lng;
+
+  try {
+    const res = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weathercode,windspeed_10m,precipitation&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum&timezone=Europe/Paris&forecast_days=3`
+    );
+    const data = await res.json();
+    const c = data.current;
+    const d = data.daily;
+
+    const wIcon = code => {
+      if (code===0) return '☀️';
+      if (code<=3) return '⛅';
+      if (code<=48) return '🌫️';
+      if (code<=67) return '🌧️';
+      if (code<=77) return '🌨️';
+      if (code<=82) return '🌦️';
+      return '⛈️';
+    };
+
+    const days = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+
+    wrap.innerHTML = `
+      <div style="margin:16px 24px 0;">
+        <div class="section-tag">Wetter · ${cur.name}</div>
+        <div style="background:var(--panel);border:1px solid var(--line2);border-radius:var(--r-lg);overflow:hidden;">
+          <!-- Current -->
+          <div style="padding:16px 20px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line);">
+            <div style="font-size:40px;line-height:1;">${wIcon(c.weathercode)}</div>
+            <div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:0.04em;color:var(--cyan);">${Math.round(c.temperature_2m)}°C</div>
+              <div style="font-size:12px;letter-spacing:0.08em;color:var(--text3);">WIND ${Math.round(c.windspeed_10m)} km/h · REGEN ${c.precipitation} mm</div>
+            </div>
+          </div>
+          <!-- 3-day forecast -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);">
+            ${[0,1,2].map(i => {
+              const date = new Date(d.time[i]);
+              return `<div style="background:var(--panel2);padding:12px 10px;text-align:center;">
+                <div style="font-size:10px;letter-spacing:0.15em;color:var(--text3);margin-bottom:4px;">${days[date.getDay()]}</div>
+                <div style="font-size:20px;margin-bottom:4px;">${wIcon(d.weathercode[i])}</div>
+                <div style="font-size:13px;color:var(--text);font-weight:700;">${Math.round(d.temperature_2m_max[i])}°</div>
+                <div style="font-size:11px;color:var(--text3);">${Math.round(d.temperature_2m_min[i])}°</div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>`;
+  } catch(e) {
+    // Silently fail — weather is optional
+  }
+}
+
+// ── HIGHLIGHTS ────────────────────────────────────────────────────────────────
+function highlightsHtml(etappeId) {
+  const h = HIGHLIGHTS[etappeId];
+  if (!h) return '';
+
+  const top3 = h.top3.map(p => `
+    <div style="padding:10px 0;border-bottom:1px solid var(--line);">
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px;">◦ ${p.name}</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.5;">${p.desc}</div>
+    </div>`).join('');
+
+  const wandern = h.wandern.map(w => `
+    <div style="font-size:14px;color:var(--text2);padding:4px 0 4px 14px;position:relative;">
+      <span style="position:absolute;left:0;color:var(--cyan);">›</span>${w}
+    </div>`).join('');
+
+  const spez = h.spezialitaeten.map(s => `
+    <div style="font-size:14px;color:var(--text2);padding:4px 0 4px 14px;position:relative;">
+      <span style="position:absolute;left:0;color:var(--cyan);">›</span>${s}
+    </div>`).join('');
+
+  return `
+    <div class="body-section">
+      <div class="body-label">⭐ Top 3 Highlights · Mit Hund</div>
+      ${top3}
+    </div>
+    <div class="body-section">
+      <div class="body-label">🥾 Wanderwege</div>
+      ${wandern}
+    </div>
+    <div class="body-section">
+      <div class="body-label">🍽 Regionale Spezialitäten</div>
+      ${spez}
+    </div>
+    <div class="body-section" style="background:rgba(0,229,255,0.04);border-left:2px solid var(--cyan);padding-left:16px;">
+      <div class="body-label">🚩 Nicht verpassen</div>
+      <div class="body-val dim">${h.nichtVerpassen}</div>
+    </div>`;
+}
+
 function renderEtappen() {
   document.getElementById('etappen-list').innerHTML = ETAPPEN.map((e,i) => {
     const doc = docData[e.id] || {};
@@ -409,6 +513,7 @@ function renderEtappen() {
           <div class="body-val dim">${e.info}</div>
         </div>
         ${docHtml}
+        ${highlightsHtml(e.id)}
         <div class="action-row">
           <a class="act-btn nav" href="${e.navUrl}" target="_blank">
             <span class="act-ico">🗺</span>
@@ -788,6 +893,7 @@ function renderAll() {
   renderTopbarDate();
   renderStats();
   renderToday();
+  renderWeather();
   renderRoute();
   renderProgress();
   renderEtappen();
