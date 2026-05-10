@@ -1,6 +1,6 @@
 // ── CONFIGURATION ────────────────────────────────────────────────────────────
 const CONFIG = {
-  anthropicKey:  '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',
+  anthropicKey:  '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',
   workerUrl:     'https://muddy-hall-ead6.philipp-51c.workers.dev/',
   appsScriptUrl: 'https://script.google.com/macros/s/AKfycbzVuZsw06w4NejYYQudXUbRUpocXX1iHKIzubvA5ppTSVOtZQS9vyhIgsi6qO6yW2k2/exec',
   mapsApiKey:    'AIzaSyAgh-3kD60VcglLsSEJ6lWMfUnDkj-BukA',
