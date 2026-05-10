@@ -72,8 +72,8 @@ body {
   color: var(--text);
   font-family: 'Public Sans', sans-serif;
   font-weight: 400;
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 18px;
+  line-height: 1.7;
   min-height: 100vh;
   overflow-x: hidden;
   transition: color 0.4s;
@@ -88,18 +88,18 @@ body {
   border-bottom: 1px solid var(--border);
   padding: 0 24px;
   display: flex; align-items: center; justify-content: space-between;
-  height: 54px;
+  height: 64px;
 }
 
 .topbar-brand { display: flex; flex-direction: column; gap: 1px; }
 
 .topbar-title {
   font-family: 'Playfair Display', serif;
-  font-size: 16px; font-weight: 500; color: var(--text);
+  font-size: 20px; font-weight: 500; color: var(--text);
 }
 
 .topbar-sub {
-  font-size: 11px; font-weight: 300;
+  font-size: 14px; font-weight: 300;
   color: var(--text3); letter-spacing: 0.1em;
 }
 
@@ -186,12 +186,12 @@ body {
 
 .stat-val {
   font-family: 'Playfair Display', serif;
-  font-size: 24px; font-weight: 400; color: var(--text); line-height: 1;
+  font-size: 30px; font-weight: 400; color: var(--text); line-height: 1;
 }
 
 .stat-label {
-  font-size: 10px; font-weight: 500;
-  letter-spacing: 0.18em; color: var(--text3); text-transform: uppercase;
+  font-size: 13px; font-weight: 500;
+  letter-spacing: 0.12em; color: var(--text3); text-transform: uppercase;
 }
 
 /* ── TODAY CARD ────────────────────────────────────────── */
@@ -216,7 +216,7 @@ body {
 
 .today-name {
   font-family: 'Playfair Display', serif;
-  font-size: 30px; font-weight: 400; line-height: 1.1; margin-bottom: 4px;
+  font-size: 36px; font-weight: 400; line-height: 1.1; margin-bottom: 4px;
 }
 
 .today-region {
@@ -228,9 +228,9 @@ body {
 
 .today-row {
   display: flex; align-items: baseline; gap: 10px;
-  font-size: 14px; font-weight: 300;
+  font-size: 17px; font-weight: 300;
   border-top: 1px solid rgba(255,255,255,0.09);
-  padding: 10px 0; opacity: 0.9;
+  padding: 12px 0; opacity: 0.9;
 }
 
 .today-key {
@@ -364,12 +364,12 @@ body {
 
 .drive-val {
   font-family: 'Playfair Display', serif;
-  font-size: 18px; font-weight: 400; color: var(--text);
+  font-size: 22px; font-weight: 400; color: var(--text);
 }
 
 .drive-lbl {
-  font-size: 10px; font-weight: 600;
-  letter-spacing: 0.16em; color: var(--text3); text-transform: uppercase;
+  font-size: 13px; font-weight: 600;
+  letter-spacing: 0.12em; color: var(--text3); text-transform: uppercase;
 }
 
 .card-head {
@@ -387,11 +387,11 @@ body {
 
 .card-title {
   font-family: 'Playfair Display', serif;
-  font-size: 28px; font-weight: 400; line-height: 1.05; margin-bottom: 4px;
+  font-size: 34px; font-weight: 400; line-height: 1.05; margin-bottom: 4px;
 }
 
 .card-region {
-  font-size: 13px; font-weight: 300;
+  font-size: 16px; font-weight: 300;
   color: var(--text2); letter-spacing: 0.04em;
 }
 
@@ -421,11 +421,11 @@ body {
 
 .accom-name {
   font-family: 'Playfair Display', serif;
-  font-size: 20px; font-weight: 400; color: var(--text); margin-bottom: 4px;
+  font-size: 24px; font-weight: 400; color: var(--text); margin-bottom: 4px;
 }
 
 .accom-address {
-  font-size: 13px; font-weight: 300;
+  font-size: 16px; font-weight: 300;
   color: var(--text2); line-height: 1.5; margin-bottom: 16px;
 }
 
@@ -439,12 +439,12 @@ body {
 }
 
 .ci-lbl {
-  font-size: 10px; font-weight: 600;
-  letter-spacing: 0.2em; color: var(--text3);
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.15em; color: var(--text3);
   text-transform: uppercase; margin-bottom: 3px;
 }
 
-.ci-val { font-size: 14px; font-weight: 400; color: var(--text); }
+.ci-val { font-size: 17px; font-weight: 400; color: var(--text); }
 
 .confirmation-badge {
   display: inline-flex; align-items: center; gap: 6px;
@@ -455,7 +455,7 @@ body {
 }
 
 .accom-highlight {
-  font-size: 14px; font-weight: 300; font-style: italic;
+  font-size: 16px; font-weight: 300; font-style: italic;
   color: var(--text2); line-height: 1.65; margin-bottom: 16px;
 }
 
@@ -465,7 +465,7 @@ body {
   display: inline-flex; align-items: center; gap: 5px;
   background: var(--surface2); border: 1px solid var(--border);
   border-radius: 100px; padding: 6px 13px;
-  font-size: 13px; font-weight: 400; color: var(--text2); white-space: nowrap;
+  font-size: 16px; font-weight: 400; color: var(--text2); white-space: nowrap;
 }
 
 .chip.pos {
@@ -497,7 +497,7 @@ body {
 .doc-lbl::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border2), transparent); }
 
 .doc-body {
-  font-size: 14px; font-weight: 300; color: var(--text2); line-height: 1.75;
+  font-size: 17px; font-weight: 300; color: var(--text2); line-height: 1.8;
 }
 .doc-body ul { list-style: none; padding: 0; }
 .doc-body li { padding: 3px 0 3px 17px; position: relative; }
@@ -533,7 +533,7 @@ body {
 }
 
 .btn-ico  { font-size: 20px; }
-.btn-lbl  { font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; text-align: center; }
+.btn-lbl  { font-size: 15px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; text-align: center; }
 .btn-note { font-size: 10px; font-weight: 300; color: var(--text3); }
 
 /* ── KARTE ─────────────────────────────────────────────── */
@@ -750,9 +750,9 @@ body {
 }
 
 .ic-icon  { font-size: 24px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
-.ic-title { font-size: 15px; font-weight: 500; margin-bottom: 5px; }
+.ic-title { font-size: 18px; font-weight: 500; margin-bottom: 5px; }
 .info-card.warn .ic-title { color: var(--rose); }
-.ic-text  { font-size: 13px; font-weight: 300; color: var(--text2); line-height: 1.7; }
+.ic-text  { font-size: 16px; font-weight: 300; color: var(--text2); line-height: 1.75; }
 
 /* ── BOTTOM NAV ────────────────────────────────────────── */
 .bottom-nav {
@@ -766,11 +766,11 @@ body {
 .nav-item {
   flex: 1; display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  gap: 4px; padding: 10px 8px;
+  gap: 5px; padding: 14px 8px;
   cursor: pointer; border: none; background: none;
   color: var(--text3); font-family: 'Public Sans', sans-serif;
   transition: color 0.3s;
 }
 .nav-item.active { color: var(--gold); }
-.nav-ico { font-size: 19px; line-height: 1; }
-.nav-lbl { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
+.nav-ico { font-size: 24px; line-height: 1; }
+.nav-lbl { font-size: 13px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
