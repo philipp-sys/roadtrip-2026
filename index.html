@@ -46,6 +46,7 @@
       <div class="section-tag">Route</div>
       <div class="route-line" id="route-line"></div>
     </div>
+    <div style="margin:18px 24px 0;" id="nearby-wrap"></div>
 
   </div>
 </div>
@@ -341,19 +342,35 @@ function highlightsHtml(etappeId) {
 
   const top3 = h.top3.map(p => `
     <div style="padding:10px 0;border-bottom:1px solid var(--line);">
-      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px;">◦ ${p.name}</div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.5;">${p.desc}</div>
+      <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:2px;">◦ ${p.name}</div>
+      <div style="font-size:15px;color:var(--text2);line-height:1.5;">${p.desc}</div>
     </div>`).join('');
 
   const wandern = h.wandern.map(w => `
-    <div style="font-size:14px;color:var(--text2);padding:4px 0 4px 14px;position:relative;">
+    <div style="font-size:16px;color:var(--text2);padding:4px 0 4px 16px;position:relative;line-height:1.5;">
       <span style="position:absolute;left:0;color:var(--cyan);">›</span>${w}
     </div>`).join('');
 
   const spez = h.spezialitaeten.map(s => `
-    <div style="font-size:14px;color:var(--text2);padding:4px 0 4px 14px;position:relative;">
+    <div style="font-size:16px;color:var(--text2);padding:4px 0 4px 16px;position:relative;line-height:1.5;">
       <span style="position:absolute;left:0;color:var(--cyan);">›</span>${s}
     </div>`).join('');
+
+  const maerkte = h.maerkte ? h.maerkte.map(m => `
+    <div style="padding:10px 0;border-bottom:1px solid var(--line);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+        <span style="font-size:10px;letter-spacing:0.12em;color:var(--cyan);background:var(--cyan-dim);border:1px solid var(--line2);border-radius:4px;padding:2px 7px;">${m.datum}</span>
+        <span style="font-size:13px;color:var(--text3);">${m.ort}</span>
+        ${m.hund ? '<span style="font-size:13px;">🐾</span>' : ''}
+      </div>
+      <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:2px;">${m.name}</div>
+      <div style="font-size:15px;color:var(--text2);">${m.info}</div>
+    </div>`).join('') : '';
+
+  const marktTipp = h.marktTipp ? `
+    <div style="padding:10px 14px;background:var(--cyan-dim);border:1px solid var(--line2);border-radius:var(--r);margin-top:8px;font-size:14px;color:var(--text2);">
+      💡 ${h.marktTipp}
+    </div>` : '';
 
   return `
     <div class="body-section">
@@ -368,9 +385,15 @@ function highlightsHtml(etappeId) {
       <div class="body-label">🍽 Regionale Spezialitäten</div>
       ${spez}
     </div>
+    ${maerkte ? `
+    <div class="body-section">
+      <div class="body-label">🛍 Märkte & Brocantes 🐾</div>
+      ${maerkte}
+      ${marktTipp}
+    </div>` : ''}
     <div class="body-section" style="background:rgba(0,229,255,0.04);border-left:2px solid var(--cyan);padding-left:16px;">
       <div class="body-label">🚩 Nicht verpassen</div>
-      <div class="body-val dim">${h.nichtVerpassen}</div>
+      <div class="body-val dim" style="font-size:17px;">${h.nichtVerpassen}</div>
     </div>`;
 }
 
@@ -806,16 +829,65 @@ function toggleTheme() {
 }
 
 // ── RENDER ALL ────────────────────────────────────────────────────────────────
+function renderNearby() {
+  const wrap = document.getElementById('nearby-wrap');
+  if (!wrap) return;
+
+  const NEARBY = {
+    1: null,
+    2: [
+      { name:'Mont Saint-Michel', dist:'1,5 Std.', tip:'Mit Hund: Steg zu Fuß (45 Min) — Busse nehmen große Hunde nicht mit.' },
+      { name:'Cherbourg', dist:'45 Min', tip:'Cité de la Mer (U-Boot). 14. Mai: Vide-grenier Sainte-Échelle.' },
+      { name:'Portbail', dist:'15 Min', tip:'Bei Ebbe traumhaft. Achtung: Schafe in den Salzwiesen.' },
+      { name:'Valognes', dist:'20 Min', tip:'17. Mai (So): Vide-grenier am Place du Château.' },
+    ],
+    3: [
+      { name:'Pointe du Raz', dist:'45 Min', tip:'Westlichste Spitze Frankreichs. Mit Hund möglich.' },
+      { name:'Brest', dist:'45 Min', tip:'Aquarium Océanopolis. Großstadt-Infrastruktur für Besorgungen.' },
+      { name:'Morgat Höhlen', dist:'15 Min', tip:'Per Boot. Hunde an Bord möglich (vorher anfragen).' },
+      { name:'Camaret-sur-Mer', dist:'vor Ort', tip:'24. Mai (So): Puces Nautiques — maritime Flohmärkte.' },
+    ],
+    4: [
+      { name:'Étretat', dist:'30 Min', tip:'Früh morgens — weniger Touristen, besseres Licht. Hund erlaubt.' },
+      { name:'Dieppe', dist:'20 Min', tip:'30. Mai (Sa): Einer der schönsten Märkte Frankreichs.' },
+      { name:'Le Tréport', dist:'15 Min', tip:'Kreidefelsen + Promenade. Brücke nach Mers-les-Bains lohnt sich.' },
+      { name:'Eu', dist:'10 Min', tip:'Schloss + Forêt d\'Eu — riesiger Wald, ideal für Hund.' },
+    ],
+  };
+
+  const cur = currentEtappe();
+  if (!cur) return;
+  const items = NEARBY[cur.id];
+  if (!items) return;
+
+  const rows = items.map(item => `
+    <div style="display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);">
+      <div style="min-width:56px;flex-shrink:0;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.04em;color:var(--cyan);">${item.dist}</div>
+      </div>
+      <div>
+        <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:2px;">${item.name}</div>
+        <div style="font-size:14px;color:var(--text2);line-height:1.4;">${item.tip}</div>
+      </div>
+    </div>`).join('');
+
+  wrap.innerHTML = `
+    <div class="section-tag">In der Nähe · ${cur.name}</div>
+    <div style="background:var(--panel);border:1px solid var(--line2);border-radius:var(--r-lg);padding:0 18px;">
+      ${rows}
+    </div>`;
+}
+
 function renderAll() {
   renderTopbarDate();
   renderStats();
   renderToday();
   renderWeather();
   renderRoute();
+  renderNearby();
   renderProgress();
   renderEtappen();
   renderNavList();
-  renderNotizen();
   initChat();
 }
 
