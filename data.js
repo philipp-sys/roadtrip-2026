@@ -1,6 +1,6 @@
 // ── CONFIGURATION ────────────────────────────────────────────────────────────
 const CONFIG = {
-  anthropicKey:  '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',
+  anthropicKey:  'ANTHROPIC_KEY_HERE',
   workerUrl:     'https://muddy-hall-ead6.philipp-51c.workers.dev/',
   appsScriptUrl: 'https://script.google.com/macros/s/AKfycbzVuZsw06w4NejYYQudXUbRUpocXX1iHKIzubvA5ppTSVOtZQS9vyhIgsi6qO6yW2k2/exec',
   mapsApiKey:    'AIzaSyAgh-3kD60VcglLsSEJ6lWMfUnDkj-BukA',
@@ -115,6 +115,12 @@ const KATEGORIEN = ['RESTAURANTS', 'WANDERN / AUSFLÜGE', 'BESONDERHEITEN', 'SUP
 const HIGHLIGHTS = {
   1: null, // Valenciennes — nur Stopover
   2: {
+    maerkte: [
+      { datum:'14. Mai (Himmelfahrt)', ort:'Cherbourg', name:'Vide-grenier Sainte-Échelle', info:'Place des Justes. Großer Frühlingsmarkt — perfekt kombinierbar.', hund:true },
+      { datum:'17. Mai (So)', ort:'Valognes, 20 Min', name:'Vide-grenier Place du Château', info:'Das "Versailles der Normandie" — tolle Kulisse.', hund:true },
+      { datum:'17. Mai (So)', ort:'Saint-Sauveur-le-Vicomte', name:'Flohmarkt an der mittelalterlichen Burg', info:'Urig, nah an Barneville.', hund:true },
+    ],
+    marktTipp: 'brocabrac.fr → Department 50 für aktuelle Märkte checken.',
     top3: [
       { name:'Cap de Carteret', desc:'Spektakulärer Aussichtspunkt mit Blick auf Kanalinseln. Leichter Spaziergang, hundefreundlich.' },
       { name:'Plage de la Vieille Église', desc:'Riesige Sandstrände bei Ebbe — perfekt für Hunde. Vor Juni keine Einschränkungen.' },
@@ -132,6 +138,11 @@ const HIGHLIGHTS = {
     nichtVerpassen: 'Ebbe-Zeiten checken! Bei Niedrigwasser entstehen endlose Sandstrände — mit Hund ein Erlebnis.',
   },
   3: {
+    maerkte: [
+      { datum:'24. Mai (So)', ort:'Camaret-sur-Mer', name:'Puces Nautiques', info:'Direkt vor Ort! Maritime Flohmärkte — Schiffsteile, Messinginstrumente, Fischernetze.', hund:true },
+      { datum:'Dienstags morgens', ort:'Crozon', name:'Wochenmarkt am Kirchplatz', info:'Bester Markt der Halbinsel — Austern, Kouign-amann, regionale Produkte.', hund:true },
+    ],
+    marktTipp: 'brocabrac.fr → Department 29 für aktuelle Märkte.',
     top3: [
       { name:'Pointe de Pen-Hir', desc:'Dramatischste Klippen der Bretagne. UNESCO-Landschaft. Hunde an der Leine erlaubt.' },
       { name:'Camaret-sur-Mer', desc:'Authentisches Fischerdorf mit bunten Booten und mittelalterlichem Turm (Vauban).' },
@@ -151,6 +162,11 @@ const HIGHLIGHTS = {
     nichtVerpassen: 'Sonnenuntergang an der Pointe de Pen-Hir — einer der schönsten Frankreichs. Mit Hund möglich.',
   },
   4: {
+    maerkte: [
+      { datum:'30. Mai (Sa)', ort:'Dieppe, 20 Min', name:'Samstagsmarkt Dieppe', info:'Einer der schönsten Märkte Frankreichs — zieht sich durch die ganze Altstadt. Brocante-Händler in Hafennähe.', hund:true },
+      { datum:'Sonntags', ort:'Le Tréport / Mers-les-Bains', name:'Kunsthandwerkermarkt', info:'Direkt an den Klippen. Unbedingt über die Brücke nach Mers-les-Bains — Belle-Époque-Villen.', hund:true },
+    ],
+    marktTipp: 'brocabrac.fr → Department 76. Gelbe Schilder am Straßenrand beachten!',
     top3: [
       { name:'Falaises d\'Étretat', desc:'Berühmteste Kreidefelsen Frankreichs — 30 Min. Fahrt. Ikonische Bögen und Nadeln.' },
       { name:'Dieppe', desc:'Lebendige Hafenstadt, 20 Min. Fahrt. Fischmarkt, Burg mit Meerblick, hundefreundliche Strände.' },
