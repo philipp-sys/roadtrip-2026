@@ -1,188 +1,76 @@
 // ── CONFIGURATION ────────────────────────────────────────────────────────────
 const CONFIG = {
-  anthropicKey:  'ANTHROPIC_KEY_HERE',
-  workerUrl:     'https://muddy-hall-ead6.philipp-51c.workers.dev/',
-  appsScriptUrl: 'https://script.google.com/macros/s/AKfycbzVuZsw06w4NejYYQudXUbRUpocXX1iHKIzubvA5ppTSVOtZQS9vyhIgsi6qO6yW2k2/exec',
-  mapsApiKey:    'AIzaSyAgh-3kD60VcglLsSEJ6lWMfUnDkj-BukA',
-  mapsListUrl:   'https://maps.app.goo.gl/ZXjmhrsYRp2C3i91A',
-  masterDocUrl:  'https://docs.google.com/document/d/1aLtGI3wMpkX4OxcORb7dbItrf8aCgRsmlpWhMG2JppM',
-  docPubUrl:     'https://docs.google.com/document/d/e/2PACX-1vSnru4coTD1Bne3fYE_MNXOTI5VSuRkugAmgHdVSBx2NLeZk7bYNR0qB5Y45NoSKtZANpyxlP6Cp1VC/pub',
+  mapsApiKey:  'AIzaSyAgh-3kD60VcglLsSEJ6lWMfUnDkj-BukA',
+  mapsListUrl: null,   // noch keine gespeicherte Maps-Liste für diese Reise
 };
 
 // ── TRIP DATA ─────────────────────────────────────────────────────────────────
 const TRIP = {
-  title:    'Bretagne & Normandie',
+  title:    'Lenggries & Valdidentro',
   year:     '2026',
-  start:    new Date('2026-05-13'),
-  end:      new Date('2026-05-30'),
-  tagline:  'Tesla · 🐾 · 1710 km',
+  start:    new Date('2026-09-11'),
+  end:      new Date('2026-09-26'),
+  tagline:  'Tesla · 🐾',
 };
 
 const ETAPPEN = [
   {
     id: 1,
     color: '#00e5ff',
-    name: 'Valenciennes',
-    region: 'Nordfrankreich',
-    dates: '13.–14. Mai',
-    km: '460',
-    dauer: '5,5 Std.',
-    naechte: 1,
-    start: new Date('2026-05-13'),
-    end:   new Date('2026-05-14'),
-    unterkunft: 'Première Classe Valenciennes Sud',
-    adresse: 'Rue Louis-Dacquin, 59220 Rouvignies',
-    checkin: '13. Mai ab 14:00',
-    checkout: '14. Mai bis 11:00',
+    name: 'Lenggries',
+    region: 'Isarwinkel, Bayern',
+    dates: '11.–19. Sept.',
+    km: null,          // Anreise ab Zuhause — keine recherchierte Strecke hinterlegt
+    dauer: null,
+    naechte: 8,
+    start: new Date('2026-09-11'),
+    end:   new Date('2026-09-19'),
+    unterkunft: 'Ferienwohnung Blomberg',
+    adresse: 'Günter-Eich-Straße 7, 83661 Lenggries',
+    checkin: 'siehe Check-in-PDF',
+    checkout: '19. Sept.',
     buchungNr: null,
-    buchungUrl: 'https://secure.booking.com/app_link/myreservations.de.html?stid=325542&bn=6526897918&aid=332731',
-    buchungPlattform: 'Booking.com',
-    info: 'Stopover an der A2. Check-in 24/7 per Automat. Akku-Check für Weiterfahrt.',
-    lat: 50.3580, lng: 3.5239,
-    navUrl: 'https://maps.google.com/maps?daddr=50.3580,3.5239&directionsmode=driving',
+    buchungUrl: 'https://www.landhaushansing.de/',
+    buchungPlattform: 'Direktbuchung (Landhaus Hansing)',
+    info: 'Vermieter Pit Hansing, Tel. 0177 7421163, hansing@gmx.de. Kurtaxe 1,50 €/Erw./Nacht vor Ort (Gemeinde Lenggries).',
+    lat: 47.6848062, lng: 11.5818386,
+    navUrl: 'https://maps.google.com/maps?daddr=47.6848062,11.5818386&directionsmode=driving',
   },
   {
     id: 2,
     color: '#ffe066',
-    name: 'Cotentin',
-    region: 'Barneville-Carteret · Normandie',
-    dates: '14.–19. Mai',
-    km: '420',
-    dauer: '4,5 Std.',
-    naechte: 5,
-    start: new Date('2026-05-14'),
-    end:   new Date('2026-05-19'),
-    unterkunft: 'Le Skiff · Villa Plein Vent',
-    adresse: 'Rue des Fauvettes 13, 50270 Barneville-Carteret',
-    checkin: '14. Mai ab 17:30',
-    checkout: '19. Mai',
-    buchungNr: '5461895880',
-    buchungUrl: 'https://secure.booking.com/app_link/myreservations.de.html?stid=325542&bn=5461895880&aid=332731',
-    buchungPlattform: 'Booking.com',
-    info: '250 m zum Strand. Jacuzzi. Fahrräder inklusive. Panorama auf Kanalinseln. ⭐ 9.7',
-    lat: 49.3755, lng: -1.7765,
-    navUrl: 'https://maps.google.com/maps?daddr=49.3755,-1.7765&directionsmode=driving',
-  },
-  {
-    id: 3,
-    color: '#b39ddb',
-    name: 'Crozon',
-    region: 'Camaret-sur-Mer · Bretagne',
-    dates: '19.–25. Mai',
-    km: '330',
-    dauer: '3,5 Std.',
-    naechte: 6,
-    start: new Date('2026-05-19'),
-    end:   new Date('2026-05-25'),
-    unterkunft: 'Haus Lambézen',
-    adresse: 'Lambézen, 29570 Camaret-sur-Mer',
-    checkin: '19. Mai',
-    checkout: '25. Mai',
-    buchungNr: 'HA-BWZJ2K',
-    buchungUrl: 'https://www.fewo-direkt.de/de-de/trips/egti-JQF-XO4-CZTX/details/OTAyMDI0NjA4OTc4MztlZzpwcm9wZXJ0eTp2MjphM2E5NDIxMDE1MWZjYWIwNTFkNTJiOTQ1MjNmNzM1NA',
-    buchungPlattform: 'FeWo-Direkt',
-    info: '500 m zum Meer. Steinhaus, ruhig. Pointe de Pen-Hir 7 Min. Wanderwege ab Haustür. ⭐ 9.4',
-    lat: 48.2776, lng: -4.5887,
-    navUrl: 'https://maps.google.com/maps?daddr=48.2776,-4.5887&directionsmode=driving',
-  },
-  {
-    id: 4,
-    color: '#ff7043',
-    name: 'Alabasterküste',
-    region: 'Criel-sur-Mer · Normandie',
-    dates: '25.–30. Mai',
-    km: '500',
-    dauer: '6 Std.',
-    naechte: 5,
-    start: new Date('2026-05-25'),
-    end:   new Date('2026-05-30'),
-    unterkunft: "Horizon d'Opale",
-    adresse: '2 Impasse des Cygnes, 76910 Criel-sur-Mer',
-    checkin: '25. Mai · Schlüsselbox',
-    checkout: '30. Mai',
-    buchungNr: null,
-    buchungUrl: 'https://www.airbnb.de/trips/v1/reservation-details/ro/RESERVATION2_CHECKIN/HMXXPYRX39',
+    name: 'Valdidentro',
+    region: 'Lombardei, Italien',
+    dates: '19.–26. Sept.',
+    km: '256',         // Google Maps, schnellste Route (Seefeld · Inntal · Reschen · Zernez · Livigno)
+    dauer: '4:17 h',
+    naechte: 7,
+    start: new Date('2026-09-19'),
+    end:   new Date('2026-09-26'),
+    unterkunft: 'Giardino sulle Alpi',
+    adresse: 'Via Producena, 4c, 23038 Valdidentro (SO), Italien',
+    checkin: '19. Sept. ab 15:00',
+    checkout: '26. Sept. bis 09:00',
+    buchungNr: 'HMCDPHXW2B',
+    buchungUrl: 'https://www.airbnb.de/trips/v1/reservation-details/ro/RESERVATION2_CHECKIN/HMCDPHXW2B',
     buchungPlattform: 'Airbnb',
-    info: 'Direkt am Strand. 180° Meerblick, 3. OG. Parkplatz B33. ⭐ 4.88 — ⚠️ Klippen-Abbruchgefahr.',
-    lat: 50.0197, lng: 1.3098,
-    navUrl: 'https://maps.google.com/maps?daddr=50.0197,1.3098&directionsmode=driving',
+    info: 'Gastgeberin Gigliola, Tel. +39 377 099 7297. 2 Erwachsene + 1 Haustier. Ruhezeiten 00:00–08:00.',
+    lat: 46.4822222, lng: 10.2630044,
+    navUrl: 'https://maps.google.com/maps?daddr=46.4822222,10.2630044&directionsmode=driving',
   },
 ];
 
-const KATEGORIEN = ['RESTAURANTS', 'WANDERN / AUSFLÜGE', 'BESONDERHEITEN', 'SUPERMARKT', 'UNTERKUNFT'];
+// ── KALENDER (chronologische Liste, reine Anzeige) ────────────────────────────
+const KALENDER = [
+  { date: new Date('2026-09-11'), datum: 'Fr., 11.09.', label: 'Anreise Lenggries' },
+  { date: new Date('2026-09-16'), datum: 'Mi., 16.09.', label: 'Dienstlich Ismaning' },
+  { date: new Date('2026-09-17'), datum: 'Do., 17.09.', label: 'Dienstlich Ismaning' },
+  { date: new Date('2026-09-19'), datum: 'Sa., 19.09.', label: 'Abreise Lenggries / Anreise Valdidentro' },
+  { date: new Date('2026-09-26'), datum: 'Sa., 26.09.', label: 'Abreise Valdidentro / Heimreise' },
+];
 
-// ── REGION HIGHLIGHTS (static, curated) ───────────────────────────────────────
-const HIGHLIGHTS = {
-  1: null, // Valenciennes — nur Stopover
-  2: {
-    maerkte: [
-      { datum:'14. Mai (Himmelfahrt)', ort:'Cherbourg', name:'Vide-grenier Sainte-Échelle', info:'Place des Justes. Großer Frühlingsmarkt — perfekt kombinierbar.', hund:true },
-      { datum:'17. Mai (So)', ort:'Valognes, 20 Min', name:'Vide-grenier Place du Château', info:'Das "Versailles der Normandie" — tolle Kulisse.', hund:true },
-      { datum:'17. Mai (So)', ort:'Saint-Sauveur-le-Vicomte', name:'Flohmarkt an der mittelalterlichen Burg', info:'Urig, nah an Barneville.', hund:true },
-    ],
-    marktTipp: 'brocabrac.fr → Department 50 für aktuelle Märkte checken.',
-    top3: [
-      { name:'Cap de Carteret', desc:'Spektakulärer Aussichtspunkt mit Blick auf Kanalinseln. Leichter Spaziergang, hundefreundlich.' },
-      { name:'Plage de la Vieille Église', desc:'Riesige Sandstrände bei Ebbe — perfekt für Hunde. Vor Juni keine Einschränkungen.' },
-      { name:'Barneville-Carteret Hafen', desc:'Gemütlicher Fischerhafen mit frischen Austern direkt vom Boot.' },
-    ],
-    wandern: [
-      'GR223 Küstenweg ab Cap de Carteret — 8 km, leicht, Meerblick',
-      'Plage de Hatainville — weiter Sandstrand, ideal bei Ebbe mit Hund',
-    ],
-    spezialitaeten: [
-      'Austern & Muscheln (direkt vom Fischer am Hafen)',
-      'Cidre de Normandie — trockener Apfelwein der Region',
-      'Teurgoule — normändischer Reispudding mit Zimt',
-    ],
-    nichtVerpassen: 'Ebbe-Zeiten checken! Bei Niedrigwasser entstehen endlose Sandstrände — mit Hund ein Erlebnis.',
-  },
-  3: {
-    maerkte: [
-      { datum:'24. Mai (So)', ort:'Camaret-sur-Mer', name:'Puces Nautiques', info:'Direkt vor Ort! Maritime Flohmärkte — Schiffsteile, Messinginstrumente, Fischernetze.', hund:true },
-      { datum:'Dienstags morgens', ort:'Crozon', name:'Wochenmarkt am Kirchplatz', info:'Bester Markt der Halbinsel — Austern, Kouign-amann, regionale Produkte.', hund:true },
-    ],
-    marktTipp: 'brocabrac.fr → Department 29 für aktuelle Märkte.',
-    top3: [
-      { name:'Pointe de Pen-Hir', desc:'Dramatischste Klippen der Bretagne. UNESCO-Landschaft. Hunde an der Leine erlaubt.' },
-      { name:'Camaret-sur-Mer', desc:'Authentisches Fischerdorf mit bunten Booten und mittelalterlichem Turm (Vauban).' },
-      { name:'Presqu\'île de Crozon', desc:'Halbinsel mit wilden Küstenlandschaften, Megalithen und einsamen Buchten.' },
-    ],
-    wandern: [
-      'Küstenwanderung Pen-Hir → Pointe de Dinan — 12 km, mittelschwer, spektakulär',
-      'Sentier des Douaniers ab Camaret — flacher Küstenpfad, hundefreundlich',
-      'Wanderwege direkt ab Haus Lambézen möglich',
-    ],
-    spezialitaeten: [
-      'Galettes (Buchweizen-Crêpes mit Käse/Ei/Schinken) — bretonische Spezialität',
-      'Kouign-Amann — buttrig-karamellisierter Blechkuchen aus Douarnenez',
-      'Bretonische Sardinen in Olivenöl — ideal als Mitbringsel',
-      'Cidre breton & Chouchen (Honigwein)',
-    ],
-    nichtVerpassen: 'Sonnenuntergang an der Pointe de Pen-Hir — einer der schönsten Frankreichs. Mit Hund möglich.',
-  },
-  4: {
-    maerkte: [
-      { datum:'30. Mai (Sa)', ort:'Dieppe, 20 Min', name:'Samstagsmarkt Dieppe', info:'Einer der schönsten Märkte Frankreichs — zieht sich durch die ganze Altstadt. Brocante-Händler in Hafennähe.', hund:true },
-      { datum:'Sonntags', ort:'Le Tréport / Mers-les-Bains', name:'Kunsthandwerkermarkt', info:'Direkt an den Klippen. Unbedingt über die Brücke nach Mers-les-Bains — Belle-Époque-Villen.', hund:true },
-    ],
-    marktTipp: 'brocabrac.fr → Department 76. Gelbe Schilder am Straßenrand beachten!',
-    top3: [
-      { name:'Falaises d\'Étretat', desc:'Berühmteste Kreidefelsen Frankreichs — 30 Min. Fahrt. Ikonische Bögen und Nadeln.' },
-      { name:'Dieppe', desc:'Lebendige Hafenstadt, 20 Min. Fahrt. Fischmarkt, Burg mit Meerblick, hundefreundliche Strände.' },
-      { name:'Véloroute Verte de Normandie', desc:'Flacher Radweg entlang der Küste. Mit Hund perfekt kombinierbar.' },
-    ],
-    wandern: [
-      'Klippen-Spaziergang Criel-sur-Mer → Mesnil-Val — 6 km, leicht (⚠️ Abstand halten!)',
-      'Strand von Criel-sur-Mer — direkt vor der Haustür, hundefreundlich',
-      'Forêt d\'Eu — Waldwanderung, 15 Min. entfernt',
-    ],
-    spezialitaeten: [
-      'Harengs fumés (Räucherhering) — Spezialität der Alabasterküste',
-      'Neufchâtel-Käse — herzförmiger Weichkäse aus der Normandie',
-      'Calvados — normändischer Apfelschnaps',
-      'Tarte normande — Apfelkuchen mit Crème fraîche',
-    ],
-    nichtVerpassen: '⚠️ Étretat unbedingt früh morgens besuchen — weniger Touristen und besseres Licht. Hund erlaubt außerhalb Hauptsaison.',
-  },
-};
+// ── REGION HIGHLIGHTS ─────────────────────────────────────────────────────────
+// Leer — Inhalte sammeln sich zunächst in HIGHLIGHTS_EINGANG.md und werden
+// erst nach Prüfung hier eingetragen. Solange leer, rendern die Etappen-Karten
+// keinen Highlights-Block.
+const HIGHLIGHTS = {};

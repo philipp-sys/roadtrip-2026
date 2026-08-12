@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<title>B&N 2026</title>
+<title>L&V 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -17,7 +17,7 @@
   <div class="topbar-brand">
     <div class="topbar-pulse"></div>
     <div>
-      <div class="topbar-title">B&N · 2026</div>
+      <div class="topbar-title">L&V · 2026</div>
     </div>
   </div>
   <div class="topbar-right">
@@ -31,12 +31,12 @@
   <div class="overview-wrap">
     <div class="hero">
       <div class="hero-label">Roadtrip</div>
-      <div class="hero-title">BRETAGNE<br>&amp; <span>NORMANDIE</span></div>
-      <div class="hero-sub">13. Mai – 30. Mai 2026 · Tesla · 🐾</div>
+      <div class="hero-title">LENGGRIES<br>&amp; <span>VALDIDENTRO</span></div>
+      <div class="hero-sub">11. Sept. – 26. Sept. 2026 · Tesla · 🐾</div>
       <div class="stats-row">
-        <div class="stat"><div class="stat-val">4</div><div class="stat-lbl">Etappen</div></div>
-        <div class="stat"><div class="stat-val">17</div><div class="stat-lbl">Nächte</div></div>
-        <div class="stat"><div class="stat-val">1710</div><div class="stat-lbl">km</div></div>
+        <div class="stat"><div class="stat-val">2</div><div class="stat-lbl">Etappen</div></div>
+        <div class="stat"><div class="stat-val">15</div><div class="stat-lbl">Nächte</div></div>
+        <div class="stat"><div class="stat-val">2</div><div class="stat-lbl">Länder</div></div>
         <div class="stat"><div class="stat-val" id="days-stat">—</div><div class="stat-lbl" id="days-lbl">Tage</div></div>
       </div>
     </div>
@@ -46,7 +46,7 @@
       <div class="section-tag">Route</div>
       <div class="route-line" id="route-line"></div>
     </div>
-    <div style="margin:18px 24px 0;" id="nearby-wrap"></div>
+    <div style="margin:18px 24px 0;" id="kalender-wrap"></div>
 
   </div>
 </div>
@@ -72,23 +72,16 @@
 <!-- ══ KARTE ══════════════════════════════════════════════ -->
 <div class="section" id="s-karte">
   <div class="karte-wrap">
-    <!-- Gespeicherte Liste -->
+    <!-- Karten-Embed -->
     <div class="maps-embed-card">
       <div class="card-header-bar">
         <div>
-          <div class="card-header-title">Gespeicherte Orte</div>
-          <div class="card-header-sub">Unterkünfte · Restaurants · POIs</div>
+          <div class="card-header-title">Reiseorte</div>
+          <div class="card-header-sub">Lenggries → Valdidentro</div>
         </div>
-        <a class="maps-link-btn" href="https://maps.app.goo.gl/ZXjmhrsYRp2C3i91A" target="_blank">
-          📍 Öffnen
-        </a>
+        <div id="maps-link-slot"></div>
       </div>
-      <div class="maps-iframe-wrap" style="height:380px;">
-        <iframe
-          src="https://www.google.com/maps/embed/v1/search?key=AIzaSyAgh-3kD60VcglLsSEJ6lWMfUnDkj-BukA&q=restaurants+hotels+Barneville-Carteret+Camaret+Criel-sur-Mer+Normandie+Bretagne&center=48.8,-2.5&zoom=7&language=de"
-          width="100%" height="380" allowfullscreen loading="lazy" style="border:none;display:block;">
-        </iframe>
-      </div>
+      <div class="maps-iframe-wrap" style="height:380px;" id="maps-embed-wrap"></div>
     </div>
     <!-- Navigation shortcuts -->
     <div class="maps-embed-card">
@@ -122,9 +115,6 @@
 // ═══════════════════════════════════════════════════════
 //  APP
 // ═══════════════════════════════════════════════════════
-
-let docData = {};
-let chatHistory = [];
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function today() { const d=new Date(); d.setHours(0,0,0,0); return d; }
@@ -181,7 +171,7 @@ function renderToday() {
     wrap.innerHTML = `
       <div class="countdown-card">
         <div class="countdown-num">${daysToStart}</div>
-        <div class="countdown-label">Tage bis zur Abfahrt · 13. Mai 2026</div>
+        <div class="countdown-label">Tage bis zur Abfahrt · 11. September 2026</div>
       </div>`;
     return;
   }
@@ -189,19 +179,15 @@ function renderToday() {
   if (d >= TRIP.end) {
     wrap.innerHTML = `
       <div class="countdown-card">
-        <div class="countdown-num" style="font-size:60px;">B&N ✓</div>
-        <div class="countdown-label">Reise abgeschlossen · 1710 km</div>
+        <div class="countdown-num" style="font-size:60px;">L&V ✓</div>
+        <div class="countdown-label">Reise abgeschlossen · 15 Nächte</div>
       </div>`;
     return;
   }
 
   if (cur) {
-    const doc = docData[cur.id] || {};
     const nightNum = daysBetween(cur.start, d) + 1;
     const nightsLeft = daysBetween(d, cur.end);
-    const firstRest = doc.restaurants
-      ? doc.restaurants.split('\n').filter(l=>l.trim()&&l!=='—')[0]?.replace(/^-\s*/,'')
-      : null;
 
     wrap.innerHTML = `
       <div class="today-card">
@@ -218,11 +204,6 @@ function renderToday() {
               <div class="today-cell-label">Nacht</div>
               <div class="today-cell-val">${nightNum} / ${cur.naechte}</div>
             </div>
-            ${firstRest ? `
-            <div class="today-cell">
-              <div class="today-cell-label">Restaurant</div>
-              <div class="today-cell-val">${firstRest}</div>
-            </div>` : ''}
             <div class="today-cell">
               <div class="today-cell-label">Morgen</div>
               <div class="today-cell-val">${nightsLeft>0?`noch ${nightsLeft} Nacht${nightsLeft>1?'e':''}`:`Abreise → ${nxt?nxt.name:'–'}`}</div>
@@ -235,9 +216,8 @@ function renderToday() {
 
 // ── ROUTE ─────────────────────────────────────────────────────────────────────
 function renderRoute() {
-  const d = today();
   const cur = currentEtappe();
-  const kms = ['460 km','420 km','330 km','500 km'];
+  const kms = ETAPPEN.map(e => e.km ? `${e.km} km` : '');
   const stops = [
     { name:'Start', color:'#3a5566', active:false },
     ...ETAPPEN.map(e => ({ name:e.name, color:e.color, active:cur===e }))
@@ -254,6 +234,30 @@ function renderRoute() {
       html += `<div class="route-conn" data-km="${kms[i]||''}"></div>`;
   });
   document.getElementById('route-line').innerHTML = html;
+}
+
+// ── KALENDER ──────────────────────────────────────────────────────────────────
+function renderKalender() {
+  const wrap = document.getElementById('kalender-wrap');
+  if (!wrap) return;
+
+  const d = today();
+  const rows = [...KALENDER]
+    .sort((a,b) => a.date - b.date)
+    .map(k => {
+      const past = k.date < d;
+      return `
+      <div style="display:flex;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);${past?'opacity:0.45;':''}">
+        <div style="min-width:82px;flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.04em;color:var(--cyan);">${k.datum}</div>
+        <div style="font-size:16px;color:var(--text);line-height:1.4;">${k.label}</div>
+      </div>`;
+    }).join('');
+
+  wrap.innerHTML = `
+    <div class="section-tag">Kalender</div>
+    <div style="background:var(--panel);border:1px solid var(--line2);border-radius:var(--r-lg);padding:0 18px;">
+      ${rows}
+    </div>`;
 }
 
 // ── PROGRESS MAP ──────────────────────────────────────────────────────────────
@@ -273,7 +277,6 @@ function renderProgress() {
   }).join('');
 }
 
-// ── ETAPPEN ───────────────────────────────────────────────────────────────────
 // ── WEATHER ───────────────────────────────────────────────────────────────────
 async function renderWeather() {
   const wrap = document.getElementById('weather-wrap');
@@ -286,7 +289,7 @@ async function renderWeather() {
 
   try {
     const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weathercode,windspeed_10m,precipitation&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum&timezone=Europe/Paris&forecast_days=3`
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weathercode,windspeed_10m,precipitation&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum&timezone=Europe/Berlin&forecast_days=3`
     );
     const data = await res.json();
     const c = data.current;
@@ -336,95 +339,52 @@ async function renderWeather() {
 }
 
 // ── HIGHLIGHTS ────────────────────────────────────────────────────────────────
+// HIGHLIGHTS ist derzeit leer (siehe HIGHLIGHTS_EINGANG.md) — dann rendert
+// diese Funktion nichts.
 function highlightsHtml(etappeId) {
   const h = HIGHLIGHTS[etappeId];
   if (!h) return '';
 
-  const top3 = h.top3.map(p => `
+  const top3 = (h.top3||[]).map(p => `
     <div style="padding:10px 0;border-bottom:1px solid var(--line);">
       <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:2px;">◦ ${p.name}</div>
       <div style="font-size:15px;color:var(--text2);line-height:1.5;">${p.desc}</div>
     </div>`).join('');
 
-  const wandern = h.wandern.map(w => `
+  const wandern = (h.wandern||[]).map(w => `
     <div style="font-size:16px;color:var(--text2);padding:4px 0 4px 16px;position:relative;line-height:1.5;">
       <span style="position:absolute;left:0;color:var(--cyan);">›</span>${w}
     </div>`).join('');
 
-  const spez = h.spezialitaeten.map(s => `
+  const spez = (h.spezialitaeten||[]).map(s => `
     <div style="font-size:16px;color:var(--text2);padding:4px 0 4px 16px;position:relative;line-height:1.5;">
       <span style="position:absolute;left:0;color:var(--cyan);">›</span>${s}
     </div>`).join('');
 
-  const maerkte = h.maerkte ? h.maerkte.map(m => `
-    <div style="padding:10px 0;border-bottom:1px solid var(--line);">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
-        <span style="font-size:10px;letter-spacing:0.12em;color:var(--cyan);background:var(--cyan-dim);border:1px solid var(--line2);border-radius:4px;padding:2px 7px;">${m.datum}</span>
-        <span style="font-size:13px;color:var(--text3);">${m.ort}</span>
-        ${m.hund ? '<span style="font-size:13px;">🐾</span>' : ''}
-      </div>
-      <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:2px;">${m.name}</div>
-      <div style="font-size:15px;color:var(--text2);">${m.info}</div>
-    </div>`).join('') : '';
-
-  const marktTipp = h.marktTipp ? `
-    <div style="padding:10px 14px;background:var(--cyan-dim);border:1px solid var(--line2);border-radius:var(--r);margin-top:8px;font-size:14px;color:var(--text2);">
-      💡 ${h.marktTipp}
-    </div>` : '';
-
   return `
-    <div class="body-section">
-      <div class="body-label">⭐ Top 3 Highlights · Mit Hund</div>
-      ${top3}
-    </div>
-    <div class="body-section">
-      <div class="body-label">🥾 Wanderwege</div>
-      ${wandern}
-    </div>
-    <div class="body-section">
-      <div class="body-label">🍽 Regionale Spezialitäten</div>
-      ${spez}
-    </div>
-    ${maerkte ? `
-    <div class="body-section">
-      <div class="body-label">🛍 Märkte & Brocantes 🐾</div>
-      ${maerkte}
-      ${marktTipp}
-    </div>` : ''}
+    ${top3 ? `<div class="body-section"><div class="body-label">⭐ Top 3 Highlights · Mit Hund</div>${top3}</div>` : ''}
+    ${wandern ? `<div class="body-section"><div class="body-label">🥾 Wanderwege</div>${wandern}</div>` : ''}
+    ${spez ? `<div class="body-section"><div class="body-label">🍽 Regionale Spezialitäten</div>${spez}</div>` : ''}
+    ${h.nichtVerpassen ? `
     <div class="body-section" style="background:rgba(0,229,255,0.04);border-left:2px solid var(--cyan);padding-left:16px;">
       <div class="body-label">🚩 Nicht verpassen</div>
       <div class="body-val dim" style="font-size:17px;">${h.nichtVerpassen}</div>
-    </div>`;
+    </div>` : ''}`;
 }
 
+// ── ETAPPEN ───────────────────────────────────────────────────────────────────
 function renderEtappen() {
   document.getElementById('etappen-list').innerHTML = ETAPPEN.map((e,i) => {
-    const doc = docData[e.id] || {};
-    const docBlocks = [
-      { lbl:'Restaurants',       ico:'🍽', data:doc.restaurants   },
-      { lbl:'Wandern & Ausflüge',ico:'🥾', data:doc.wandern       },
-      { lbl:'Besonderheiten',    ico:'💡', data:doc.besonderheiten },
-      { lbl:'Supermarkt',        ico:'🛒', data:doc.supermarkt    },
-    ].filter(x=>x.data);
-
-    const docHtml = docBlocks.map(b => {
-      const lines = b.data.split('\n').map(l=>l.trim()).filter(l=>l&&l!=='—');
-      if (!lines.length) return '';
-      const isList = lines.some(l=>l.startsWith('-'));
-      const inner = isList
-        ? `<ul class="doc-entry">${lines.map(l=>`<li>${l.replace(/^-\s*/,'')}</li>`).join('')}</ul>`
-        : `<div class="doc-entry">${lines.join('<br>')}</div>`;
-      return `<div class="body-section"><div class="body-label">${b.ico} ${b.lbl}</div>${inner}</div>`;
-    }).join('');
+    const driveCells = [
+      e.km    ? `<div class="drive-cell"><div class="drive-val">${e.km}</div><div class="drive-lbl">km</div></div>` : '',
+      e.dauer ? `<div class="drive-cell"><div class="drive-val">${e.dauer}</div><div class="drive-lbl">Fahrt</div></div>` : '',
+      `<div class="drive-cell"><div class="drive-val">${e.naechte}</div><div class="drive-lbl">Nächte</div></div>`,
+    ].join('');
 
     return `
     <div class="etappe-card" id="card-${i}">
       <div class="card-accent" style="background:${e.color}"></div>
-      <div class="drive-bar">
-        <div class="drive-cell"><div class="drive-val">${e.km}</div><div class="drive-lbl">km</div></div>
-        <div class="drive-cell"><div class="drive-val">${e.dauer}</div><div class="drive-lbl">Fahrt</div></div>
-        <div class="drive-cell"><div class="drive-val">${e.naechte}</div><div class="drive-lbl">Nächte</div></div>
-      </div>
+      <div class="drive-bar">${driveCells}</div>
       <div class="card-head" onclick="toggleCard(${i})">
         <div class="card-num" style="color:${e.color}">${String(e.id).padStart(2,'0')}</div>
         <div class="card-info">
@@ -447,26 +407,51 @@ function renderEtappen() {
             <div><div class="body-label">Check-in</div><div class="body-val">${e.checkin}</div></div>
             <div><div class="body-label">Check-out</div><div class="body-val">${e.checkout}</div></div>
           </div>
-          ${e.buchungNr ? `<div style="margin-top:12px;"><div class="booking-badge">✓ ${e.buchungNr} · ${e.buchungPlattform}</div></div>` : ''}
+          <div style="margin-top:12px;">
+            <div class="booking-badge">✓ ${e.buchungNr ? `${e.buchungNr} · ` : ''}${e.buchungPlattform}</div>
+          </div>
         </div>
         <div class="body-section">
           <div class="body-val dim">${e.info}</div>
         </div>
-        ${docHtml}
         ${highlightsHtml(e.id)}
         <div class="action-row">
           <a class="act-btn nav" href="${e.navUrl}" target="_blank">
             <span class="act-ico">🗺</span>
             <span class="act-lbl">Navigation</span>
           </a>
+          ${e.buchungUrl ? `
           <a class="act-btn book" href="${e.buchungUrl}" target="_blank">
             <span class="act-ico">🔖</span>
             <span class="act-lbl">Buchung</span>
-          </a>
+          </a>` : ''}
         </div>
       </div>
     </div>`;
   }).join('');
+}
+
+// ── KARTE ─────────────────────────────────────────────────────────────────────
+function renderMapEmbed() {
+  const wrap = document.getElementById('maps-embed-wrap');
+  if (!wrap) return;
+
+  const [a, b] = ETAPPEN;
+  const src = `https://www.google.com/maps/embed/v1/directions?key=${CONFIG.mapsApiKey}`
+    + `&origin=${encodeURIComponent(a.adresse)}`
+    + `&destination=${encodeURIComponent(b.adresse)}`
+    + `&mode=driving&language=de`;
+
+  wrap.innerHTML = `
+    <iframe src="${src}" width="100%" height="380" allowfullscreen loading="lazy"
+      style="border:none;display:block;"></iframe>`;
+
+  const slot = document.getElementById('maps-link-slot');
+  if (slot) {
+    slot.innerHTML = CONFIG.mapsListUrl
+      ? `<a class="maps-link-btn" href="${CONFIG.mapsListUrl}" target="_blank">📍 Öffnen</a>`
+      : '';
+  }
 }
 
 function renderNavList() {
@@ -479,328 +464,6 @@ function renderNavList() {
       </div>
       <div class="nav-arrow">NAV →</div>
     </a>`).join('');
-}
-
-// ── DOC PARSING ───────────────────────────────────────────────────────────────
-const KATMAP = {
-  'unterkunft':'unterkunft','supermarkt':'supermarkt','restaurants':'restaurants',
-  'wandern_/_ausflüge':'wandern','besonderheiten':'besonderheiten'
-};
-
-async function loadDoc() {
-  try {
-    const res = await fetch(CONFIG.docPubUrl + '?output=txt&t=' + Date.now());
-    const text = await res.text();
-    docData = parseDoc(text);
-  } catch(e) {}
-  renderAll();
-}
-
-function parseDoc(text) {
-  const result = {};
-  const lines = text.split('\n').map(l=>l.trim());
-  let curEtappe=null, curKat=null, buf=[];
-  const KATS = ['UNTERKUNFT','SUPERMARKT','RESTAURANTS','WANDERN / AUSFLÜGE','BESONDERHEITEN'];
-
-  function flush() {
-    if (curEtappe && curKat && buf.length) {
-      const content = buf.filter(l=>l&&l!=='—').join('\n').trim();
-      if (content) {
-        if (!result[curEtappe]) result[curEtappe] = {};
-        const k = curKat.toLowerCase().replace(' / ','_').replace(/ /g,'_');
-        result[curEtappe][KATMAP[k]||k] = content;
-      }
-    }
-    buf = [];
-  }
-
-  for (const line of lines) {
-    const em = line.match(/==\s*ETAPPE\s*(\d+)\s*==/i);
-    if (em) { flush(); curEtappe=parseInt(em[1]); curKat=null; continue; }
-    if (line.match(/^---+$/)) { flush(); curKat=null; continue; }
-    if (curEtappe) {
-      const kat = KATS.find(k=>line===k);
-      if (kat) { flush(); curKat=kat; continue; }
-      if (curKat) buf.push(line);
-    }
-  }
-  flush();
-  return result;
-}
-
-// ── NOTIZEN ───────────────────────────────────────────────────────────────────
-function renderNotizen() {
-  const el = document.getElementById('notizen-list');
-  if (!el) return;
-
-  const blocks = ETAPPEN.map(e => {
-    const doc = docData[e.id] || {};
-    const kats = [
-      { lbl:'Restaurants', data:doc.restaurants },
-      { lbl:'Wandern & Ausflüge', data:doc.wandern },
-      { lbl:'Besonderheiten', data:doc.besonderheiten },
-      { lbl:'Supermarkt', data:doc.supermarkt },
-    ].filter(x=>x.data);
-    if (!kats.length) return '';
-
-    return `
-      <div class="notiz-etappe-block">
-        <div class="notiz-etappe-head">
-          <div class="notiz-etappe-dot" style="background:${e.color}"></div>
-          <div class="notiz-etappe-name" style="color:${e.color}">${e.name}</div>
-          <div class="notiz-etappe-dates">${e.dates}</div>
-        </div>
-        ${kats.map(k => {
-          const lines = k.data.split('\n').map(l=>l.trim()).filter(l=>l&&l!=='—');
-          if (!lines.length) return '';
-          const isList = lines.some(l=>l.startsWith('-'));
-          const inner = isList
-            ? `<ul class="notiz-kat-items">${lines.map(l=>`<li>${l.replace(/^-\s*/,'')}</li>`).join('')}</ul>`
-            : `<div class="notiz-kat-items"><li>${lines.join('</li><li>')}</li></div>`;
-          return `<div class="notiz-kat"><div class="notiz-kat-label">${k.lbl}</div>${inner}</div>`;
-        }).join('')}
-      </div>`;
-  }).filter(Boolean).join('');
-
-  el.innerHTML = blocks || `<div style="text-align:center;padding:32px;color:var(--text3);font-size:15px;letter-spacing:0.1em;">// KEINE NOTIZEN VORHANDEN</div>`;
-}
-
-async function saveNotiz() {
-  const etappe  = document.getElementById('notiz-etappe').value;
-  const kat     = document.getElementById('notiz-kat').value;
-  const text    = document.getElementById('notiz-text').value.trim();
-  const status  = document.getElementById('notiz-status');
-
-  if (!text) { status.textContent = '// Text eingeben'; return; }
-
-  status.textContent = '// Speichern…';
-  const inhalt = text.startsWith('-') ? text : `- ${text}`;
-  const result = await writeToDoc(parseInt(etappe), kat, inhalt);
-
-  status.textContent = result || '// Gespeichert ✓';
-  document.getElementById('notiz-text').value = '';
-  if (result && !result.includes('Fehler')) setTimeout(()=>{ loadDoc(); status.textContent=''; }, 2000);
-}
-
-// ── DOC WRITE ─────────────────────────────────────────────────────────────────
-async function writeToDoc(etappe, kategorie, inhalt) {
-  const url = CONFIG.appsScriptUrl;
-  if (!url) return 'Apps Script nicht konfiguriert';
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action:'write', etappe, kategorie, inhalt })
-    });
-    const data = await res.json();
-    return data.success ? data.message : `Fehler: ${data.error}`;
-  } catch(e) {
-    return `Verbindungsfehler: ${e.message}`;
-  }
-}
-
-// ── CHAT ──────────────────────────────────────────────────────────────────────
-function buildSystemPrompt() {
-  const d = today();
-  const cur = currentEtappe();
-  const loc = cur ? cur.name : 'außerhalb der Reise';
-  const docSummary = Object.entries(docData).map(([num, data]) => {
-    const e = ETAPPEN[num-1];
-    if (!e) return '';
-    const parts = [`[${e.name}]`];
-    if (data.restaurants)    parts.push('Restaurants: ' + data.restaurants.split('\n').filter(l=>l.trim()).slice(0,3).join(', '));
-    if (data.wandern)        parts.push('Wandern: ' + data.wandern.split('\n').filter(l=>l.trim()).slice(0,2).join(', '));
-    if (data.besonderheiten) parts.push(data.besonderheiten.split('\n')[0]?.trim());
-    return parts.filter(Boolean).join(' — ');
-  }).filter(Boolean).join('\n');
-
-  return `Reiseleiter für Bretagne/Normandie Roadtrip Mai 2026. Tesla + Hund.
-Heute: ${d.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'})}. Standort: ${loc}.
-Etappen: 1.Valenciennes(13-14.05) 2.Cotentin(14-19.05) 3.Crozon(19-25.05) 4.Alabasterküste(25-30.05).
-Doc-Notizen: ${docSummary||'keine'}.
-Antworte kurz, konkret, auf Deutsch. Nur reiserelevante Antworten.
-Für Ortsuchen: gib <map_search>{"query":"...","lat":XX,"lng":XX}</map_search> aus.
-Für Doc-Einträge: gib <doc_write>{"etappe":N,"kategorie":"RESTAURANTS","inhalt":"- Name: Info"}</doc_write> aus.`;
-}
-
-function addMsg(role, text) {
-  const msgs = document.getElementById('chat-msgs');
-  const t = new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
-  const div = document.createElement('div');
-  div.className = `msg ${role}`;
-  div.innerHTML = `<div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div><div class="msg-time">${t}</div>`;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-  chatHistory.push({ role: role==='user'?'user':'assistant', content: text });
-}
-
-function addTyping() {
-  const msgs = document.getElementById('chat-msgs');
-  const div = document.createElement('div');
-  div.id = 'typing'; div.className = 'typing-wrap';
-  div.innerHTML = '<div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div>';
-  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
-}
-
-async function sendMsg() {
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim();
-  if (!text) return;
-
-  input.value = ''; input.style.height = 'auto';
-  const btn = document.getElementById('send-btn');
-  btn.disabled = true;
-
-  addMsg('user', text);
-  addTyping();
-
-  try {
-    const messages = chatHistory.filter(m=>m.role==='user'||m.role==='assistant').slice(-8);
-    const res = await fetch(CONFIG.workerUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': CONFIG.anthropicKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
-        max_tokens: 1024,
-        system: buildSystemPrompt(),
-        messages
-      })
-    });
-
-    document.getElementById('typing')?.remove();
-
-    if (!res.ok) {
-      const err = await res.json().catch(()=>({}));
-      addMsg('ai', `Fehler: ${err?.error?.message || res.status}`);
-      btn.disabled = false; return;
-    }
-
-    const data = await res.json();
-    const reply = data.content?.filter(b=>b.type==='text').map(b=>b.text).join('') || '–';
-
-    // Clean & process
-    const clean = reply.replace(/<map_search>[\s\S]*?<\/map_search>/g,'').replace(/<doc_write>[\s\S]*?<\/doc_write>/g,'').trim();
-    if (clean) addMsg('ai', clean);
-
-    // Map search
-    const mapMatches = [...reply.matchAll(/<map_search>([\s\S]*?)<\/map_search>/g)];
-    mapMatches.forEach(m => {
-      try { const p = JSON.parse(m[1].trim()); renderMapInChat(p.query, p.lat||48.5, p.lng||-2.5); } catch(e){}
-    });
-
-    // Doc writes
-    const docMatches = [...reply.matchAll(/<doc_write>([\s\S]*?)<\/doc_write>/g)];
-    for (const m of docMatches) {
-      try {
-        const p = JSON.parse(m[1].trim());
-        const result = await writeToDoc(p.etappe, p.kategorie, p.inhalt);
-        const msgs = document.getElementById('chat-msgs');
-        const d = document.createElement('div');
-        d.style.cssText = 'text-align:center;font-size:12px;color:var(--cyan);padding:4px;letter-spacing:0.06em;';
-        d.textContent = result || '// Eingetragen';
-        msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
-        setTimeout(loadDoc, 1500);
-      } catch(e){}
-    }
-
-  } catch(e) {
-    document.getElementById('typing')?.remove();
-    addMsg('ai', `// Verbindungsfehler: ${e.message}`);
-  }
-
-  btn.disabled = false;
-}
-
-function useChip(el) {
-  document.getElementById('chat-input').value = el.textContent;
-  sendMsg();
-}
-
-function doMapSearch() {
-  const q = document.getElementById('map-search').value.trim();
-  if (!q) return;
-  const cur = currentEtappe();
-  const lat = cur ? cur.lat : 48.5;
-  const lng = cur ? cur.lng : -2.5;
-  addMsg('user', `📍 ${q}`);
-  renderMapInChat(q, lat, lng);
-  document.getElementById('map-search').value = '';
-}
-
-function renderMapInChat(query, lat, lng) {
-  const msgs = document.getElementById('chat-msgs');
-  const ts = Date.now();
-  const cur = currentEtappe();
-  const etappeNum = cur ? ETAPPEN.indexOf(cur)+1 : 1;
-
-  const div = document.createElement('div');
-  div.style.cssText = 'width:100%;max-width:100%;align-self:flex-start;animation:fadeUp 0.25s ease;';
-
-  div.innerHTML = `
-    <div class="chat-map">
-      <div class="chat-map-header">
-        <span style="font-size:14px;">📍</span>
-        <span class="chat-map-title">${query}</span>
-        <a class="chat-map-open" href="https://www.google.com/maps/search/${encodeURIComponent(query)}/@${lat},${lng},14z" target="_blank">MAPS →</a>
-      </div>
-      <iframe src="https://www.google.com/maps/embed/v1/search?key=${CONFIG.mapsApiKey}&q=${encodeURIComponent(query)}&center=${lat},${lng}&zoom=14"
-        width="100%" height="240" style="border:none;display:block;" allowfullscreen loading="lazy">
-      </iframe>
-      <div class="chat-map-save">
-        <input class="save-input" id="si-${ts}" type="text" placeholder="Namen eingeben und speichern…"
-          onkeydown="if(event.key==='Enter'){event.preventDefault();chatSave('si-${ts}',${etappeNum})}">
-        <button class="save-btn" type="button" onclick="chatSave('si-${ts}',${etappeNum})">+ SAVE</button>
-      </div>
-    </div>`;
-
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-async function chatSave(inputId, etappeNum) {
-  const input = document.getElementById(inputId);
-  const name = input.value.trim();
-  if (!name) return;
-
-  input.disabled = true;
-  const n = name.toLowerCase();
-  let kat = 'BESONDERHEITEN';
-  if (n.match(/restaurant|café|cafe|brasserie|crêperie|bistro|boulangerie|bar |auberge/)) kat='RESTAURANTS';
-  else if (n.match(/supermarché|leclerc|carrefour|intermarché|lidl|aldi|marché/)) kat='SUPERMARKT';
-  else if (n.match(/plage|pointe|cap |sentier|randonnée|phare|château|musée|parc/)) kat='WANDERN / AUSFLÜGE';
-
-  const result = await writeToDoc(etappeNum, kat, `- ${name}`);
-
-  const msgs = document.getElementById('chat-msgs');
-  const d = document.createElement('div');
-  d.style.cssText = 'text-align:center;font-size:12px;color:var(--cyan);padding:4px;letter-spacing:0.06em;';
-  d.textContent = result || `// "${name}" gespeichert`;
-  msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
-
-  input.value = ''; input.disabled = false;
-  if (result && !result.includes('Fehler')) setTimeout(loadDoc, 1500);
-}
-
-function initChat() {
-  const msgs = document.getElementById('chat-msgs');
-  const cur = currentEtappe();
-  const d = today();
-  let greeting;
-  if (d < TRIP.start) {
-    const days = daysBetween(d, TRIP.start);
-    greeting = `// SYSTEM BEREIT\nNoch ${days} Tage bis zur Abfahrt.\n\nFrag mich nach Aktivitäten, Restaurants oder Tipps. Ich kann auch Notizen ins Reisedokument schreiben.`;
-  } else if (cur) {
-    greeting = `// STANDORT: ${cur.name.toUpperCase()}\nTag ${daysBetween(TRIP.start,d)+1} der Reise.\n\nFrag mich nach Restaurants, Aktivitäten, Gezeiten. Oder sag mir was ich ins Reisedoc eintragen soll.`;
-  } else {
-    greeting = `// KI REISELEITER\nBretagne & Normandie 2026.\n\nFragen, Empfehlungen, Notizen eintragen — ich helfe.`;
-  }
-  const t = new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
-  msgs.innerHTML = `<div class="msg ai"><div class="msg-bubble">${greeting.replace(/\n/g,'<br>')}</div><div class="msg-time">${t}</div></div>`;
-  chatHistory = [{ role:'assistant', content:greeting }];
 }
 
 // ── NAVIGATION ────────────────────────────────────────────────────────────────
@@ -829,69 +492,20 @@ function toggleTheme() {
 }
 
 // ── RENDER ALL ────────────────────────────────────────────────────────────────
-function renderNearby() {
-  const wrap = document.getElementById('nearby-wrap');
-  if (!wrap) return;
-
-  const NEARBY = {
-    1: null,
-    2: [
-      { name:'Mont Saint-Michel', dist:'1,5 Std.', tip:'Mit Hund: Steg zu Fuß (45 Min) — Busse nehmen große Hunde nicht mit.' },
-      { name:'Cherbourg', dist:'45 Min', tip:'Cité de la Mer (U-Boot). 14. Mai: Vide-grenier Sainte-Échelle.' },
-      { name:'Portbail', dist:'15 Min', tip:'Bei Ebbe traumhaft. Achtung: Schafe in den Salzwiesen.' },
-      { name:'Valognes', dist:'20 Min', tip:'17. Mai (So): Vide-grenier am Place du Château.' },
-    ],
-    3: [
-      { name:'Pointe du Raz', dist:'45 Min', tip:'Westlichste Spitze Frankreichs. Mit Hund möglich.' },
-      { name:'Brest', dist:'45 Min', tip:'Aquarium Océanopolis. Großstadt-Infrastruktur für Besorgungen.' },
-      { name:'Morgat Höhlen', dist:'15 Min', tip:'Per Boot. Hunde an Bord möglich (vorher anfragen).' },
-      { name:'Camaret-sur-Mer', dist:'vor Ort', tip:'24. Mai (So): Puces Nautiques — maritime Flohmärkte.' },
-    ],
-    4: [
-      { name:'Étretat', dist:'30 Min', tip:'Früh morgens — weniger Touristen, besseres Licht. Hund erlaubt.' },
-      { name:'Dieppe', dist:'20 Min', tip:'30. Mai (Sa): Einer der schönsten Märkte Frankreichs.' },
-      { name:'Le Tréport', dist:'15 Min', tip:'Kreidefelsen + Promenade. Brücke nach Mers-les-Bains lohnt sich.' },
-      { name:'Eu', dist:'10 Min', tip:'Schloss + Forêt d\'Eu — riesiger Wald, ideal für Hund.' },
-    ],
-  };
-
-  const cur = currentEtappe();
-  if (!cur) return;
-  const items = NEARBY[cur.id];
-  if (!items) return;
-
-  const rows = items.map(item => `
-    <div style="display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);">
-      <div style="min-width:56px;flex-shrink:0;">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.04em;color:var(--cyan);">${item.dist}</div>
-      </div>
-      <div>
-        <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:2px;">${item.name}</div>
-        <div style="font-size:14px;color:var(--text2);line-height:1.4;">${item.tip}</div>
-      </div>
-    </div>`).join('');
-
-  wrap.innerHTML = `
-    <div class="section-tag">In der Nähe · ${cur.name}</div>
-    <div style="background:var(--panel);border:1px solid var(--line2);border-radius:var(--r-lg);padding:0 18px;">
-      ${rows}
-    </div>`;
-}
-
 function renderAll() {
   renderTopbarDate();
   renderStats();
   renderToday();
   renderWeather();
   renderRoute();
-  renderNearby();
+  renderKalender();
   renderProgress();
   renderEtappen();
+  renderMapEmbed();
   renderNavList();
-  initChat();
 }
 
-loadDoc();
+renderAll();
 </script>
 </body>
 </html>
