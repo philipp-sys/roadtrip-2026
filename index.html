@@ -1,508 +1,524 @@
 <!DOCTYPE html>
-<html lang="de" data-theme="dark">
+<html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<title>L&V 2026</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<!-- Die Seite ist öffentlich per URL erreichbar und enthält Zugangsdaten der
+     Unterkunft: keine Beschreibung, keine OG-Tags, keine Indexierung. -->
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="referrer" content="no-referrer">
+<title>Reisejournal 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340;0,9..144,480;0,9..144,600;1,9..144,340&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- TOPBAR -->
-<header class="topbar">
-  <div class="topbar-brand">
-    <div class="topbar-pulse"></div>
-    <div>
-      <div class="topbar-title">L&V · 2026</div>
+<!-- ══ MASTHEAD ═══════════════════════════════════════════════════════════ -->
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="mh-eyebrow rise rise-1" id="mh-eyebrow"></div>
+    <div class="mh-right rise rise-1">
+      <span class="mh-issue" id="mh-issue"></span>
+      <button class="theme-btn" onclick="toggleTheme()" id="theme-btn">Nachtausgabe</button>
     </div>
-  </div>
-  <div class="topbar-right">
-    <div class="topbar-sub" id="topbar-date"></div>
-    <button class="theme-btn" onclick="toggleTheme()" aria-label="Theme">◑</button>
   </div>
 </header>
 
-<!-- ══ START ══════════════════════════════════════════════ -->
-<div class="section active" id="s-overview">
-  <div class="overview-wrap">
-    <div class="hero">
-      <div class="hero-label">Roadtrip</div>
-      <div class="hero-title">LENGGRIES<br>&amp; <span>VALDIDENTRO</span></div>
-      <div class="hero-sub">11. Sept. – 26. Sept. 2026 · Tesla · 🐾</div>
-      <div class="stats-row">
-        <div class="stat"><div class="stat-val">2</div><div class="stat-lbl">Etappen</div></div>
-        <div class="stat"><div class="stat-val">15</div><div class="stat-lbl">Nächte</div></div>
-        <div class="stat"><div class="stat-val">2</div><div class="stat-lbl">Länder</div></div>
-        <div class="stat"><div class="stat-val" id="days-stat">—</div><div class="stat-lbl" id="days-lbl">Tage</div></div>
-      </div>
-    </div>
-    <div class="today-wrap" id="today-wrap"></div>
-    <div id="weather-wrap"></div>
-    <div class="route-wrap">
-      <div class="section-tag">Route</div>
-      <div class="route-line" id="route-line"></div>
-    </div>
-    <div style="margin:18px 24px 0;" id="kalender-wrap"></div>
-
+<!-- ══ RUBRIKEN ═══════════════════════════════════════════════════════════ -->
+<nav class="rubriken">
+  <div class="rubriken-inner">
+    <button class="rub active" onclick="switchTab('journal',this)">Journal</button>
+    <button class="rub" onclick="switchTab('etappen',this)">Etappen</button>
+    <button class="rub" onclick="switchTab('karte',this)">Karte</button>
   </div>
-</div>
-
-<!-- ══ ETAPPEN ════════════════════════════════════════════ -->
-<div class="section" id="s-etappen">
-  <div class="etappen-wrap">
-    <div style="padding:20px 24px 16px;">
-      <div class="page-title">Etappen</div>
-      <div class="page-sub">Alle Stopps — Navigation & Details</div>
-    </div>
-    <!-- Progress map -->
-    <div class="progress-map">
-      <div class="progress-map-inner">
-        <div class="section-tag">Fortschritt</div>
-        <div class="progress-steps" id="progress-steps"></div>
-      </div>
-    </div>
-    <div id="etappen-list"></div>
-  </div>
-</div>
-
-<!-- ══ KARTE ══════════════════════════════════════════════ -->
-<div class="section" id="s-karte">
-  <div class="karte-wrap">
-    <!-- Karten-Embed -->
-    <div class="maps-embed-card">
-      <div class="card-header-bar">
-        <div>
-          <div class="card-header-title">Reiseorte</div>
-          <div class="card-header-sub">Lenggries → Valdidentro</div>
-        </div>
-        <div id="maps-link-slot"></div>
-      </div>
-      <div class="maps-iframe-wrap" style="height:380px;" id="maps-embed-wrap"></div>
-    </div>
-    <!-- Navigation shortcuts -->
-    <div class="maps-embed-card">
-      <div class="card-header-bar">
-        <div>
-          <div class="card-header-title">Navigation</div>
-          <div class="card-header-sub">Direkt zu den Unterkünften</div>
-        </div>
-      </div>
-      <div class="nav-list" id="nav-list"></div>
-    </div>
-  </div>
-</div>
-
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-  <button class="nav-item active" onclick="switchTab('overview',this)">
-    <span class="nav-ico">⬡</span><span class="nav-lbl">Start</span>
-  </button>
-  <button class="nav-item" onclick="switchTab('etappen',this)">
-    <span class="nav-ico">◎</span><span class="nav-lbl">Etappen</span>
-  </button>
-  <button class="nav-item" onclick="switchTab('karte',this)">
-    <span class="nav-ico">◉</span><span class="nav-lbl">Karte</span>
-  </button>
-
 </nav>
+
+<main class="wrap">
+
+  <!-- ── JOURNAL ──────────────────────────────────────────────────────── -->
+  <section class="section active" id="s-journal">
+    <div class="opener">
+      <h1 class="title rise rise-2" id="title"></h1>
+      <div class="standfirst rise rise-3" id="standfirst"></div>
+      <div class="dateline rise rise-3" id="dateline"></div>
+    </div>
+
+    <div class="stats rise rise-4" id="stats"></div>
+
+    <div class="routeband">
+      <div class="section-tag">Strecke</div>
+      <div class="route" id="route"></div>
+    </div>
+
+    <div id="stand-wrap"></div>
+    <div id="wetter-wrap"></div>
+
+    <div class="toc">
+      <div class="section-tag">Termine</div>
+      <div id="toc-list"></div>
+    </div>
+  </section>
+
+  <!-- ── ETAPPEN ──────────────────────────────────────────────────────── -->
+  <section class="section" id="s-etappen">
+    <div id="spreads"></div>
+  </section>
+
+  <!-- ── KARTE ────────────────────────────────────────────────────────── -->
+  <section class="section" id="s-karte">
+    <div class="figure">
+      <div class="section-tag">Abbildung</div>
+      <div class="figure-frame" id="figure-frame"></div>
+      <div class="figcaption">Abb. 1 — Streckenverlauf Lenggries → Valdidentro</div>
+    </div>
+    <div class="verzeichnis">
+      <div class="section-tag">Verzeichnis</div>
+      <div id="vz-list"></div>
+    </div>
+  </section>
+
+  <footer class="colophon">
+    <span id="colophon-left"></span>
+    <span id="colophon-right"></span>
+  </footer>
+
+</main>
 
 <script src="data.js"></script>
 <script>
-// ═══════════════════════════════════════════════════════
-//  APP
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
+//  REISEJOURNAL — Alpine Editorial
+// ═══════════════════════════════════════════════════════════════════════
 
-// ── HELPERS ───────────────────────────────────────────────────────────────────
-function today() { const d=new Date(); d.setHours(0,0,0,0); return d; }
+// ── Helfer ─────────────────────────────────────────────────────────────
+function today() { const d = new Date(); d.setHours(0,0,0,0); return d; }
 function daysBetween(a,b) { return Math.round((b-a)/86400000); }
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => (
+    {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]
+  ));
+}
 
 function currentEtappe() {
-  const d=today();
-  return ETAPPEN.find(e=>{
-    const s=new Date(e.start); s.setHours(0,0,0,0);
-    const en=new Date(e.end);  en.setHours(0,0,0,0);
-    return d>=s && d<en;
+  const d = today();
+  return ETAPPEN.find(e => {
+    const s = new Date(e.start); s.setHours(0,0,0,0);
+    const en = new Date(e.end);  en.setHours(0,0,0,0);
+    return d >= s && d < en;
   });
 }
-
 function nextEtappe() {
-  const d=today();
-  return ETAPPEN.find(e=>{ const s=new Date(e.start); s.setHours(0,0,0,0); return s>d; });
-}
-
-// ── TOPBAR DATE ───────────────────────────────────────────────────────────────
-function renderTopbarDate() {
-  const d = new Date();
-  document.getElementById('topbar-date').textContent =
-    d.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit' });
-}
-
-// ── STATS ─────────────────────────────────────────────────────────────────────
-function renderStats() {
   const d = today();
-  const stat = document.getElementById('days-stat');
-  const lbl  = document.getElementById('days-lbl');
-  if (d < TRIP.start) {
-    const days = daysBetween(d, TRIP.start);
-    stat.textContent = days;
-    lbl.textContent = 'Tage noch';
-  } else if (d >= TRIP.end) {
-    stat.textContent = '✓';
-    lbl.textContent = 'Fertig';
-  } else {
-    stat.textContent = daysBetween(TRIP.start, d) + 1;
-    lbl.textContent = 'Tag';
-  }
+  return ETAPPEN.find(e => { const s = new Date(e.start); s.setHours(0,0,0,0); return s > d; });
 }
 
-// ── TODAY CARD ────────────────────────────────────────────────────────────────
-function renderToday() {
-  const wrap = document.getElementById('today-wrap');
+// ── Alpenpanorama, gezeichnet ──────────────────────────────────────────
+// Kein Foto-Platzhalter, sondern eine eigene Illustration je Etappe.
+// Sobald `foto` in data.js gesetzt ist, tritt sie dahinter zurück.
+const PANORAMA = {
+  pine: {
+    sky: ['var(--sky1a)','var(--sky1b)'],
+    far: { fill:'var(--r1a)', op: 0.34,
+      d:'M0,268 L80,232 L150,258 L230,196 L300,240 L380,182 L460,232 L540,190 L620,238 L700,204 L780,244 L800,236 L800,600 L0,600 Z' },
+    ridges: [
+      { fill:'var(--r1a)', d:'M0,300 L60,276 L124,296 L190,228 L242,266 L302,214 L362,252 L432,202 L500,246 L562,222 L642,262 L722,234 L800,274 L800,600 L0,600 Z' },
+      { fill:'var(--r1b)', d:'M0,368 L82,334 L152,362 L222,304 L302,346 L372,292 L452,334 L522,308 L602,350 L692,320 L762,356 L800,340 L800,600 L0,600 Z' },
+      { fill:'var(--r1c)', d:'M0,458 L92,426 L172,454 L252,404 L342,440 L422,398 L522,438 L602,416 L702,450 L800,428 L800,600 L0,600 Z' },
+      { fill:'var(--r1d)', d:'M0,548 L120,520 L242,546 L362,512 L482,542 L622,514 L742,544 L800,530 L800,600 L0,600 Z' },
+    ],
+    sun: { cx: 618, cy: 158, r: 46, fill: '#FBF4E2', op: 0.5 },
+    snow: [],
+  },
+  amber: {
+    sky: ['var(--sky2a)','var(--sky2b)'],
+    far: { fill:'var(--r2a)', op: 0.30,
+      d:'M0,250 L70,196 L130,238 L190,132 L258,196 L330,104 L404,180 L472,124 L546,192 L624,142 L706,208 L774,168 L800,200 L800,600 L0,600 Z' },
+    ridges: [
+      { fill:'var(--r2a)', d:'M0,300 L70,244 L122,284 L182,176 L250,242 L322,146 L400,224 L470,166 L542,238 L620,188 L702,254 L772,212 L800,248 L800,600 L0,600 Z' },
+      { fill:'var(--r2b)', d:'M0,378 L74,330 L146,372 L214,296 L292,352 L364,286 L446,346 L520,300 L598,360 L682,314 L764,368 L800,344 L800,600 L0,600 Z' },
+      { fill:'var(--r2c)', d:'M0,458 L96,412 L178,452 L262,394 L346,442 L430,398 L522,446 L610,410 L706,452 L800,424 L800,600 L0,600 Z' },
+      { fill:'var(--r2d)', d:'M0,548 L118,516 L238,546 L358,512 L486,544 L618,514 L740,546 L800,530 L800,600 L0,600 Z' },
+    ],
+    sun: { cx: 178, cy: 132, r: 54, fill: '#FFF1D0', op: 0.62 },
+    // Firnfelder auf den höchsten Gipfeln der Ortlergruppe
+    snow: [
+      'M322,146 L292,192 L354,194 Z',
+      'M182,176 L154,220 L212,222 Z',
+      'M470,166 L444,206 L498,208 Z',
+    ],
+  },
+};
+
+function panoramaSvg(variant, uid) {
+  const p = PANORAMA[variant] || PANORAMA.pine;
+  const gid = `sky-${uid}`, sid = `sun-${uid}`;
+  // xMidYMax: das Gebirge bleibt in jedem Zuschnitt stehen, gekappt wird der Himmel.
+  return `
+  <svg class="illu" viewBox="0 0 800 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="${p.sky[0]}"/>
+        <stop offset="72%"  stop-color="${p.sky[1]}"/>
+        <stop offset="100%" stop-color="${p.sky[1]}"/>
+      </linearGradient>
+      <radialGradient id="${sid}">
+        <stop offset="0%"   stop-color="${p.sun.fill}" stop-opacity="${p.sun.op}"/>
+        <stop offset="42%"  stop-color="${p.sun.fill}" stop-opacity="${p.sun.op * 0.55}"/>
+        <stop offset="100%" stop-color="${p.sun.fill}" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect x="-400" y="-600" width="1600" height="1200" fill="url(#${gid})"/>
+    <circle cx="${p.sun.cx}" cy="${p.sun.cy}" r="${p.sun.r * 3.4}" fill="url(#${sid})"/>
+    <circle cx="${p.sun.cx}" cy="${p.sun.cy}" r="${p.sun.r}" fill="${p.sun.fill}" opacity="${p.sun.op}"/>
+    ${p.far ? `<path d="${p.far.d}" fill="${p.far.fill}" opacity="${p.far.op}"/>` : ''}
+    ${p.ridges.map((r, i) => `
+      <path d="${r.d}" fill="${r.fill}"${
+        i > 0 ? ` stroke="#ffffff" stroke-opacity="${0.16 - i * 0.03}" stroke-width="1.5"` : ''
+      }/>
+      ${/* Firnfelder gehören zum hintersten Grat und werden von den
+            vorderen Rücken verdeckt — deshalb direkt danach. */ ''}
+      ${i === 0 ? p.snow.map(d => `<path d="${d}" fill="#ffffff" opacity="0.5"/>`).join('') : ''}
+    `).join('')}
+  </svg>`;
+}
+
+// ── Masthead & Aufmacher ───────────────────────────────────────────────
+function renderMasthead() {
+  document.getElementById('mh-eyebrow').textContent = TRIP.eyebrow;
+  document.getElementById('mh-issue').textContent   = TRIP.ausgabe;
+
+  const parts = TRIP.title.split(' & ');
+  document.getElementById('title').innerHTML = parts.length === 2
+    ? `${esc(parts[0])}<br><span class="amp">&amp;</span> ${esc(parts[1])}`
+    : esc(TRIP.title);
+
+  document.getElementById('standfirst').textContent = TRIP.standfirst;
+  document.getElementById('dateline').textContent   = TRIP.dateline;
+
+  document.getElementById('colophon-left').textContent =
+    `${START.name} → ${ETAPPEN.map(e => e.name).join(' → ')} → ${START.name}`;
+  document.getElementById('colophon-right').textContent = TRIP.eyebrow;
+}
+
+// ── Kennzahlen ─────────────────────────────────────────────────────────
+function renderStats() {
+  const naechte  = ETAPPEN.reduce((s,e) => s + e.naechte, 0);
+  const gefahren = ETAPPEN.reduce((s,e) => s + (parseInt(e.km,10) || 0), 0);
+
+  const cells = [
+    { val: ETAPPEN.length, lbl: 'Etappen' },
+    { val: naechte,        lbl: 'Nächte' },
+    { val: gefahren,       lbl: 'km einfache Strecke' },
+    { val: 2,              lbl: 'Länder' },
+  ];
+
+  document.getElementById('stats').innerHTML = cells.map(c => `
+    <div class="stat">
+      <div class="stat-val">${esc(c.val)}</div>
+      <div class="stat-lbl">${esc(c.lbl)}</div>
+    </div>`).join('');
+}
+
+// ── Streckenband ───────────────────────────────────────────────────────
+function renderRoute() {
+  const cur = currentEtappe();
+  const stops = [
+    { name: START.name, sub: START.region, cls: 'is-start' },
+    ...ETAPPEN.map(e => ({ name: e.name, sub: e.datesShort, cls: e.color, leg: e }))
+  ];
+
+  let html = '';
+  stops.forEach((s, i) => {
+    if (i > 0) {
+      const e = s.leg;
+      const val = e.km ? `${e.km} km · ${e.dauer}` : '—';
+      html += `<div class="route-leg">
+        <div class="leg-line"></div>
+        <div class="leg-val">${esc(val)}</div>
+      </div>`;
+    }
+    html += `<div class="route-stop ${s.cls}${cur && s.leg === cur ? ' current' : ''}">
+      <div class="r-dot"></div>
+      <div class="r-name">${esc(s.name)}</div>
+      <div class="r-sub">${esc(s.sub)}</div>
+    </div>`;
+  });
+  document.getElementById('route').innerHTML = html;
+}
+
+// ── Auszug: Countdown, laufende Reise, Rückblick ───────────────────────
+function renderStand() {
+  const wrap = document.getElementById('stand-wrap');
   const d = today();
   const cur = currentEtappe();
   const nxt = nextEtappe();
-  const daysToStart = daysBetween(d, TRIP.start);
 
   if (d < TRIP.start) {
     wrap.innerHTML = `
-      <div class="countdown-card">
-        <div class="countdown-num">${daysToStart}</div>
-        <div class="countdown-label">Tage bis zur Abfahrt · 11. September 2026</div>
+      <div class="pullout">
+        <div class="pullout-num">${daysBetween(d, TRIP.start)}</div>
+        <div class="pullout-txt">Tage bis zur Abfahrt — am 11. September geht es über die A7 nach Süden.</div>
       </div>`;
     return;
   }
 
   if (d >= TRIP.end) {
+    const naechte = ETAPPEN.reduce((s,e) => s + e.naechte, 0);
     wrap.innerHTML = `
-      <div class="countdown-card">
-        <div class="countdown-num" style="font-size:60px;">L&V ✓</div>
-        <div class="countdown-label">Reise abgeschlossen · 15 Nächte</div>
+      <div class="pullout">
+        <div class="pullout-num">✓</div>
+        <div class="pullout-txt">Reise abgeschlossen — ${naechte} Nächte zwischen Isarwinkel und Valtellina.</div>
       </div>`;
     return;
   }
 
-  if (cur) {
-    const nightNum = daysBetween(cur.start, d) + 1;
-    const nightsLeft = daysBetween(d, cur.end);
+  if (!cur) { wrap.innerHTML = ''; return; }
 
-    wrap.innerHTML = `
-      <div class="today-card">
-        <div class="today-inner">
-          <div class="today-tag" style="color:${cur.color}">// Aktuell · Tag ${daysBetween(TRIP.start,d)+1}</div>
-          <div class="today-location" style="color:${cur.color}">${cur.name}</div>
-          <div class="today-region">${cur.region}</div>
-          <div class="today-grid">
-            <div class="today-cell">
-              <div class="today-cell-label">Unterkunft</div>
-              <div class="today-cell-val">${cur.unterkunft}</div>
-            </div>
-            <div class="today-cell">
-              <div class="today-cell-label">Nacht</div>
-              <div class="today-cell-val">${nightNum} / ${cur.naechte}</div>
-            </div>
-            <div class="today-cell">
-              <div class="today-cell-label">Morgen</div>
-              <div class="today-cell-val">${nightsLeft>0?`noch ${nightsLeft} Nacht${nightsLeft>1?'e':''}`:`Abreise → ${nxt?nxt.name:'–'}`}</div>
-            </div>
-          </div>
-        </div>
-      </div>`;
-  }
-}
-
-// ── ROUTE ─────────────────────────────────────────────────────────────────────
-function renderRoute() {
-  const cur = currentEtappe();
-  const kms = ETAPPEN.map(e => e.km ? `${e.km} km` : '');
-  const stops = [
-    { name:'Start', color:'#3a5566', active:false },
-    ...ETAPPEN.map(e => ({ name:e.name, color:e.color, active:cur===e }))
-  ];
-
-  let html = '';
-  stops.forEach((s,i) => {
-    const cls = s.active ? ' active' : '';
-    html += `<div class="route-stop">
-      <div class="route-dot${cls}" style="color:${s.color}"></div>
-      <div class="route-name${cls}" style="${s.active?'color:'+s.color:''}">${s.name}</div>
-    </div>`;
-    if (i < stops.length-1)
-      html += `<div class="route-conn" data-km="${kms[i]||''}"></div>`;
-  });
-  document.getElementById('route-line').innerHTML = html;
-}
-
-// ── KALENDER ──────────────────────────────────────────────────────────────────
-function renderKalender() {
-  const wrap = document.getElementById('kalender-wrap');
-  if (!wrap) return;
-
-  const d = today();
-  const rows = [...KALENDER]
-    .sort((a,b) => a.date - b.date)
-    .map(k => {
-      const past = k.date < d;
-      return `
-      <div style="display:flex;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);${past?'opacity:0.45;':''}">
-        <div style="min-width:82px;flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.04em;color:var(--cyan);">${k.datum}</div>
-        <div style="font-size:16px;color:var(--text);line-height:1.4;">${k.label}</div>
-      </div>`;
-    }).join('');
-
+  const nacht = daysBetween(cur.start, d) + 1;
+  const offen = daysBetween(d, cur.end);
   wrap.innerHTML = `
-    <div class="section-tag">Kalender</div>
-    <div style="background:var(--panel);border:1px solid var(--line2);border-radius:var(--r-lg);padding:0 18px;">
-      ${rows}
+    <div class="now ${cur.color}-accent">
+      <div class="section-tag">Heute · Tag ${daysBetween(TRIP.start, d)+1}</div>
+      <div class="now-name">${esc(cur.name)}</div>
+      <div class="info-region">${esc(cur.region)}</div>
+      <div class="now-grid">
+        <div class="fact"><div class="fact-lbl">Unterkunft</div><div class="fact-val">${esc(cur.unterkunft)}</div></div>
+        <div class="fact"><div class="fact-lbl">Nacht</div><div class="fact-val">${nacht} von ${cur.naechte}</div></div>
+        <div class="fact"><div class="fact-lbl">Morgen</div><div class="fact-val">${
+          offen > 0 ? `noch ${offen} Nacht${offen > 1 ? 'e' : ''}` : `Abreise → ${nxt ? esc(nxt.name) : 'Heimreise'}`
+        }</div></div>
+      </div>
     </div>`;
 }
 
-// ── PROGRESS MAP ──────────────────────────────────────────────────────────────
-function renderProgress() {
-  const d = today();
+// ── Wetterbericht ──────────────────────────────────────────────────────
+async function renderWetter() {
+  const wrap = document.getElementById('wetter-wrap');
   const cur = currentEtappe();
-
-  document.getElementById('progress-steps').innerHTML = ETAPPEN.map(e => {
-    const isDone = d >= new Date(e.end);
-    const isCur  = cur === e;
-    const cls = isCur ? 'current' : isDone ? 'done' : '';
-    return `
-      <div class="prog-step ${cls}" onclick="openEtappe(${e.id-1})">
-        <div class="prog-dot">${e.id}</div>
-        <div class="prog-label">${e.name}</div>
-      </div>`;
-  }).join('');
-}
-
-// ── WEATHER ───────────────────────────────────────────────────────────────────
-async function renderWeather() {
-  const wrap = document.getElementById('weather-wrap');
-  if (!wrap) return;
-
-  const cur = currentEtappe();
-  if (!cur) return;
-
-  const lat = cur.lat, lng = cur.lng;
+  if (!wrap || !cur) return;
 
   try {
     const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weathercode,windspeed_10m,precipitation&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum&timezone=Europe/Berlin&forecast_days=3`
+      `https://api.open-meteo.com/v1/forecast?latitude=${cur.lat}&longitude=${cur.lng}` +
+      `&current=temperature_2m,weathercode,windspeed_10m,precipitation` +
+      `&daily=temperature_2m_max,temperature_2m_min,weathercode` +
+      `&timezone=Europe/Berlin&forecast_days=3`
     );
     const data = await res.json();
-    const c = data.current;
-    const d = data.daily;
+    const c = data.current, dd = data.daily;
 
-    const wIcon = code => {
-      if (code===0) return '☀️';
-      if (code<=3) return '⛅';
-      if (code<=48) return '🌫️';
-      if (code<=67) return '🌧️';
-      if (code<=77) return '🌨️';
-      if (code<=82) return '🌦️';
-      return '⛈️';
+    const wort = code => {
+      if (code === 0) return 'Klar';
+      if (code <= 3)  return 'Bewölkt';
+      if (code <= 48) return 'Nebel';
+      if (code <= 67) return 'Regen';
+      if (code <= 77) return 'Schnee';
+      if (code <= 82) return 'Schauer';
+      return 'Gewitter';
     };
-
-    const days = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+    const tage = ['So','Mo','Di','Mi','Do','Fr','Sa'];
 
     wrap.innerHTML = `
-      <div style="margin:16px 24px 0;">
-        <div class="section-tag">Wetter · ${cur.name}</div>
-        <div style="background:var(--panel);border:1px solid var(--line2);border-radius:var(--r-lg);overflow:hidden;">
-          <!-- Current -->
-          <div style="padding:16px 20px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line);">
-            <div style="font-size:40px;line-height:1;">${wIcon(c.weathercode)}</div>
-            <div>
-              <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:0.04em;color:var(--cyan);">${Math.round(c.temperature_2m)}°C</div>
-              <div style="font-size:12px;letter-spacing:0.08em;color:var(--text3);">WIND ${Math.round(c.windspeed_10m)} km/h · REGEN ${c.precipitation} mm</div>
-            </div>
-          </div>
-          <!-- 3-day forecast -->
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);">
-            ${[0,1,2].map(i => {
-              const date = new Date(d.time[i]);
-              return `<div style="background:var(--panel2);padding:12px 10px;text-align:center;">
-                <div style="font-size:10px;letter-spacing:0.15em;color:var(--text3);margin-bottom:4px;">${days[date.getDay()]}</div>
-                <div style="font-size:20px;margin-bottom:4px;">${wIcon(d.weathercode[i])}</div>
-                <div style="font-size:13px;color:var(--text);font-weight:700;">${Math.round(d.temperature_2m_max[i])}°</div>
-                <div style="font-size:11px;color:var(--text3);">${Math.round(d.temperature_2m_min[i])}°</div>
-              </div>`;
-            }).join('')}
+      <div class="wetter">
+        <div class="section-tag">Wetterbericht · ${esc(cur.name)}</div>
+        <div class="wetter-now">
+          <div class="wetter-temp">${Math.round(c.temperature_2m)}°</div>
+          <div>
+            <div style="font-size:16px;">${wort(c.weathercode)}</div>
+            <div class="mono" style="margin-top:4px;">Wind ${Math.round(c.windspeed_10m)} km/h · Niederschlag ${c.precipitation} mm</div>
           </div>
         </div>
+        <div class="wetter-days">
+          ${[0,1,2].map(i => {
+            const date = new Date(dd.time[i]);
+            return `<div class="wetter-day">
+              <div class="mono">${tage[date.getDay()]}</div>
+              <div class="wetter-hi">${Math.round(dd.temperature_2m_max[i])}°</div>
+              <div class="wetter-lo">${Math.round(dd.temperature_2m_min[i])}° · ${wort(dd.weathercode[i])}</div>
+            </div>`;
+          }).join('')}
+        </div>
       </div>`;
-  } catch(e) {
-    // Silently fail — weather is optional
+  } catch (e) {
+    // Wetter ist Beiwerk — bei Netzfehler bleibt die Sektion leer.
   }
 }
 
-// ── HIGHLIGHTS ────────────────────────────────────────────────────────────────
-// HIGHLIGHTS ist derzeit leer (siehe HIGHLIGHTS_EINGANG.md) — dann rendert
-// diese Funktion nichts.
-function highlightsHtml(etappeId) {
-  const h = HIGHLIGHTS[etappeId];
+// ── Termine als Inhaltsverzeichnis ─────────────────────────────────────
+function renderToc() {
+  const d = today();
+  const sorted = [...KALENDER].sort((a,b) => a.date - b.date);
+  const nextIdx = sorted.findIndex(k => k.date >= d);
+
+  document.getElementById('toc-list').innerHTML = sorted.map((k, i) => `
+    <div class="toc-row ${k.date < d ? 'past' : ''} ${i === nextIdx ? 'next' : ''}">
+      <div class="toc-num">Nº ${String(i+1).padStart(2,'0')}</div>
+      <div class="toc-date">${esc(k.datum)}</div>
+      <div class="toc-label">${esc(k.label)}</div>
+    </div>`).join('');
+}
+
+// ── Etappen-Spreads ────────────────────────────────────────────────────
+function highlightsHtml(id) {
+  const h = HIGHLIGHTS[id];
   if (!h) return '';
 
-  const top3 = (h.top3||[]).map(p => `
-    <div style="padding:10px 0;border-bottom:1px solid var(--line);">
-      <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:2px;">◦ ${p.name}</div>
-      <div style="font-size:15px;color:var(--text2);line-height:1.5;">${p.desc}</div>
-    </div>`).join('');
+  const gruppen = [
+    { key: 'wandern',     lbl: 'Zu Fuß ab der Haustür' },
+    { key: 'restaurants', lbl: 'Tisch & Einkehr' },
+    { key: 'besonderes',  lbl: 'Besonderes' },
+  ].filter(g => Array.isArray(h[g.key]) && h[g.key].length);
 
-  const wandern = (h.wandern||[]).map(w => `
-    <div style="font-size:16px;color:var(--text2);padding:4px 0 4px 16px;position:relative;line-height:1.5;">
-      <span style="position:absolute;left:0;color:var(--cyan);">›</span>${w}
-    </div>`).join('');
+  if (!gruppen.length) return '';
 
-  const spez = (h.spezialitaeten||[]).map(s => `
-    <div style="font-size:16px;color:var(--text2);padding:4px 0 4px 16px;position:relative;line-height:1.5;">
-      <span style="position:absolute;left:0;color:var(--cyan);">›</span>${s}
-    </div>`).join('');
-
-  return `
-    ${top3 ? `<div class="body-section"><div class="body-label">⭐ Top 3 Highlights · Mit Hund</div>${top3}</div>` : ''}
-    ${wandern ? `<div class="body-section"><div class="body-label">🥾 Wanderwege</div>${wandern}</div>` : ''}
-    ${spez ? `<div class="body-section"><div class="body-label">🍽 Regionale Spezialitäten</div>${spez}</div>` : ''}
-    ${h.nichtVerpassen ? `
-    <div class="body-section" style="background:rgba(0,229,255,0.04);border-left:2px solid var(--cyan);padding-left:16px;">
-      <div class="body-label">🚩 Nicht verpassen</div>
-      <div class="body-val dim" style="font-size:17px;">${h.nichtVerpassen}</div>
-    </div>` : ''}`;
+  return `<div class="hl">` + gruppen.map(g => `
+    <div class="hl-group">
+      <div class="hl-lbl">${g.lbl}</div>
+      ${h[g.key].map((item, i) => `
+        <div class="hl-item">
+          <div class="hl-marker">${String(i+1).padStart(2,'0')}</div>
+          <div>
+            <div class="hl-name">${esc(item.name)}</div>
+            ${item.info ? `<div class="hl-info">${esc(item.info)}</div>` : ''}
+          </div>
+        </div>`).join('')}
+    </div>`).join('') + `</div>`;
 }
 
-// ── ETAPPEN ───────────────────────────────────────────────────────────────────
-function renderEtappen() {
-  document.getElementById('etappen-list').innerHTML = ETAPPEN.map((e,i) => {
-    const driveCells = [
-      e.km    ? `<div class="drive-cell"><div class="drive-val">${e.km}</div><div class="drive-lbl">km</div></div>` : '',
-      e.dauer ? `<div class="drive-cell"><div class="drive-val">${e.dauer}</div><div class="drive-lbl">Fahrt</div></div>` : '',
-      `<div class="drive-cell"><div class="drive-val">${e.naechte}</div><div class="drive-lbl">Nächte</div></div>`,
-    ].join('');
+function renderSpreads() {
+  document.getElementById('spreads').innerHTML = ETAPPEN.map((e, i) => {
+    const bild = e.foto
+      ? `<img class="shot" src="${esc(e.foto)}" alt="${esc(e.name)}">`
+      : panoramaSvg(e.color, e.id);
+    const caption = e.foto ? (e.fotoCredit || e.name) : e.illuCaption;
+
+    const facts = [
+      { lbl: 'Unterkunft', val: esc(e.unterkunft) },
+      { lbl: 'Nächte',     val: e.naechte },
+      { lbl: 'Adresse',    val: esc(e.adresse), wide: true },
+      { lbl: 'Check-in',   val: esc(e.checkin), wide: e.checkin.length > 30 },
+      { lbl: 'Check-out',  val: esc(e.checkout) },
+      { lbl: 'Buchung',    val: `${e.buchungNr ? `<span class="code">${esc(e.buchungNr)}</span> · ` : ''}${esc(e.buchungPlattform)}` },
+    ];
+    if (e.wlan) {
+      facts.push({
+        lbl: 'WLAN',
+        val: `${esc(e.wlan.ssid)}<br><span class="code">${esc(e.wlan.passwort)}</span>`,
+        wide: true,
+      });
+    }
 
     return `
-    <div class="etappe-card" id="card-${i}">
-      <div class="card-accent" style="background:${e.color}"></div>
-      <div class="drive-bar">${driveCells}</div>
-      <div class="card-head" onclick="toggleCard(${i})">
-        <div class="card-num" style="color:${e.color}">${String(e.id).padStart(2,'0')}</div>
-        <div class="card-info">
-          <div class="card-name" style="color:${e.color}">${e.name}</div>
-          <div class="card-region">${e.region}</div>
-        </div>
-        <div class="card-right">
-          <div class="card-dates">${e.dates}</div>
-          <div class="card-chevron">↓</div>
-        </div>
+    <article class="spread ${i % 2 === 1 ? 'reverse' : ''} reveal">
+      <div class="photo">
+        ${bild}
+        <div class="photo-num">${String(e.id).padStart(2,'0')}</div>
+        <div class="photo-caption">${esc(caption)}</div>
       </div>
-      <div class="card-body">
-        <div class="body-section">
-          <div class="body-label">Unterkunft</div>
-          <div class="body-val">${e.unterkunft}</div>
-          <div class="body-val dim" style="margin-top:4px;">${e.adresse}</div>
+      <!-- Beide Kopien liegen im Spread, damit sie exakt deckungsgleich sitzen. -->
+      <div class="crossname on-photo">${esc(e.name)}</div>
+      <div class="crossname on-paper" aria-hidden="true">${esc(e.name)}</div>
+      <div class="info ${e.color}-accent">
+        <div class="info-anfahrt">Anfahrt ${e.km ? `${esc(e.km)} km · ${esc(e.dauer)}` : 'offen'}</div>
+        <div class="info-region">${esc(e.region)} · ${esc(e.dates)}</div>
+        <div class="info-teaser">${esc(e.teaser)}</div>
+        <div class="facts">
+          ${facts.map(f => `
+            <div class="fact${f.wide ? ' wide' : ''}">
+              <div class="fact-lbl">${f.lbl}</div>
+              <div class="fact-val">${f.val}</div>
+            </div>`).join('')}
         </div>
-        <div class="body-section">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-            <div><div class="body-label">Check-in</div><div class="body-val">${e.checkin}</div></div>
-            <div><div class="body-label">Check-out</div><div class="body-val">${e.checkout}</div></div>
-          </div>
-          <div style="margin-top:12px;">
-            <div class="booking-badge">✓ ${e.buchungNr ? `${e.buchungNr} · ` : ''}${e.buchungPlattform}</div>
-          </div>
-        </div>
-        <div class="body-section">
-          <div class="body-val dim">${e.info}</div>
-        </div>
+        <div class="fact"><div class="fact-lbl">Notiz</div><div class="fact-val">${esc(e.info)}</div></div>
         ${highlightsHtml(e.id)}
-        <div class="action-row">
-          <a class="act-btn nav" href="${e.navUrl}" target="_blank">
-            <span class="act-ico">🗺</span>
-            <span class="act-lbl">Navigation</span>
-          </a>
-          ${e.buchungUrl ? `
-          <a class="act-btn book" href="${e.buchungUrl}" target="_blank">
-            <span class="act-ico">🔖</span>
-            <span class="act-lbl">Buchung</span>
-          </a>` : ''}
+        <div class="actions">
+          <a class="btn" href="${esc(e.navUrl)}" target="_blank" rel="noopener"><span>Navigation</span></a>
+          ${e.buchungUrl ? `<a class="btn" href="${esc(e.buchungUrl)}" target="_blank" rel="noopener"><span>Buchung</span></a>` : ''}
         </div>
       </div>
-    </div>`;
+    </article>`;
   }).join('');
+
+  observeReveals();
 }
 
-// ── KARTE ─────────────────────────────────────────────────────────────────────
-function renderMapEmbed() {
-  const wrap = document.getElementById('maps-embed-wrap');
-  if (!wrap) return;
-
+// ── Karte ──────────────────────────────────────────────────────────────
+function renderKarte() {
   const [a, b] = ETAPPEN;
   const src = `https://www.google.com/maps/embed/v1/directions?key=${CONFIG.mapsApiKey}`
     + `&origin=${encodeURIComponent(a.adresse)}`
     + `&destination=${encodeURIComponent(b.adresse)}`
     + `&mode=driving&language=de`;
+  document.getElementById('figure-frame').innerHTML =
+    `<iframe src="${src}" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>`;
 
-  wrap.innerHTML = `
-    <iframe src="${src}" width="100%" height="380" allowfullscreen loading="lazy"
-      style="border:none;display:block;"></iframe>`;
+  const orte = [
+    { name: START.name, sub: START.adresse,  url: START.navUrl },
+    ...ETAPPEN.map(e => ({ name: e.name, sub: `${e.unterkunft} · ${e.adresse}`, url: e.navUrl })),
+  ];
 
-  const slot = document.getElementById('maps-link-slot');
-  if (slot) {
-    slot.innerHTML = CONFIG.mapsListUrl
-      ? `<a class="maps-link-btn" href="${CONFIG.mapsListUrl}" target="_blank">📍 Öffnen</a>`
-      : '';
-  }
-}
-
-function renderNavList() {
-  document.getElementById('nav-list').innerHTML = ETAPPEN.map(e => `
-    <a class="nav-list-row" href="${e.navUrl}" target="_blank">
-      <div class="nav-dot" style="background:${e.color}"></div>
+  document.getElementById('vz-list').innerHTML = orte.map((o, i) => `
+    <a class="vz-row" href="${esc(o.url)}" target="_blank" rel="noopener">
+      <div class="vz-num">${String(i).padStart(2,'0')}</div>
       <div>
-        <div class="nav-name">${e.name}</div>
-        <div class="nav-sub">${e.unterkunft}</div>
+        <div class="vz-name">${esc(o.name)}</div>
+        <div class="vz-sub">${esc(o.sub)}</div>
       </div>
-      <div class="nav-arrow">NAV →</div>
+      <div class="vz-nav">Route →</div>
     </a>`).join('');
 }
 
-// ── NAVIGATION ────────────────────────────────────────────────────────────────
-function toggleCard(i) { document.getElementById(`card-${i}`).classList.toggle('open'); }
-
-function openEtappe(i) {
-  switchTab('etappen', document.querySelectorAll('.nav-item')[1]);
-  setTimeout(() => {
-    const card = document.getElementById(`card-${i}`);
-    card?.classList.add('open');
-    card?.scrollIntoView({ behavior:'smooth', block:'start' });
-  }, 100);
+// ── Auftritt beim Scrollen ─────────────────────────────────────────────
+let revealObserver = null;
+function observeReveals() {
+  const items = document.querySelectorAll('.reveal:not(.in)');
+  if (!('IntersectionObserver' in window)) {
+    items.forEach(el => el.classList.add('in'));
+    return;
+  }
+  if (!revealObserver) {
+    revealObserver = new IntersectionObserver((entries, obs) => {
+      entries.forEach(en => {
+        if (en.isIntersecting) { en.target.classList.add('in'); obs.unobserve(en.target); }
+      });
+    }, { rootMargin: '0px 0px -12% 0px' });
+  }
+  items.forEach(el => revealObserver.observe(el));
+  // Sicherheitsnetz: Inhalt darf nie an der Animation hängen bleiben.
+  setTimeout(() => items.forEach(el => el.classList.add('in')), 2500);
 }
 
+// ── Navigation & Ausgabe ───────────────────────────────────────────────
 function switchTab(name, btn) {
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.rub').forEach(b => b.classList.remove('active'));
   document.getElementById(`s-${name}`).classList.add('active');
   btn.classList.add('active');
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
+  observeReveals();
 }
 
 function toggleTheme() {
-  const html = document.documentElement;
-  html.setAttribute('data-theme', html.getAttribute('data-theme')==='dark'?'light':'dark');
+  const root = document.documentElement;
+  const night = root.getAttribute('data-theme') === 'night';
+  root.setAttribute('data-theme', night ? 'tag' : 'night');
+  document.getElementById('theme-btn').textContent = night ? 'Nachtausgabe' : 'Tagausgabe';
 }
 
-// ── RENDER ALL ────────────────────────────────────────────────────────────────
+// ── Satz & Druck ───────────────────────────────────────────────────────
 function renderAll() {
-  renderTopbarDate();
+  renderMasthead();
   renderStats();
-  renderToday();
-  renderWeather();
   renderRoute();
-  renderKalender();
-  renderProgress();
-  renderEtappen();
-  renderMapEmbed();
-  renderNavList();
+  renderStand();
+  renderWetter();
+  renderToc();
+  renderSpreads();
+  renderKarte();
 }
 
 renderAll();

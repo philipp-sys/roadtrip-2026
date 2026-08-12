@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alpine Editorial — Konzept 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,340;9..144,480;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EFEDE5;
+    --paper2:#E7E3D8;
+    --ink:#1C1B17;
+    --ink-soft:#5B594F;
+    --pine:#2E4A3B;
+    --pine-deep:#1C2F26;
+    --amber:#B4842E;
+    --amber-deep:#7A5A1E;
+    --rule: rgba(28,27,23,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  /* MASTHEAD */
+  .masthead{
+    padding:28px 28px 22px; border-bottom:1px solid var(--rule);
+    display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:10px;
+  }
+  .mh-eyebrow{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ink-soft);
+  }
+  .mh-issue{font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.1em; color:var(--ink-soft);}
+  h1.title{
+    font-family:'Fraunces',serif; font-weight:600; font-optical-sizing:auto;
+    font-size:clamp(40px,6.2vw,84px); line-height:0.96; letter-spacing:-0.01em;
+    margin:10px 0 0; padding:0 28px;
+  }
+  .subtitle{
+    padding:16px 28px 26px; max-width:640px;
+    font-size:17px; line-height:1.6; color:var(--ink-soft);
+    border-bottom:1px solid var(--rule);
+  }
+
+  /* STATS STRIP */
+  .stats{
+    display:grid; grid-template-columns:repeat(4,1fr);
+    border-bottom:1px solid var(--rule);
+  }
+  .stat{padding:18px 28px; border-right:1px solid var(--rule);}
+  .stat:last-child{border-right:none;}
+  .stat-val{font-family:'Fraunces',serif; font-weight:600; font-size:34px; line-height:1;}
+  .stat-lbl{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); margin-top:6px;}
+
+  /* SPREAD */
+  .spread{
+    display:grid; grid-template-columns: 1fr 1fr;
+    border-bottom:1px solid var(--rule);
+    min-height:520px;
+  }
+  .spread.reverse{ grid-template-columns: 1fr 1fr; }
+  .spread.reverse .photo{ order:2; }
+  .spread.reverse .info{ order:1; }
+
+  .photo{
+    position:relative; overflow:hidden;
+    display:flex; align-items:flex-end;
+    min-height:340px;
+  }
+  .photo.pine{ background:
+    linear-gradient(180deg, rgba(28,47,38,0.15), rgba(28,47,38,0.75)),
+    repeating-linear-gradient(115deg, #3c5a48 0 3px, #2e4a3b 3px 7px);
+  }
+  .photo.amber{ background:
+    linear-gradient(180deg, rgba(122,90,30,0.12), rgba(122,90,30,0.72)),
+    repeating-linear-gradient(115deg, #c99a4f 0 3px, #a97e39 3px 7px);
+  }
+  .photo-label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.1em;
+    color:rgba(255,255,255,0.65); padding:14px 18px;
+  }
+  .photo-num{
+    position:absolute; top:24px; left:24px;
+    font-family:'Fraunces',serif; font-weight:600; font-size:20px; color:#fff;
+    letter-spacing:.08em;
+  }
+  .photo-name{
+    font-family:'Fraunces',serif; font-weight:600; color:#fff;
+    font-size:clamp(38px,4.4vw,62px); line-height:0.95;
+    padding:0 24px 20px; text-shadow:0 2px 20px rgba(0,0,0,0.25);
+  }
+
+  .info{ padding:32px 34px; display:flex; flex-direction:column; justify-content:center; gap:20px; }
+  .info-region{ font-size:15px; letter-spacing:.04em; color:var(--ink-soft); }
+  .info-teaser{ font-family:'Fraunces',serif; font-weight:340; font-size:22px; line-height:1.45; font-style:italic; }
+  .info-facts{ display:grid; grid-template-columns:1fr 1fr; gap:14px 18px; margin-top:6px; }
+  .fact-lbl{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:3px;}
+  .fact-val{ font-size:15.5px; line-height:1.4; }
+  .info.pine-accent .info-region{ color:var(--pine); }
+  .info.amber-accent .info-region{ color:var(--amber-deep); }
+
+  /* FOOTER */
+  footer{
+    padding:24px 28px 40px; display:flex; justify-content:space-between;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.08em; color:var(--ink-soft);
+    flex-wrap:wrap; gap:8px;
+  }
+
+  @media (max-width:760px){
+    .spread, .spread.reverse{ grid-template-columns:1fr; min-height:auto; }
+    .spread.reverse .photo{ order:1;} .spread.reverse .info{ order:2;}
+    .stats{ grid-template-columns:1fr 1fr; }
+    .stat:nth-child(2){ border-right:none; }
+    .photo{ min-height:280px; }
+    h1.title{ padding:0 20px; }
+    .masthead, .subtitle, .info, footer{ padding-left:20px; padding-right:20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="mh-eyebrow">Reisejournal · Tesla &amp; Hund</div>
+    <div class="mh-issue">Ausgabe Nº 02 — September 2026</div>
+  </div>
+  <h1 class="title">Lenggries<br>&amp; Valdidentro</h1>
+  <div class="subtitle">Zwei Etappen zwischen bayerischen Voralpen und lombardischem Hochtal — von der Isar über den Reschenpass bis an den Fuß des Stilfser Jochs.</div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-val">2</div><div class="stat-lbl">Etappen</div></div>
+    <div class="stat"><div class="stat-val">15</div><div class="stat-lbl">Nächte</div></div>
+    <div class="stat"><div class="stat-val">256</div><div class="stat-lbl">km zwischen den Etappen</div></div>
+    <div class="stat"><div class="stat-val">2</div><div class="stat-lbl">Länder</div></div>
+  </div>
+
+  <div class="spread">
+    <div class="photo pine">
+      <div class="photo-num">01</div>
+      <div>
+        <div class="photo-name">Lenggries</div>
+        <div class="photo-label">FOTO-PLATZHALTER · BRAUNECK / ISARWINKEL</div>
+      </div>
+    </div>
+    <div class="info pine-accent">
+      <div class="info-region">Isarwinkel, Bayern · 11.–19. September</div>
+      <div class="info-teaser">„Acht Nächte am Fuß des Brauneck, mit Wanderwegen direkt ab der Haustür."</div>
+      <div class="info-facts">
+        <div><div class="fact-lbl">Unterkunft</div><div class="fact-val">Ferienwohnung Blomberg</div></div>
+        <div><div class="fact-lbl">Nächte</div><div class="fact-val">8</div></div>
+        <div><div class="fact-lbl">Adresse</div><div class="fact-val">Günther Eich-Str. 7, 83661 Lenggries</div></div>
+        <div><div class="fact-lbl">Check-in</div><div class="fact-val">Self Check-in (Schlüsselsafe)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spread reverse">
+    <div class="photo amber">
+      <div class="photo-num">02</div>
+      <div>
+        <div class="photo-name">Valdidentro</div>
+        <div class="photo-label">FOTO-PLATZHALTER · ORTLERGRUPPE / VALTELLINA</div>
+      </div>
+    </div>
+    <div class="info amber-accent">
+      <div class="info-region">Lombardei, Italien · 19.–26. September</div>
+      <div class="info-teaser">„Sieben Nächte am Fuß des Stilfser Jochs, mit Blick auf die Ortlergruppe."</div>
+      <div class="info-facts">
+        <div><div class="fact-lbl">Unterkunft</div><div class="fact-val">Giardino sulle Alpi</div></div>
+        <div><div class="fact-lbl">Nächte</div><div class="fact-val">7</div></div>
+        <div><div class="fact-lbl">Adresse</div><div class="fact-val">Via Producena 4c, 23038 Valdidentro</div></div>
+        <div><div class="fact-lbl">Check-in</div><div class="fact-val">Ab 15:00 Uhr</div></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>Route: Lenggries → Reschenpass → Livigno → Valdidentro</span>
+    <span>Tesla · 🐾 · Konzept 2 / 4</span>
+  </footer>
+
+</div>
+</body>
+</html>
